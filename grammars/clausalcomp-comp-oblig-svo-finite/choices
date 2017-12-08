@@ -2,7 +2,7 @@
 version=28
 
 section=general
-language=clausalcomp-comp-oblig-svo-finite
+language=clausalcomp-comp-oblig-svo-embform-subjunct
 
 section=word-order
 word-order=svo
