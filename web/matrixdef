@@ -679,30 +679,6 @@ EndIter mood
 
 Label "</div>"
 
-#Separator
-
-#Label "<h3>Syntactic Feature</h3>"
-
-#Label "<div style=\"padding-left: 16px\">"
-#Label "<h4><span class=\"feat\">form</span></h4>"
-#Check form-fin-nf "Finite-nonfinite" "" "My language has no auxiliaries but does make a syntactically relevant finite/non-finite distinction.</p>"
-
-
-#Label "<div style=\"padding-left: 35px\">"
-
-#Label "<b>nonfinite</b>:"
-#  BeginIter nf-subform{i} "a subtype"
-#    Text name "Nonfinite subtype {i} name" "nonfinite subtype name: " "" 20
-#  EndIter nf-subform
-
-#Label "<br><br><b>finite</b>:"
-#  BeginIter fin-subform{i} "a subtype"
-#    Text name "Finite subtype {i} name" "finite subtype name: " "" 20
-#  EndIter fin-subform
-
-#Label "</div>"
-#Label "</div>"
-
 Label "<h4>References</h4>"
 Label "<div style=\"font-size:2\">"
 Label "<p>Bybee, Joan L. 2003. Aspect. In: Frawley, W.J. (ed.)
@@ -719,8 +695,6 @@ Edition). Dordrecht: Kluwer Academic Publishers. (Revised version of
 Smith, Carlota. 1991. The Parameter of Aspect. Dordrecht: Kluwer
 Academic Publishers)."
 Label "</div>"
-
-
 
 Section other-features "Other Features"
 
@@ -769,12 +743,6 @@ BeginIter form-subtype{i} "a Subtype for FORM"
 
 EndIter form-subtype
 
-
-#Label "<div id='form' class='form_switch' style='display:none'>
-#<p> FORM will be specified as a syntactic feature, and a value \"finite\"
-#will be specified by default. You can add more values below.</p>"
-
-#Label "</div>"
 
 Label "<h3>Other Syntactic and Semantic Features</h3>"
 

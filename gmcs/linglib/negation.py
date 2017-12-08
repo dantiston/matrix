@@ -269,7 +269,7 @@ def customize_infl_head_neg():
 
     # * neg-aux is a typical aux,
     # * the required FORM value is added
-    #   to the questionairre page automatically,
+    #   to the questionnaire page automatically,
     # * user selects that the inflector is FORM negform
     #   and makes the position class required to enforce
     #   complementary distribution of FORM

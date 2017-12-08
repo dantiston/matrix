@@ -296,10 +296,7 @@ def validate_names(ch, vr):
     for mood in ch.get('mood', []):
         user_types += [[mood.get('name'), mood.full_key + '_name']]
 
-    for sf in ch.get('nf-subform', []):
-        user_types += [[sf.get('name'), sf.full_key + '_name']]
-
-    for sf in ch.get('fin-subform', []):
+    for sf in ch.get('form-subtype', []):
         user_types += [[sf.get('name'), sf.full_key + '_name']]
 
     for noun in ch.get('noun', []):
@@ -741,7 +738,8 @@ def validate_word_order(ch, vr):
             vr.err('subord-word-order',
                    'V-final subordinate word order is ' +
                    'only supported with V2 matrix order.')
-        elif ch.get('has-aux') == 'yes' and ch.get('aux-comp') != 'v':
+        elif wo == 'v2' and ch.get('subord-word-order') == 'vfinal' \
+                and ch.get('has-aux') == 'yes' and ch.get('aux-comp') != 'v':
             vr.err('aux-comp','The only supported choice for auxiliary complement '
                    'type for v2/vfinal word order combination is V.')
 
@@ -1147,14 +1145,9 @@ def validate_tanda(ch, vr):
     ## validate form
     if ch.get('has-aux') == 'yes' and not ch.get('form-fin-nf') == 'on':
         mess = 'You have indicated on the word order page that ' + \
-               'your language has auxiliaries but have not initialized a FORM hierarchy.'
+               'your language has auxiliaries or picked a sentential negation strategy' \
+               'that assumes auxiliaries, but have not initialized a FORM hierarchy.'
         vr.err('form-fin-nf', mess)
-
-    # if ch.get('has-aux') == 'no' and not (ch.get('noaux-fin-nf') == 'on'):
-    #     if 'nf-subform' in ch:
-    #         mess = 'You have indicated that your language has no auxiliaries ' + \
-    #                'but you have entered subforms of finite or non-finite.'
-    #         vr.err('noaux-fin-nf', mess)
 
 ######################################################################
 # validate_test_sentences(ch, vr)

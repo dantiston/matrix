@@ -50,8 +50,7 @@ class TestValidate(unittest.TestCase):
                      ['tense1_', ''],
                      ['aspect1_', ''],
                      ['situation1_', ''],
-                     ['nf-subform1_', ''],
-                     ['fin-subform1_', ''],
+                     ['form-subtype_', ''],
                      ['noun1_', '-noun-lex'],
                      ['noun2_', '-noun-lex'],
                      ['det1_', '-determiner-lex'],
@@ -363,7 +362,7 @@ class TestValidate(unittest.TestCase):
 
         c['has-aux'] = 'no'
         c['noaux-fin-nf'] = ''
-        c['nf-subform1_dummy'] = 'dummy'
+        c['form-subtype1_dummy'] = 'dummy'
         self.assertError(c, 'noaux-fin-nf')
 
 

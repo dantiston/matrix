@@ -152,9 +152,9 @@ def import_toolbox_lexicon(choicesfile):
     choices = ChoicesFile(choicesfile)
     # Counters
     tbentries = 0
-    form_data_entries = 1;
+    form_data_entries = 1
 
-    form_data = FormData();
+    form_data = FormData()
     form_data['section'].value = 'ToolboxLexicon'
 
     for config in choices['toolboximportconfig']:
