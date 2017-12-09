@@ -91,5 +91,5 @@ See clausalcomps.py.
 def merge_constraints(choice, mylang, typename, path, key1, key2,val):
     for f in choice[key1]:
         if f[key2] == val:
-            mylang.add(typename + ' := [ ' + path + f['value'] + ' ].',
+            mylang.add(typename + ' := [ ' + path + ' ' + f['value'] + ' ].',
                        merge=True)
