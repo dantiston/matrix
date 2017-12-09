@@ -74,3 +74,22 @@ def format_comment_block(comment_string, max_chars=70, prefix=';;;'):
 
 def verify():
     return raw_input("  Do you want to continue? (y/n): ").lower() in ('y','yes')
+
+'''
+2017-12-08 OZ: An attempt to start modularizing the customization code better.
+A function (with lots of params, so, not sure this is going to work well)
+that will generally merge in constraints into a type.
+Example:
+        cs = ch.get('comps')[0] # First clausal complement strategy
+        typename = 'comp1-comp-lex-item'
+        path = 'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT.HEAD.FORM'
+        merge_constraints(choice=cs, mylang=mylang, typename=typename,path=path,key1='feat',key2='name',val='form')
+
+This will merge in constraints on FORM into a complementizer lexical type.
+See clausalcomps.py.
+'''
+def merge_constraints(choice, mylang, typename, path, key1, key2,val):
+    for f in choice[key1]:
+        if f[key2] == val:
+            mylang.add(typename + ' := [ ' + path + f['value'] + ' ].',
+                       merge=True)

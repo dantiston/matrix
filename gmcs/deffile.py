@@ -1729,6 +1729,9 @@ class MatrixDefFile:
                         old_choices['form-subtype%d_supertype' % next_n ] = 'nonfinite' #OZ 2017-12-09 I have not tested this line and don't know if it works
                 except:
                     print 'Go look in deffile.py save_choices; probably nf-subform needs to be updated to form-subtype; see choices.py up-rev 28-29 function.'
+
+        if section == 'clausal-comps':
+            self.save_clausalcomp_choices(old_choices,form_data)
         # Now pass through the def file, writing out either the old choices
         # for each section or, for the section we're saving, the new choices
         f = open(choices_file, 'w')
@@ -1759,6 +1762,10 @@ class MatrixDefFile:
             self.save_choices_section(self.def_lines[cur_sec_begin:i], f, choices)
 
         f.close()
+
+    def save_clausalcomp_choices(self,choices,form_data):
+        #if form_data['comps1_clause-pos-extra'] == 'on':
+        pass
 
     def create_neg_aux_choices(self, choices,form_data):
         '''this is a side effect of the existence of neg-aux

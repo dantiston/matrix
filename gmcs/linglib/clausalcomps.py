@@ -1,5 +1,6 @@
 from gmcs.utils import TDLencode
 from gmcs.utils import orth_encode
+from gmcs.utils import merge_constraints
 from gmcs.lib import TDLHierarchy
 
 from gmcs.linglib import features
@@ -38,9 +39,11 @@ def add_complementizer_type_to_grammar(mylang,ch,rules):
         typename = id + '-comp-lex-item'
         mylang.add(typename + ' := comp-lex-item.', section='complex')
         # merge feature information in
-        for f in cs['feat']:
-            if f['name'] == 'form':
-                mylang.add(typename + ' := [ SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT.HEAD.FORM ' + f['value'] + ' ].',merge=True)
+        path = 'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT.HEAD.FORM'
+        merge_constraints(choice=cs, mylang=mylang, typename=typename,path=path,key1='feat',key2='name',val='form')
+        #if cs['clause-pos-extra'] == 'on':
+        #    pass
+
 
 def add_complementizers_to_lexicon(lexicon,ch):
     lexicon.add_literal(';;; Complementizers')
