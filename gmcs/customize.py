@@ -618,7 +618,7 @@ def customize_matrix(path, arch_type, destination=None, force_dest=False):
     customize_pettdl(grammar_path)
     customize_acetdl(grammar_path)
     customize_roots()
-    
+
     customize_vpm(ch, vpm, hierarchies)
 
     # Save the output files

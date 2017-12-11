@@ -37,11 +37,24 @@ def add_complementizer_subtype(ch, cs, mylang,rules):
     merge_constraints(choicedict=cs, mylang=mylang, typename=typename, path=path, key1='feat', key2='name', val='form')
     # Deal with differing word order (e.g. complementizer attaching at the left edge
     # in an otherwise SOV language.
-    if ch.get('word-order') == 'sov' and cs['comp-pos-before'] == 'on':
+    customize_complementizer_order(ch, cs, mylang, rules, typename)
+
+
+'''
+Deal with differing word order (e.g. complementizer attaching at the left edge
+in an otherwise SOV language.
+'''
+def customize_complementizer_order(ch, cs, mylang, rules, typename):
+    if ch.get('word-order') in ['sov', 'ovs', 'osv', 'vfinal'] and cs['comp-pos-before'] == 'on':
         mylang.add('head :+ [ INIT bool ].', section='addenda')
         mylang.add(typename + ' := [ SYNSEM.LOCAL.CAT.HEAD.INIT + ].', merge=True)
         mylang.add('transitive-verb-lex := [ SYNSEM.LOCAL.CAT.HEAD.INIT - ].', merge=True)
-        add_phrase_structure_rules(ch,cs,mylang,rules)
+        add_phrase_structure_rules(ch, cs, mylang, rules)
+    elif ch.get('word-order') in ['svo', 'vos', 'vso', 'v2'] and cs['comp-pos-after'] == 'on':
+        mylang.add('head :+ [ INIT bool ].', section='addenda')
+        mylang.add(typename + ' := [ SYNSEM.LOCAL.CAT.HEAD.INIT - ].', merge=True)
+        mylang.add('transitive-verb-lex := [ SYNSEM.LOCAL.CAT.HEAD.INIT + ].', merge=True)
+        add_phrase_structure_rules(ch, cs, mylang, rules)
 
 
 def add_complementizer_supertype(mylang):
@@ -56,13 +69,21 @@ def add_complementizer_supertype(mylang):
                                VAL [ SUBJ < >,\
                                      COMPS < > ] ] ] > ].', section='complex')
 
-
+'''
+Add custom phrase-structure rules for case when the general order in the matrix clause
+and the order of complementizer and its complement differ.
+'''
 def add_phrase_structure_rules(ch,cs,mylang,rules):
-    if ch['word-order'] == 'sov' and cs['comp-pos-before']:
+    if ch.get('word-order') in ['sov', 'ovs', 'osv', 'vfinal'] and cs['comp-pos-before'] == 'on':
         rules.add('head-comp := head-comp-phrase.')
         mylang.add('head-comp-phrase := basic-head-1st-comp-phrase & head-initial & '
                    '[ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp & [ INIT + ] ].',section='phrases')
         mylang.add('comp-head-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT - ] ].',section='phrases')
+    elif ch.get('word-order') in ['svo', 'vos', 'vso', 'v2'] and cs['comp-pos-after'] == 'on':
+        rules.add('comp-head := comp-head-phrase.')
+        mylang.add('comp-head-phrase := basic-head-1st-comp-phrase & head-final & '
+                   '[ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp & [ INIT - ] ].',section='phrases')
+        mylang.add('head-comp-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT + ] ].',section='phrases')
 
 '''
 Determine whether additional phrase structure rules
