@@ -78,12 +78,14 @@ def add_phrase_structure_rules(ch,cs,mylang,rules):
         rules.add('head-comp := head-comp-phrase.')
         mylang.add('head-comp-phrase := basic-head-1st-comp-phrase & head-initial & '
                    '[ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp & [ INIT + ] ].',section='phrases')
-        mylang.add('comp-head-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT - ] ].',section='phrases')
+        if not cs['comp-pos-after'] == 'on':
+            mylang.add('comp-head-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT - ] ].',section='phrases')
     elif ch.get('word-order') in ['svo', 'vos', 'vso', 'v2'] and cs['comp-pos-after'] == 'on':
         rules.add('comp-head := comp-head-phrase.')
         mylang.add('comp-head-phrase := basic-head-1st-comp-phrase & head-final & '
                    '[ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp & [ INIT - ] ].',section='phrases')
-        mylang.add('head-comp-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT + ] ].',section='phrases')
+        if not cs['comp-pos-before'] == 'on':
+            mylang.add('head-comp-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT + ] ].',section='phrases')
 
 '''
 Determine whether additional phrase structure rules
