@@ -794,7 +794,7 @@ function fill_numbers()
 function fill_forms()
 {
   var items = new Array();
-  for (var i = 0; i < forms.length; i++) {
+  for (var i = 0; i < s.length; i++) {
     var n = forms[i].split(':');
     items.push([n[0],n[0]]);
   }

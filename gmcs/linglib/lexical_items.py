@@ -266,7 +266,6 @@ def customize_verbs(mylang, ch, lexicon, hierarchies):
        [ SYNSEM.LOCAL.CAT.VAL.COMPS < > ].'
     mylang.add(typedef)
 
-
     # transitive verb lexical type
     typedef = \
         'transitive-verb-lex := ' + mainorverbtype + ' & transitive-lex-item & \

@@ -116,6 +116,10 @@ comp-lex-item := raise-sem-lex-item & basic-one-arg &
 comps1-comp-lex-item := comp-lex-item &
   [ SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT.HEAD.FORM subjunctive ].
 
+
+comps2-comp-lex-item := comp-lex-item &
+  [ SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT.HEAD.FORM finite ].
+
 ;;;;;;;;;;;;;;;;;;;
 ;;; Lexical Rules
 ;;;;;;;;;;;;;;;;;;;
