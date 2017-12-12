@@ -2,7 +2,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Grammar of clausalcomp-comp-opt
 ;;; created at:
-;;;     Tue Dec 12 20:45:58 UTC 2017
+;;;     Tue Dec 12 20:56:06 UTC 2017
 ;;; based on Matrix customization system version of:
 ;;;     Tue Dec 12 20:45:26 UTC 2017
 ;;;
@@ -25,8 +25,6 @@ basic-head-mod-phrase-simple :+ [ SYNSEM.LOCAL.CAT.MC #mc,
     NON-HEAD-DTR.SYNSEM.LOCAL.CAT.MC #mc ].
 
 basic-head-opt-subj-phrase :+ [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].
-
-head :+ [ INIT bool ].
 
 ;;;;;;;;;;;;;;;;;;;
 ;;; Lexical Types
@@ -63,14 +61,13 @@ intransitive-verb-lex := verb-lex & intransitive-lex-item &
     ARG-ST.FIRST.LOCAL.CAT.HEAD noun ].
 
 transitive-verb-lex := verb-lex & transitive-lex-item &
-  [ ARG-ST < [ LOCAL.CAT.HEAD noun ],
+  [ SYNSEM.LOCAL.CAT.VAL.COMPS < #comps >,
+    ARG-ST < [ LOCAL.CAT.HEAD noun ],
              #comps &
              [ LOCAL.CAT cat-sat &
                          [ VAL [ SPR < >,
                                  COMPS < > ],
-                           HEAD noun ] ] >,
-    SYNSEM.LOCAL.CAT [ VAL.COMPS < #comps >,
-                       HEAD.INIT - ] ].
+                           HEAD noun ] ] > ].
 
 ctp-verb-lex := verb-lex & clausal-second-arg-trans-lex-item &
   [ SYNSEM.LOCAL.CAT.VAL.COMPS < #comps >,
@@ -98,8 +95,7 @@ comp-lex-item := raise-sem-lex-item & basic-one-arg &
                            VAL [ SUBJ < >,
                                  COMPS < > ] ] ] > ].
 
-comps1-comp-lex-item := comp-lex-item &
-  [ SYNSEM.LOCAL.CAT.HEAD.INIT + ].
+comps1-comp-lex-item := comp-lex-item.
 
 ;;;;;;;;;;;;;;;;;;;
 ;;; Lexical Rules
@@ -114,8 +110,7 @@ comps1-comp-lex-item := comp-lex-item &
 ;Constraint on MC used to be part of matrix.tdl
 ;;it applies to all wo implementations, except for v2
 
-comp-head-phrase := basic-head-1st-comp-phrase & head-final &
-  [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT - ].
+head-comp-phrase := basic-head-1st-comp-phrase & head-initial.
 
 subj-head-phrase := decl-head-subj-phrase & head-final &
   [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].
@@ -125,10 +120,6 @@ subj-head-phrase := decl-head-subj-phrase & head-final &
 
 bare-np-phrase := basic-bare-np-phrase &
   [ C-CONT.RELS <! [ PRED "exist_q_rel" ] !> ].
-
-head-comp-phrase := basic-head-1st-comp-phrase & head-initial &
-  [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp &
-                                   [ INIT + ] ].
 
 ;;;;;;;;;;;;;;;;;;
 ;;; Coordination
