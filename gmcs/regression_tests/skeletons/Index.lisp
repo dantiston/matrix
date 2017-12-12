@@ -22,6 +22,7 @@
 (
 ((:path . "tiniest") (:content . "tiniest: A very basic grammar just to get the regression tests started.  SOV word order, no frills."))
  ;;; new-regression-test-here
+((:path . "clausalcomp-comp-opt") (:content . "clausalcomp-comp-opt: Optional complementizer marking clausal complement."))
 ((:path . "clausalcomp-comp-opt") (:content . "clausalcomp-comp-opt: Optional complementizer marking clausal complements."))
 ((:path . "clausalcomp-comp-opt") (:content . "clausalcomp-comp-opt: Optional complementizer marking clausal complements."))
 ((:path . "clausalcomp-comp-oblig-before-after-ovs") (:content . "clausalcomp-comp-oblig-before-after-ovs: Obligatory complementizer attaching either to the left or to the right of the embedded clause, with general matrix word order being OVS."))
