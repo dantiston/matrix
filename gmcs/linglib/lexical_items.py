@@ -8,6 +8,7 @@ from gmcs.linglib import case
 from gmcs.linglib import features
 from gmcs.linglib import auxiliaries
 from gmcs.linglib import information_structure
+from gmcs.linglib import clausalcomps
 from gmcs.linglib.parameters import determine_vcluster
 from gmcs.linglib.lexbase import ALL_LEX_TYPES, LEXICAL_SUPERTYPES
 from gmcs.linglib.lexicon import get_all_supertypes
@@ -276,15 +277,9 @@ def customize_verbs(mylang, ch, lexicon, hierarchies):
                                       COMPS < > ] ] ] ] > ].'
     mylang.add(typedef)
 
-    # CTP (clausal complement-taking type)
-    typedef = 'ctp-verb-lex := ' + mainorverbtype + '& clausal-second-arg-trans-lex-item &\
-  [ SYNSEM.LOCAL.CAT.VAL.COMPS < #comps >,\
-    ARG-ST < [LOCAL.CAT.HEAD noun ],\
-    	     #comps &\
-    	     [ LOCAL.CAT [ VAL [ SPR < >, COMPS < > ],' \
-                                                    'HEAD comp ] ] > ].'
-
-    mylang.add(typedef)
+    if ch.get('comps'):
+        # CTP (clausal complement-taking type)
+        clausalcomps.add_ctp_supertype(ch, mainorverbtype, mylang)
 
     case.customize_verb_case(mylang, ch)
 
@@ -298,6 +293,8 @@ def customize_verbs(mylang, ch, lexicon, hierarchies):
     cases = case.case_names(ch)
     for verb in ch.get('verb',[]):
         create_verb_lex_type(cases, ch, hierarchies, lexicon, mylang, verb)
+
+
 
 
 def create_verb_lex_type(cases, ch, hierarchies, lexicon, mylang, verb):

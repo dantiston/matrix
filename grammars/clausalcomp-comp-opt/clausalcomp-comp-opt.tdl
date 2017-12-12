@@ -2,9 +2,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Grammar of clausalcomp-comp-opt
 ;;; created at:
-;;;     Tue Dec 12 19:23:14 UTC 2017
+;;;     Tue Dec 12 20:45:58 UTC 2017
 ;;; based on Matrix customization system version of:
-;;;     Tue Dec 12 19:22:52 UTC 2017
+;;;     Tue Dec 12 20:45:26 UTC 2017
 ;;;
 ;;; 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -25,6 +25,8 @@ basic-head-mod-phrase-simple :+ [ SYNSEM.LOCAL.CAT.MC #mc,
     NON-HEAD-DTR.SYNSEM.LOCAL.CAT.MC #mc ].
 
 basic-head-opt-subj-phrase :+ [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].
+
+head :+ [ INIT bool ].
 
 ;;;;;;;;;;;;;;;;;;;
 ;;; Lexical Types
@@ -61,23 +63,22 @@ intransitive-verb-lex := verb-lex & intransitive-lex-item &
     ARG-ST.FIRST.LOCAL.CAT.HEAD noun ].
 
 transitive-verb-lex := verb-lex & transitive-lex-item &
-  [ SYNSEM.LOCAL.CAT.VAL.COMPS < #comps >,
-    ARG-ST < [ LOCAL.CAT.HEAD noun ],
+  [ ARG-ST < [ LOCAL.CAT.HEAD noun ],
              #comps &
              [ LOCAL.CAT cat-sat &
                          [ VAL [ SPR < >,
                                  COMPS < > ],
-                           HEAD noun ] ] > ].
+                           HEAD noun ] ] >,
+    SYNSEM.LOCAL.CAT [ VAL.COMPS < #comps >,
+                       HEAD.INIT - ] ].
 
 ctp-verb-lex := verb-lex & clausal-second-arg-trans-lex-item &
-  [ ARG-ST < [ LOCAL.CAT.HEAD noun ],
+  [ SYNSEM.LOCAL.CAT.VAL.COMPS < #comps >,
+    ARG-ST < [ LOCAL.CAT.HEAD noun ],
              #comps &
              [ LOCAL.CAT [ VAL [ SPR < >,
                                  COMPS < > ],
-                           HEAD comp ] ] >,
-    SYNSEM.LOCAL.CAT.VAL.COMPS [ FIRST #comps,
-                                 REST null,
-                                 LOCAL.CAT.HEAD +vc ] ].
+                           HEAD +vc ] ] > ].
 
 tverb-verb-lex := transitive-verb-lex.
 
@@ -97,7 +98,8 @@ comp-lex-item := raise-sem-lex-item & basic-one-arg &
                            VAL [ SUBJ < >,
                                  COMPS < > ] ] ] > ].
 
-comps1-comp-lex-item := comp-lex-item.
+comps1-comp-lex-item := comp-lex-item &
+  [ SYNSEM.LOCAL.CAT.HEAD.INIT + ].
 
 ;;;;;;;;;;;;;;;;;;;
 ;;; Lexical Rules
@@ -112,7 +114,8 @@ comps1-comp-lex-item := comp-lex-item.
 ;Constraint on MC used to be part of matrix.tdl
 ;;it applies to all wo implementations, except for v2
 
-head-comp-phrase := basic-head-1st-comp-phrase & head-initial.
+comp-head-phrase := basic-head-1st-comp-phrase & head-final &
+  [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT - ].
 
 subj-head-phrase := decl-head-subj-phrase & head-final &
   [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].
@@ -122,6 +125,10 @@ subj-head-phrase := decl-head-subj-phrase & head-final &
 
 bare-np-phrase := basic-bare-np-phrase &
   [ C-CONT.RELS <! [ PRED "exist_q_rel" ] !> ].
+
+head-comp-phrase := basic-head-1st-comp-phrase & head-initial &
+  [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp &
+                                   [ INIT + ] ].
 
 ;;;;;;;;;;;;;;;;;;
 ;;; Coordination

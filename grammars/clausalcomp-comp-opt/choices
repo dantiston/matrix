@@ -5,7 +5,7 @@ section=general
 language=clausalcomp-comp-opt
 
 section=word-order
-word-order=svo
+word-order=sov
 has-dets=no
 has-aux=no
 subord-word-order=same

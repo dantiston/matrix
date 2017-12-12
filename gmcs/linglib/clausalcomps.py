@@ -26,11 +26,6 @@ def add_complementizer_types_to_grammar(mylang,ch,rules):
 
     for cs in ch.get('comps'):
         add_complementizer_subtype(ch, cs, mylang,rules)
-        if cs['comp'] == 'opt':
-            make_complementizer_optional(mylang, 'ctp-verb-lex')
-
-def make_complementizer_optional(mylang,typename):
-    mylang.add(typename + ' := [ SYNSEM.LOCAL.CAT.VAL.COMPS.LOCAL.CAT.HEAD +vc ].',merge=True)
 
 def add_complementizer_subtype(ch, cs, mylang,rules):
     id = cs.full_key
@@ -116,3 +111,18 @@ def add_complementizers_to_lexicon(lexicon,ch):
                           [ STEM < "' + orth + '" > ].'
 
             lexicon.add(typedef)
+
+
+def add_ctp_supertype(ch, mainorverbtype,mylang):
+    head = 'comp'
+    for ccs in ch.get('comps'):
+        if ccs['comp'] == 'opt':
+            head = '+vc'
+            break
+    typedef = 'ctp-verb-lex := ' + mainorverbtype + '& clausal-second-arg-trans-lex-item &\
+      [ SYNSEM.LOCAL.CAT.VAL.COMPS < #comps >,\
+        ARG-ST < [ LOCAL.CAT.HEAD noun ],\
+                 #comps &\
+                 [ LOCAL.CAT [ VAL [ SPR < >, COMPS < > ],' \
+                                                    'HEAD ' + head + ' ] ] > ].'
+    mylang.add(typedef,section='verblex')
