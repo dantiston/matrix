@@ -295,4 +295,3 @@ clausalcomp-comp-oblig-svo-embform-subjunct=A clause with a clausal complement (
 clausalcomp-comp-oblig-before-sov=Complementizer attaching to the left of the complement clause with an otherwise SOV matrix word order.
 clausalcomp-comp-oblig-after-svo=Obligatory complementizer attaching to the right of the embedded clause, general matrix order SVO.
 clausalcomp-comp-oblig-before-after-ovs=Obligatory complementizer attaching either to the left or to the right of the embedded clause, with general matrix word order being OVS.
-clausalcomp-comp-opt=Optional complementizer marking clausal complements.
