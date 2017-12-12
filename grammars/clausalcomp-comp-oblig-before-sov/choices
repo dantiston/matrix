@@ -25,10 +25,6 @@ section=direct-inverse
 section=tense-aspect-mood
 
 section=other-features
-form-fin-nf=on
-  form-subtype1_name=gggggg
-  form-subtype1_supertype=finite
-  form-subtype2_name=jhjjj
 
 section=sentential-negation
 
