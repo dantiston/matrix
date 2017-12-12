@@ -26,7 +26,11 @@ def add_complementizer_types_to_grammar(mylang,ch,rules):
 
     for cs in ch.get('comps'):
         add_complementizer_subtype(ch, cs, mylang,rules)
+        if cs['comp'] == 'opt':
+            make_complementizer_optional(mylang, 'ctp-verb-lex')
 
+def make_complementizer_optional(mylang,typename):
+    mylang.add(typename + ' := [ SYNSEM.LOCAL.CAT.VAL.COMPS.LOCAL.CAT.HEAD +vc ].',merge=True)
 
 def add_complementizer_subtype(ch, cs, mylang,rules):
     id = cs.full_key
@@ -38,7 +42,6 @@ def add_complementizer_subtype(ch, cs, mylang,rules):
     # Deal with differing word order (e.g. complementizer attaching at the left edge
     # in an otherwise SOV language.
     customize_complementizer_order(ch, cs, mylang, rules, typename)
-
 
 '''
 Deal with differing word order (e.g. complementizer attaching at the left edge
