@@ -1,5 +1,5 @@
 
-version=28
+version=29
 
 section=general
 language=v2-vfinal-aux
@@ -28,6 +28,7 @@ section=direct-inverse
 section=tense-aspect-mood
 
 section=other-features
+form-fin-nf=on
 
 section=sentential-negation
 
@@ -48,8 +49,6 @@ section=clausal-comp
   comps1_comp-pos-before=on
   comps1_comp=oblig
     comps1_complementizer1_orth=comp1
-    comps1_feat1_name=form
-    comps1_feat1_value=finite
 
 section=lexicon
   noun1_name=noun
@@ -60,21 +59,20 @@ section=lexicon
     noun1_stem2_pred=_noun2_n_rel
     noun1_stem3_orth=noun3
     noun1_stem3_pred=_noun3_n_rel
-  verb1_name=iverb
-  verb1_valence=intrans
-    verb1_stem1_orth=iverb
-    verb1_stem1_pred=_iverb_v_rel
-  verb2_name=tverb
-  verb2_valence=trans
-    verb2_stem1_orth=tverb
-    verb2_stem1_pred=_tverb_v_rel
+  verb1_name=tverb
+  verb1_valence=trans
+    verb1_stem1_orth=tverb
+    verb1_stem1_pred=_tverb_v_rel
+  verb2_name=cverb
+  verb2_valence=comps1
+    verb2_stem1_orth=cverb
+    verb2_stem1_pred=_cverb_v_rel
   aux1_name=aux
-  aux1_sem=add-pred
+  aux1_sem=no-pred
   aux1_subj=np
     aux1_compfeature1_name=form
-    aux1_compfeature1_value=nonfinite
+    aux1_compfeature1_value=finite
     aux1_stem1_orth=aux1
-    aux1_stem1_pred=aux1
 
 section=morphology
 

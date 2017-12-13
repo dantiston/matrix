@@ -2,9 +2,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Grammar of v2-vfinal-aux
 ;;; created at:
-;;;     Thu Nov 30 20:58:36 UTC 2017
+;;;     Wed Dec 13 19:13:41 UTC 2017
 ;;; based on Matrix customization system version of:
-;;;     Sun Dec 14 20:42:11 UTC 2014
+;;;     Wed Dec 13 19:13:12 UTC 2017
 ;;;
 ;;; 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -96,13 +96,9 @@ ctp-verb-lex := main-verb-lex & clausal-second-arg-trans-lex-item &
                                  COMPS < > ],
                            HEAD comp ] ] > ].
 
-comps1-intransitive-verb-lex := intransitive-verb-lex &
-  [ ARG-ST.FIRST.LOCAL.CAT.HEAD noun &
-                                [ CASE comps1 ] ].
-
-iverb-verb-lex := intransitive-verb-lex.
-
 tverb-verb-lex := transitive-verb-lex.
+
+cverb-comps1-verb-lex := ctp-verb-lex.
 
 ;;; Auxiliaries
 
@@ -130,20 +126,23 @@ arg-comp-aux := aux-lex & basic-two-arg &
 ; that the non-local features are amalgamated from subj, the
 ; lexical verb complement, but not the other complements, if any.
 
-; Not inheriting from basic-verb-lex, so need to put in
-; event-relation by hand here.
+; Note that raise-sem-lex-item assumes the first complement is
+; where the HOOK comes from.  It's not clear to me how you'd
+; tell that you had an argument composition auxiliary if it
+; wasn't appearing adjacent to the verb.
 
-arg-comp-aux-with-pred := arg-comp-aux & hcons-lex-item &
-  [ SYNSEM [ LOCAL.CONT.HCONS <! qeq &
-                                 [ HARG #harg,
-                                   LARG #larg ] !>,
-             LKEYS.KEYREL event-relation &
-                          [ ARG1 #harg ] ],
-    ARG-ST < [ ],
-             [ LOCAL.CONT.HOOK.LTOP #larg ] > ].
+; To keep the semantically empty ones from spinning on
+; generation, require complement to be [AUX -].  The
+; FORM feature might be enough in the starter grammars,
+; but I don't want to rely on this.  Then again, [ AUX - ]
+; might not be true.
 
-aux-aux-lex := arg-comp-aux-with-pred &
-  [ SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT [ HEAD.FORM nonfinite,
+arg-comp-aux-no-pred := arg-comp-aux & raise-sem-lex-item &
+  [ ARG-ST < [ ],
+             [ LOCAL.CAT.HEAD.AUX - ] > ].
+
+aux-aux-lex := arg-comp-aux-no-pred &
+  [ SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT [ HEAD.FORM finite,
                                                  MC na-or-- ] ].
 
 ;;; Complementizers
@@ -161,8 +160,7 @@ comp-lex-item := raise-sem-lex-item & basic-one-arg &
                            VAL [ SUBJ < >,
                                  COMPS < > ] ] ] > ].
 
-comps1-comp-lex-item := comp-lex-item & raise-sem-lex-item & basic-one-arg &
-  [ SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT.HEAD.FORM finite ].
+comps1-comp-lex-item := comp-lex-item.
 
 ;;;;;;;;;;;;;;;;;;;
 ;;; Lexical Rules
@@ -206,8 +204,9 @@ bare-np-phrase := basic-bare-np-phrase &
 ; Phrase structure rules for subordinate clauses
 
 subord-phrase := head-final &
-  [ SYNSEM.LOCAL.CAT.MC #mc & -,
-    HEAD-DTR.SYNSEM.LOCAL.CAT.MC #mc ].
+  [ HEAD-DTR.SYNSEM.LOCAL.CAT.MC #mc,
+    SYNSEM.LOCAL.CAT [ MC #mc & -,
+                       VC - ] ].
 
 subord-comp-head-phrase := subord-phrase & basic-head-1st-comp-phrase.
 
@@ -218,6 +217,15 @@ basic-unary-phrase :+ [ SYNSEM.LOCAL.CAT.VC #vc,
 
 basic-binary-headed-phrase :+ [ SYNSEM.LOCAL.CAT.VC #vc,
     NON-HEAD-DTR.SYNSEM.LOCAL.CAT.VC #vc ].
+
+verb-cluster-phrase := head-final &
+  [ SYNSEM.LOCAL.CAT [ VC +,
+                       MC #mc & - ],
+    HEAD-DTR.SYNSEM.LOCAL.CAT [ VC +,
+                                MC #mc ],
+    NON-HEAD-DTR.SYNSEM.LOCAL.CAT.VC + ].
+
+vc-comp-head-phrase := verb-cluster-phrase & basic-head-1st-comp-phrase.
 
 ;;;;;;;;;;;;;;;;;;
 ;;; Coordination
