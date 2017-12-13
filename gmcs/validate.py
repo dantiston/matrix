@@ -16,6 +16,7 @@ import gmcs.linglib.case
 import gmcs.linglib.morphotactics
 import gmcs.linglib.negation
 import gmcs.linglib.lexicon
+import gmcs.linglib.clausalcomps
 
 
 ######################################################################
