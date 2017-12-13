@@ -1396,6 +1396,7 @@ def validate_hierarchy(ch, vr):
                            "' is an immediate supertype of '"+x.get('name','')+"' and also "+
                            "an ancestor of another supertype.")
 
+
 def validate_arg_opt(ch, vr):
     """Check to see if the user completed the necessary portions of the arg
      opt page and see that the OPT feature is used correctly elsewhere"""
@@ -1458,6 +1459,7 @@ def validate(ch, extra = False):
     gmcs.linglib.lexicon.validate_lexicon(ch, vr)
     gmcs.linglib.morphotactics.validate(ch, vr)
     validate_test_sentences(ch, vr)
+    gmcs.linglib.clausalcomps.validate(ch,vr)
 
     validate_types(ch, vr)
     validate_features(ch, vr)

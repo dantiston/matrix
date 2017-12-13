@@ -302,6 +302,7 @@ def create_verb_lex_type(cases, ch, hierarchies, lexicon, mylang, verb):
     stype_names = [verb_id(ch[st]) for st in stypes if st != '']
     vtype = verb_id(verb)
     construct_supertype_names(cases, ch, stype_names, verb)
+    vtype = clausalcomps.update_verb_lextype(ch,verb,vtype)
 
     if len(stype_names) == 0:
         mylang.add(vtype + ' := verb-lex .')
