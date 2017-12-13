@@ -297,3 +297,4 @@ clausalcomp-comp-oblig-before-after-ovs=Obligatory complementizer attaching eith
 clausalcomp-comp-opt=Optional complementizer marking clausal complement.
 v2-vfinal-aux=German-like subordinate word order with auxiliary clustering with the verb at the end of the embedded clause.
 clausalcomp-extra-and-same=Clausal complement either extraposed or in the normal OV position in SOV language; complementizer attached on the right of the embedded clause.
+clausalcomp-extra=Extraposed clausal complements only (always extraposed) in SOV language; complementizer on the right of the embedded clause.

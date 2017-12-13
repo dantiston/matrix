@@ -1,0 +1,6 @@
+1@unknown@formal@none@1@S@noun1 noun2 tverb@@@@@@@olzama@2017-12-13
+2@unknown@formal@none@1@@delphin gmcs gmmt grammars gtest_regression_tests.sh install iso.tab LICENSE lisp matrix.cgi matrix-core matrix.py matrix-types web noun1 tverb noun2@@@@@@@olzama@2017-12-13
+3@unknown@formal@none@1@@delphin gmcs gmmt grammars gtest_regression_tests.sh install iso.tab LICENSE lisp matrix.cgi matrix-core matrix.py matrix-types web noun1 noun2 noun3 tverb comp1 cverb@@@@@@@olzama@2017-12-13
+4@unknown@formal@none@1@S@noun1 cverb noun2 noun3 tverb comp1@@@@@@@olzama@2017-12-13
+5@unknown@formal@none@1@@delphin gmcs gmmt grammars gtest_regression_tests.sh install iso.tab LICENSE lisp matrix.cgi matrix-core matrix.py matrix-types web noun1 cverb comp1 noun2 noun3 tverb@@@@@@@olzama@2017-12-13
+6@unknown@formal@none@1@@delphin gmcs gmmt grammars gtest_regression_tests.sh install iso.tab LICENSE lisp matrix.cgi matrix-core matrix.py matrix-types web noun1 comp1 noun2 noun3 tverb cverb@@@@@@@olzama@2017-12-13
