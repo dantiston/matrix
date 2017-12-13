@@ -22,6 +22,7 @@
 (
 ((:path . "tiniest") (:content . "tiniest: A very basic grammar just to get the regression tests started.  SOV word order, no frills."))
  ;;; new-regression-test-here
+((:path . "clausalcomp-extraposed") (:content . "clausalcomp-extraposed: Extraposed clausal complement in SOV language; complementizer attached at the right edge of the embedded clause."))
 ((:path . "clausalcomp-comp-opt") (:content . "clausalcomp-comp-opt: Optional complementizer marking clausal complement."))
 ((:path . "clausalcomp-comp-opt") (:content . "clausalcomp-comp-opt: Optional complementizer marking clausal complements."))
 ((:path . "clausalcomp-comp-opt") (:content . "clausalcomp-comp-opt: Optional complementizer marking clausal complements."))
