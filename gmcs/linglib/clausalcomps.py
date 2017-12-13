@@ -86,6 +86,9 @@ Add custom phrase-structure rules for case when the general order in the matrix 
 and the order of complementizer and its complement differ.
 '''
 def add_phrase_structure_rules(ch,cs,mylang,rules):
+    if not cs['clause-pos-extra']:
+        cs['clause-pos-same'] = 'on'
+        cs['clause-pos-extra'] = 'off'
     if ch.get('word-order') in ['sov', 'ovs', 'osv', 'vfinal'] \
             and (cs['comp-pos-before'] == 'on' or cs['clause-pos-extra'] == 'on'):
         head = None
@@ -101,9 +104,10 @@ def add_phrase_structure_rules(ch,cs,mylang,rules):
                             'head could not be determined for the additional head-comp rule.')
         mylang.add('head-comp-phrase := basic-head-1st-comp-phrase & head-initial & '
                    '[ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + head + ' & [ INIT + ] ].',section='phrases')
-        if not cs['comp-pos-after'] == 'on' \
-                or (cs['clause-pos-extra']=='on' and cs['clause-pos-same'] == 'on)'):
-            mylang.add('comp-head-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT - ] ].',section='phrases')
+        # Need additional constraints to rule out comp-head licensing
+        # unless order is flexible and allows both comp-head and head-comp here.
+        if not (cs['comp-pos-after'] == 'on'and cs['clause-pos-same'] == 'on'):
+            mylang.add('comp-head-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT - ].',section='phrases')
     elif ch.get('word-order') in ['svo', 'vos', 'vso', 'v2'] and cs['comp-pos-after'] == 'on':
         rules.add('comp-head := comp-head-phrase.')
         mylang.add('comp-head-phrase := basic-head-1st-comp-phrase & head-final & '
