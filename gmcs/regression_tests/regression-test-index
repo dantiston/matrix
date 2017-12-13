@@ -297,3 +297,4 @@ clausalcomp-comp-oblig-after-svo=Obligatory complementizer attaching to the righ
 clausalcomp-comp-oblig-before-after-ovs=Obligatory complementizer attaching either to the left or to the right of the embedded clause, with general matrix word order being OVS.
 clausalcomp-comp-opt=Optional complementizer marking clausal complement.
 clausalcomp-extraposed=Extraposed clausal complement in SOV language; complementizer attached at the right edge of the embedded clause.
+v2-vfinal-aux=German-like subordinate word order with auxiliary clustering with the verb at the end of the embedded clause.
