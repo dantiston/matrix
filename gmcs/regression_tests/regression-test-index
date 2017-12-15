@@ -308,7 +308,6 @@ evidentials-inflection-build=testing evidential verbal inflection with user-inpu
 evidentials-auxiliary-build=testing evidential auxiliary verbs with user-input evidential inventory
 evidentials-auxiliary-choose=testing evidential auxiliary verbs with selected evidential inventory
 vfinal=V-final basic word order: verb in final position, subject and object in either position in front.
-
 v2-basic-order=V2 basic word order: verb in second position, subject and object on either side.
 evidentials-infl-aux-kal=Testing the evidentiality library with Kalaallisut evidentials
 evidentials-infl-aux-shp=Testing the evidentiality library with the evidentials of Shipibo-Konibo
