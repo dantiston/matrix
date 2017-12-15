@@ -49,6 +49,7 @@ def customize_order(ch, cs, mylang, rules, typename):
         if cs['comp-pos-before'] == 'on' or cs['clause-pos-extra'] == 'on':
             mylang.add('head :+ [ INIT bool ].', section='addenda')
             mylang.add('transitive-verb-lex := [ SYNSEM.LOCAL.CAT.HEAD.INIT - ].', merge=True)
+            #TODO this should better be called separately, from outside this function
             add_phrase_structure_rules(ch, cs, mylang, rules)
         if cs['comp-pos-before'] == 'on':
             mylang.add(typename + ' := [ SYNSEM.LOCAL.CAT.HEAD.INIT + ].', merge=True)
@@ -64,6 +65,7 @@ def customize_order(ch, cs, mylang, rules, typename):
         mylang.add('head :+ [ INIT bool ].', section='addenda')
         mylang.add(typename + ' := [ SYNSEM.LOCAL.CAT.HEAD.INIT - ].', merge=True)
         mylang.add('transitive-verb-lex := [ SYNSEM.LOCAL.CAT.HEAD.INIT + ].', merge=True)
+        #TODO this should better be called separately, from outside this function
         add_phrase_structure_rules(ch, cs, mylang, rules)
         if cs['comp-pos-before'] == 'on':
             mylang.add(typename + ' := [ SYNSEM.LOCAL.CAT.HEAD.INIT - ].', merge=True)
@@ -110,7 +112,8 @@ def add_phrase_structure_rules(ch,cs,mylang,rules):
         # unless order is flexible and allows both comp-head and head-comp here.
         if not (cs['comp-pos-after'] == 'on'and cs['clause-pos-same'] == 'on'):
             mylang.add('comp-head-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT - ].',section='phrases')
-    elif ch.get('word-order') in ['svo', 'vos', 'vso', 'v2'] and cs['comp-pos-after'] == 'on':
+    #TODO should v2 be mentioned below as well?
+    elif ch.get('word-order') in ['svo', 'vos', 'vso'] and cs['comp-pos-after'] == 'on':
         rules.add('comp-head := comp-head-phrase.')
         mylang.add('comp-head-phrase := basic-head-1st-comp-phrase & head-final & '
                    '[ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp & [ INIT - ] ].',section='phrases')
@@ -129,7 +132,8 @@ at the end of the clause (that I think is typologically not common).
 def complementizer_order_differs(ch,cs):
     if ch.get('wo') in ['sov', 'vfinal', 'osv', 'ovs'] and cs['comp-pos-before'] == 'on':
         return True
-    if ch.get('wo') in ['svo', 'v2', 'vinitial', 'vso', 'vos'] and cs['comp-pos-after'] == 'on':
+    #TODO where does v2 belong?
+    if ch.get('wo') in ['svo', 'vinitial', 'vso', 'vos'] and cs['comp-pos-after'] == 'on':
         return True
 
 def add_complementizers_to_lexicon(lexicon,ch):
@@ -179,4 +183,4 @@ def validate(ch,vr):
             if css['clause-pos-extra'] == 'on':
                 vr.err(css.full_key + '_clause-pos-extra',
                        'Extraposed clausal complements are only supported for word orders '
-                       'where Objects precedes Verb (e.g. SOV).')
+                       'where Object precedes Verb (e.g. SOV).')
