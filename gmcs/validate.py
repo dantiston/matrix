@@ -1484,7 +1484,7 @@ def validate(ch, extra = False):
     gmcs.linglib.morphotactics.validate(ch, vr)
     validate_test_sentences(ch, vr)
     gmcs.linglib.clausalcomps.validate(ch, vr)
-    validate_clausalmods(ch, vr)
+    validate_clausal_mods(ch, vr)
 
     validate_types(ch, vr)
     validate_features(ch, vr)
