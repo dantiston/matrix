@@ -42,12 +42,12 @@ def lexrule_name(rule_type,*args):
 ############ RULE BUILDERS ################
 
 def subj_rem_op_lex_rule():
-  return  lexrule_name('subj-rem-op') + ''' := subj-change-only-lex-rule &
+    return  lexrule_name('subj-rem-op') + ''' := subj-change-only-lex-rule &
   [ SYNSEM.LOCAL.CAT.VAL.SUBJ < >,
     DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < unexpressed > ].'''
 
 def obj_rem_op_lex_rule():
-  return lexrule_name('obj-rem-op') + ''' := comps-change-only-lex-rule &
+    return lexrule_name('obj-rem-op') + ''' := comps-change-only-lex-rule &
   [ SYNSEM.LOCAL.CAT.VAL.COMPS #comps,
     DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < unexpressed . #comps > ].'''
 

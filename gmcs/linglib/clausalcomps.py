@@ -84,6 +84,8 @@ def add_complementizer_supertype(mylang):
 '''
 Add custom phrase-structure rules for case when the general order in the matrix clause
 and the order of complementizer and its complement differ.
+The function is very spaghetti at the moment.
+It would be ideal to extract some clearer logic from it.
 '''
 def add_phrase_structure_rules(ch,cs,mylang,rules):
     if not cs['clause-pos-extra']:

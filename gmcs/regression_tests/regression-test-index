@@ -298,3 +298,17 @@ clausalcomp-comp-opt=Optional complementizer marking clausal complement.
 v2-vfinal-aux=German-like subordinate word order with auxiliary clustering with the verb at the end of the embedded clause.
 clausalcomp-extra-and-same=Clausal complement either extraposed or in the normal OV position in SOV language; complementizer attached on the right of the embedded clause.
 clausalcomp-extra=Extraposed clausal complements only (always extraposed) in SOV language; complementizer on the right of the embedded clause.
+evidentials-infl-aux-kaz=testing coverage of Kazakh evidentials (infl, aux)
+evidentials-infl-cng=testing coverage of Qiang evidentials (infl)
+evidentials-aux-apw=testing coverage of Western Apache evidentials (aux)
+evidentials-infl-yux=testing coverage of Kolyma Yukaghir evidentials (infl)
+evidentials-aux-peb=testing coverage of Eastern Pommo evidentials (infl)
+evidentials-inflection-choose=testing evidential verbal inflection with selected evidential inventory
+evidentials-inflection-build=testing evidential verbal inflection with user-input evidential inventory
+evidentials-auxiliary-build=testing evidential auxiliary verbs with user-input evidential inventory
+evidentials-auxiliary-choose=testing evidential auxiliary verbs with selected evidential inventory
+vfinal=V-final basic word order: verb in final position, subject and object in either position in front.
+
+v2-basic-order=V2 basic word order: verb in second position, subject and object on either side.
+evidentials-infl-aux-kal=Testing the evidentiality library with Kalaallisut evidentials
+evidentials-infl-aux-shp=Testing the evidentiality library with the evidentials of Shipibo-Konibo

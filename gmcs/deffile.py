@@ -13,6 +13,7 @@
 # imports
 
 import os
+import cgi
 import cgitb
 import glob
 import re
@@ -32,7 +33,7 @@ from collections import defaultdict
 # HTML blocks, used to create web pages
 
 def dummy():
-    pass # let emacs know the indentation is 2 spaces 2017-12-01 OZ: why 2 spaces and not the standard 4?
+    pass # let emacs know the indentation is 2 spaces
 
 
 HTTP_header = 'Content-type: text/html;charset=UTF-8'
@@ -95,7 +96,7 @@ HTML_toggle_visible_js = '''<script type="text/javascript">
 HTML_mainprebody = '''<body onload="animate()">
 <h1>LinGO Grammar Matrix</h1>
 <h1 style="display:inline">Matrix customization and download page</h1>
-<span class="tt">[<a href="http://moin.delph-in.net/MatrixDocTop" target="matrixdoc">help</a>]</span>
+<span class="tt">[<a href="http://moin.delph-in.net/MatrixDocTop" target="matrixdoc">documentation</a>]</span>
 <h2>Version of %s</h2>
 
 <p>The <a href="http://www.delph-in.net/matrix">LinGO Grammar
@@ -240,10 +241,6 @@ HTML_sentencespostbody = '''
 
 HTML_prebody = '''<body onload="animate(); focus_all_fields(); multi_init(); fill_hidden_errors(); scalenav();">
 '''
-
-HTML_prebody_of = '''<body onload="animate(); focus_all_fields(); multi_init(); fill_hidden_errors(); display_form_choice();scalenav();">
-'''
-
 
 HTML_prebody_sn = '''<body onload="animate(); focus_all_fields(); multi_init(); fill_hidden_errors();display_neg_form();scalenav();">'''
 
@@ -546,7 +543,7 @@ class MatrixDefFile:
     sections = { 'general':'General Information',
                  'word-order':'Word Order', 'number':'Number',
                  'person':'Person', 'gender':'Gender', 'case':'Case',
-                 'direct-inverse':'Direct-inverse', 'tense-aspect-mood':'Tense, Aspect and Mood',
+                 'direct-inverse':'Direct-inverse', 'tense-aspect-mood':'Tense, Aspect and Mood', 'evidentials': 'Evidentials',
                  'other-features':'Other Features', 'sentential-negation':'Sentential Negation',
                  'coordination':'Coordination', 'matrix-yes-no':'Matrix Yes/No Questions',
                  'info-str':'Information Structure',
@@ -563,7 +560,7 @@ class MatrixDefFile:
     doclinks = { 'general':'GeneralInfo',
                  'word-order':'WordOrder', 'number':'Number',
                  'person':'Person', 'gender':'Gender', 'case':'Case',
-                 'direct-inverse':'DirectInverse', 'tense-aspect-mood':'TenseAspectMood',
+                 'direct-inverse':'DirectInverse', 'tense-aspect-mood':'TenseAspectMood', 'evidentials': 'Evidentials',
                  'other-features':'OtherFeatures', 'sentential-negation':'SententialNegation',
                  'coordination':'Coordination', 'matrix-yes-no':'YesNoQ',
                  'info-str':'InformationStructure',
@@ -844,7 +841,6 @@ class MatrixDefFile:
 
         html = ''
 
-        #if not debug:
         http_cookie = os.getenv('HTTP_COOKIE')
 
         cookie = {}
@@ -975,8 +971,6 @@ class MatrixDefFile:
                 # probably by calling it incorrectly, but the check should not hurt.
                 while i < len(lines)-1 and lines[i].strip().startswith('fill'):
                     word = tokenize_def(replace_vars(lines[i], vars))
-                    #if word[0].startswith('fillform'):
-                    #    print(5)
                     # arguments are labeled like p=pattern, l(literal_feature)=1,
                     # n(nameOnly)=1, c=cat
                     #note: possible cat values are "noun", "verb" or "both"
@@ -1194,6 +1188,50 @@ class MatrixDefFile:
 
         return html
 
+    def verification(self):
+        # Note, In previous parts of this site the html bits are configured outside of the
+        # function and pipped in as global variables. I don't like this. So i'm confining variables
+        # locally. But I don't want to leave things messy, so I've divided it into sections to keep
+        # things more "clean" looking.
+        ### Setup ###
+        verify_form = cgi.FieldStorage()
+        HTML_google_api = "<script src='https://www.google.com/recaptcha/api.js'></script> \n"
+        HTML_verify_form_prebody = """
+<html>
+  <head>
+    <title>Grammar Matrix: Session Verification Page</title>
+     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+     <script>
+       function onSubmit(token) {
+         document.getElementById("verify-form").submit();
+       }
+     </script>
+  </head>
+"""
+        HTML_verify_form_body = """
+<body>
+	We were unable to detect a valid session for you. In order to create a new session,<br>
+	please use the verify button below to confirm you are not a bot. Once this is done you will be<br>
+	redirected to the main page where you can begin using the grammar matrix.<br><br>
+</body>
+"""
+        HTML_verify_form_postbody = """
+      <form id='verify-form' action="matrix.cgi" method="POST">
+      <button class="g-recaptcha" data-sitekey="6LfEeisUAAAAAGdbbNlfjxKjkRxcSWhSovyq9oik" data-callback='onSubmit'>Verify</button>
+      <br/>
+    </form>
+</html>
+
+
+   """
+
+        ### Execution ###
+        print HTTP_header + '\n'
+        print HTML_pretitle
+        print HTML_verify_form_prebody
+        print HTML_verify_form_body
+        print HTML_verify_form_postbody
+        print HTML_postbody
 
     # Create and print the matrix subpage for the specified section
     # based on the arguments, which are the name of the section and
@@ -1247,8 +1285,6 @@ class MatrixDefFile:
 
             if section == 'sentential-negation':
                 print HTML_prebody_sn
-            #elif section == 'other-features':
-            #    print HTML_prebody_of
             else:
                 print HTML_prebody
 
@@ -1700,7 +1736,7 @@ class MatrixDefFile:
                 old_choices, neg_aux_index = self.create_neg_aux_choices(old_choices,form_data)
                 new_choices["neg-aux-index"] = str(neg_aux_index) if neg_aux_index > 0 else str(1)
 
-        # # create a zero-neg lri in choices
+        # create a zero-neg lri in choices
         if section == 'sentential-negation' and 'neg-exp' in form_data \
                 and form_data['neg-exp'].value == '0' \
                 and 'vpc-0-neg' in form_data.keys():
