@@ -1092,21 +1092,21 @@ class ChoicesFile:
 
         # Case
         features += self.__get_features(case.case_names(self), 0, 1, 'case',
-                                        'LOCAL.CAT.HEAD.CASE','noun', 'y')
+                                        'LOCAL.CAT.HEAD.CASE', 'noun', 'y')
         # Number, Person, and Pernum
         pernums = self.pernums()
         if pernums:
             features += self.__get_features(pernums, 0, 0, 'pernum',
-                                            'LOCAL.CONT.HOOK.INDEX.PNG.PERNUM','noun', 'y')
+                                            'LOCAL.CONT.HOOK.INDEX.PNG.PERNUM', 'noun', 'y')
         else:
             features += self.__get_features(self.numbers(), 0, 0, 'number',
-                                            'LOCAL.CONT.HOOK.INDEX.PNG.NUM','noun', 'y')
+                                            'LOCAL.CONT.HOOK.INDEX.PNG.NUM', 'noun', 'y')
             features += self.__get_features(self.persons(), 0, 0, 'person',
-                                            'LOCAL.CONT.HOOK.INDEX.PNG.PER','noun', 'y')
+                                            'LOCAL.CONT.HOOK.INDEX.PNG.PER', 'noun', 'y')
 
         # Gender
         features += self.__get_features(self.genders(), 0, 0, 'gender',
-                                        'LOCAL.CONT.HOOK.INDEX.PNG.GEND','noun', 'y')
+                                        'LOCAL.CONT.HOOK.INDEX.PNG.GEND', 'noun', 'y')
 
         # Case patterns
         features += self.__get_features(self.patterns(), 0, 1,
@@ -2181,8 +2181,8 @@ class ChoicesFile:
         except finite and nonfinite values will be initialized by default.
         """
         if self.get('noaux-fin-nf') == 'on':
-            self.convert_key('noaux-fin-nf','form-fin-nf')
-        elif self.get('has-aux')=='yes' or 'nf-subform' in self or 'fin-subform' in self:
+            self.convert_key('noaux-fin-nf', 'form-fin-nf')
+        elif self.get('has-aux') == 'yes' or 'nf-subform' in self or 'fin-subform' in self:
             self['form-fin-nf'] = 'on'
         for subtype in self.get('nf-subform'):
             subtype['supertype'] = 'nonfinite'

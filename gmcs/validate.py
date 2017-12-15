@@ -1150,6 +1150,12 @@ def validate_tanda(ch, vr):
                'that assumes auxiliaries, but have not initialized a FORM hierarchy.'
         vr.err('form-fin-nf', mess)
 
+    # if ch.get('has-aux') == 'no' and not (ch.get('noaux-fin-nf') == 'on'):
+    #     if 'nf-subform' in ch:
+    #         mess = 'You have indicated that your language has no auxiliaries ' + \
+    #                'but you have entered subforms of finite or non-finite.'
+    #         vr.err('noaux-fin-nf', mess)
+
 ######################################################################
 # validate_test_sentences(ch, vr)
 #   Validate the user's choices about test sentences.
@@ -1397,7 +1403,6 @@ def validate_hierarchy(ch, vr):
                            "' is an immediate supertype of '"+x.get('name','')+"' and also "+
                            "an ancestor of another supertype.")
 
-
 def validate_arg_opt(ch, vr):
     """Check to see if the user completed the necessary portions of the arg
      opt page and see that the OPT feature is used correctly elsewhere"""
@@ -1436,6 +1441,24 @@ def validate_arg_opt(ch, vr):
                        "on the subject NP or the object NP."
                 vr.err(feat.full_key+'_head',mess)
 
+# validate_clausal_mods(ch, vr)
+#   Validate the user's choices clausal modifiers.
+
+def validate_clausal_mods(ch, vr):
+    for cms in ch.get('cms'):
+        pos = cms.get('position')
+        subord = cms.get('subordinator')
+        subpos = cms.get('subposition')
+
+        if subord == 'free':
+            pass
+
+        if subord == 'pair':
+            pass
+
+        if subord == 'none':
+            pass
+
 
 def validate(ch, extra = False):
     """
@@ -1460,7 +1483,8 @@ def validate(ch, extra = False):
     gmcs.linglib.lexicon.validate_lexicon(ch, vr)
     gmcs.linglib.morphotactics.validate(ch, vr)
     validate_test_sentences(ch, vr)
-    gmcs.linglib.clausalcomps.validate(ch,vr)
+    gmcs.linglib.clausalcomps.validate(ch, vr)
+    validate_clausalmods(ch, vr)
 
     validate_types(ch, vr)
     validate_features(ch, vr)
