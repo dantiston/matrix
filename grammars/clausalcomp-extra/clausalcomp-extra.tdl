@@ -110,8 +110,7 @@ comp-lex-item := raise-sem-lex-item & basic-one-arg &
                            VAL [ SUBJ < >,
                                  COMPS < > ] ] ] > ].
 
-comps1-comp-lex-item := comp-lex-item &
-  [ SYNSEM.LOCAL.CAT.HEAD.INIT - ].
+comps1-comp-lex-item := comp-lex-item.
 
 ;;;;;;;;;;;;;;;;;;;
 ;;; Lexical Rules
@@ -126,8 +125,7 @@ comps1-comp-lex-item := comp-lex-item &
 ;Constraint on MC used to be part of matrix.tdl
 ;;it applies to all wo implementations, except for v2
 
-comp-head-phrase := basic-head-1st-comp-phrase & head-final &
-  [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT - ].
+comp-head-phrase := basic-head-1st-comp-phrase & head-final.
 
 subj-head-phrase := decl-head-subj-phrase & head-final &
   [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].

@@ -58,7 +58,8 @@ def customize_order(ch, cs, mylang, rules, typename):
         if cs['clause-pos-extra'] == 'on':
             if not verbtypename:
                 raise Exception('Clausalcomps.py customize_order could '
-                                'not find a ctp verb type to go along with a clausal complement strategy.')
+                                'not find a clausal-complement verb type to go along '
+                                'with a clausal complement strategy.')
             mylang.add( verbtypename + ' := [ SYNSEM.LOCAL.CAT.HEAD.INIT + ]. ', merge=True)
 
     elif ch.get('word-order') in ['svo', 'vos', 'vso', 'v2'] and cs['comp-pos-after'] == 'on':
@@ -67,7 +68,7 @@ def customize_order(ch, cs, mylang, rules, typename):
         mylang.add('transitive-verb-lex := [ SYNSEM.LOCAL.CAT.HEAD.INIT + ].', merge=True)
         #TODO this should better be called separately, from outside this function
         add_phrase_structure_rules(ch, cs, mylang, rules)
-        if cs['comp-pos-before'] == 'on':
+        if cs['comp-pos-before'] == 'on': #TODO this line repeats line 66 above
             mylang.add(typename + ' := [ SYNSEM.LOCAL.CAT.HEAD.INIT - ].', merge=True)
 
 
@@ -82,6 +83,20 @@ def add_complementizer_supertype(mylang):
                  [ LOCAL.CAT [ HEAD verb, MC -,\
                                VAL [ SUBJ < >,\
                                      COMPS < > ] ] ] > ].', section='complex')
+
+
+'''
+Add and modify head-complement rules depending
+on what kind of word order variations clausal complements
+exhibit.
+'''
+def add_phrase_structure_rules2(ch,cs,mylang,rules):
+    # Which is the general rule and which needs to be added?
+    # What is the head of the added rule's head daughter?
+    # Do I need to modify the general rule? (== Is INIT feature needed?)
+    # Constrain added and general rule wrt INIT
+    # Which lexical types need to be constrained wrt INIT?
+    pass
 
 '''
 Add custom phrase-structure rules for case when the general order in the matrix clause
@@ -111,6 +126,8 @@ def add_phrase_structure_rules(ch,cs,mylang,rules):
         # Need additional constraints to rule out comp-head licensing
         # unless order is flexible and allows both comp-head and head-comp here.
         if not (cs['comp-pos-after'] == 'on'and cs['clause-pos-same'] == 'on'):
+            #TODO: Does this mean all other lexical types should be made INIT - as well?
+            # Nouns, auxiliaries, what else?
             mylang.add('comp-head-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT - ].',section='phrases')
     #TODO should v2 be mentioned below as well?
     elif ch.get('word-order') in ['svo', 'vos', 'vso'] and cs['comp-pos-after'] == 'on':
