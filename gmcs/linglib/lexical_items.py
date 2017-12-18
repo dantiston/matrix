@@ -277,9 +277,8 @@ def customize_verbs(mylang, ch, lexicon, hierarchies):
                                       COMPS < > ] ] ] ] > ].'
     mylang.add(typedef)
 
-    if ch.get('comps'):
-        # CTP (clausal complement-taking type)
-        clausalcomps.add_ctp_supertype(ch, mainorverbtype, mylang)
+    if ch.get(clausalcomps.COMPS):
+        clausalcomps.add_clausalcomp_verb_supertype(ch, mainorverbtype, mylang)
 
     case.customize_verb_case(mylang, ch)
 
