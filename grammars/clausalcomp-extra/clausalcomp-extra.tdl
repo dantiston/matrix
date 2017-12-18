@@ -2,9 +2,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Grammar of clausalcomp-extra
 ;;; created at:
-;;;     Wed Dec 13 23:14:50 UTC 2017
+;;;     Mon Dec 18 23:38:01 UTC 2017
 ;;; based on Matrix customization system version of:
-;;;     Wed Dec 13 23:14:24 UTC 2017
+;;;     Sun Dec 14 20:42:11 UTC 2014
 ;;;
 ;;; 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -28,6 +28,8 @@ basic-head-mod-phrase-simple :+ [ SYNSEM.LOCAL.CAT.MC #mc,
     NON-HEAD-DTR.SYNSEM.LOCAL.CAT.MC #mc ].
 
 basic-head-opt-subj-phrase :+ [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].
+
++nvcdmo :+ [ MOD < > ].
 
 ;;;;;;;;;;;;;;
 ;;; Features
@@ -83,7 +85,7 @@ transitive-verb-lex := verb-lex & transitive-lex-item &
     SYNSEM.LOCAL.CAT [ VAL.COMPS < #comps >,
                        HEAD.INIT - ] ].
 
-ctp-verb-lex := verb-lex & clausal-second-arg-trans-lex-item &
+clausalcomp-verb-lex := verb-lex & clausal-second-arg-trans-lex-item &
   [ SYNSEM.LOCAL.CAT.VAL.COMPS < #comps >,
     ARG-ST < [ LOCAL.CAT.HEAD noun ],
              #comps &
@@ -93,7 +95,7 @@ ctp-verb-lex := verb-lex & clausal-second-arg-trans-lex-item &
 
 tverb-verb-lex := transitive-verb-lex.
 
-cverb-comps1-verb-lex := ctp-verb-lex &
+cverb-comps1-verb-lex := clausalcomp-verb-lex &
   [ SYNSEM.LOCAL.CAT.HEAD.INIT + ].
 
 ;;; Complementizers
@@ -125,7 +127,8 @@ comps1-comp-lex-item := comp-lex-item.
 ;Constraint on MC used to be part of matrix.tdl
 ;;it applies to all wo implementations, except for v2
 
-comp-head-phrase := basic-head-1st-comp-phrase & head-final.
+comp-head-phrase := basic-head-1st-comp-phrase & head-final &
+  [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT - ].
 
 subj-head-phrase := decl-head-subj-phrase & head-final &
   [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].
@@ -139,9 +142,3 @@ bare-np-phrase := basic-bare-np-phrase &
 head-comp-phrase := basic-head-1st-comp-phrase & head-initial &
   [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD verb &
                                    [ INIT + ] ].
-
-;;;;;;;;;;;;;;;;;;
-;;; Coordination
-;;;;;;;;;;;;;;;;;;
-
-+nvcdmo :+ [ MOD < > ].
