@@ -351,9 +351,9 @@ def construct_supertype_names(cases, ch, stype_names, verb):
             o_case = case.canon_to_abbr(c[1], cases)
             tivity = a_case + '-' + o_case + '-trans'
         else:
-            ccs_names = [ccs_name.full_key for ccs_name in list(ch.get('comps'))]
+            ccs_names = [ccs_name.full_key for ccs_name in list(ch.get(clausalcomps.COMPS))]
             if val in ccs_names:
-                clausalcomp = 'ctp'
+                clausalcomp = clausalcomps.CLAUSALCOMP
             else:
                 s_case = case.canon_to_abbr(val, cases)
                 tivity = s_case + '-intrans'
