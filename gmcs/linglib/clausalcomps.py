@@ -92,7 +92,7 @@ def add_types_to_grammar(mylang,ch,rules):
     # strategy, we must constrain all of them properly with respect to INIT. But if we don't need
     # it at all, best not to put an unnecessary feature into the grammar.
     wo = ch.get(constants.WORD_ORDER)
-    if wo in OV_ORDERS or wo in OV_ORDERS:
+    if wo in OV_ORDERS or wo in VO_ORDERS:
         for cs in ch.get(COMPS):
             init = init_needed(ch.get(constants.WORD_ORDER),cs,mylang)
             if init:
@@ -103,7 +103,7 @@ def add_types_to_grammar(mylang,ch,rules):
     for cs in ch.get(COMPS):
         # There can only be one complementizer type per strategy
         typename = add_complementizer_subtype(cs, mylang)
-        if wo in OV_ORDERS or wo in OV_ORDERS:
+        if wo in OV_ORDERS or wo in VO_ORDERS:
         # Some strategies require changes to the word order
             customize_order(ch, cs, mylang, rules, typename, init,general,additional)
 

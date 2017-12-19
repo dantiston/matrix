@@ -2,7 +2,7 @@
 version=29
 
 section=general
-language=clausalcomp-comp-oblig-after-svo
+language=clausalcomp-comp-oblig-after-svo-test
 
 section=word-order
 word-order=svo
