@@ -69,7 +69,7 @@ def add_types_to_grammar(mylang,ch,rules):
     general, additional = determine_head_comp_rule_type(ch.get(constants.WORD_ORDER))
     for cs in ch.get(COMPS):
         typename = add_complementizer_subtype(cs, mylang)
-        customize_order2(ch, cs, mylang, rules, typename, init,general,additional)
+        customize_order(ch, cs, mylang, rules, typename, init,general,additional)
 
 def add_complementizer_subtype(cs, mylang):
     id = cs.full_key
@@ -81,45 +81,6 @@ def add_complementizer_subtype(cs, mylang):
                       path=path, key1='feat', key2='name', val='form')
     return typename
 
-# Deal with differing word order (e.g. complementizer attaching at the left edge
-# in an otherwise SOV language).
-def customize_order(ch, cs, mylang, rules, typename, init):
-    verbtypename = None
-    if cs[CLAUSE_POS_EXTRA] == constants.ON:
-        for v in ch.get(constants.VERB):
-            if v.get(constants.VALENCE) == cs.full_key:
-                verbtypename = get_name(v) + '-' + cs.full_key + '-verb-lex'
-    if ch.get(constants.WORD_ORDER) in OV_ORDERS:
-        if cs[COMP_POS_BEFORE] == constants.ON or cs[CLAUSE_POS_EXTRA] == constants.ON:
-            if not init:
-                mylang.add('head :+ [ INIT bool ].', section='addenda')
-                init = True
-            mylang.add('transitive-verb-lex := [ SYNSEM.LOCAL.CAT.HEAD.INIT - ].', merge=True)
-            #TODO this should better be called separately, from outside this function
-            add_phrase_structure_rules(ch, cs, mylang, rules)
-        if cs[COMP_POS_BEFORE] == constants.ON:
-            mylang.add(typename + ' := [ SYNSEM.LOCAL.CAT.HEAD.INIT + ].', merge=True)
-        else:
-            mylang.add(typename + ' := [ SYNSEM.LOCAL.CAT.HEAD.INIT - ].', merge=True)
-        if cs[CLAUSE_POS_EXTRA] == constants.ON:
-            if not verbtypename:
-                raise Exception('Clausalcomps.py customize_order could '
-                                'not find a clausal-complement verb type to go along '
-                                'with a clausal complement strategy.')
-            mylang.add( verbtypename + ' := [ SYNSEM.LOCAL.CAT.HEAD.INIT + ]. ', merge=True)
-
-    elif ch.get(constants.WORD_ORDER) in VO_ORDERS and cs[COMP_POS_AFTER] == constants.ON:
-        if not init:
-            mylang.add('head :+ [ INIT bool ].', section='addenda')
-            init = True
-        mylang.add(typename + ' := [ SYNSEM.LOCAL.CAT.HEAD.INIT - ].', merge=True)
-        mylang.add('transitive-verb-lex := [ SYNSEM.LOCAL.CAT.HEAD.INIT + ].', merge=True)
-        #TODO this should better be called separately, from outside this function
-        add_phrase_structure_rules(ch, cs, mylang, rules)
-        if cs[COMP_POS_BEFORE] == constants.ON: #TODO this line repeats line 66 above
-            mylang.add(typename + ' := [ SYNSEM.LOCAL.CAT.HEAD.INIT - ].', merge=True)
-    return init
-
 def add_complementizer_supertype(mylang):
     mylang.add(COMP_LEX_ITEM_DEF, section=COMPLEX)
 
@@ -129,7 +90,7 @@ Add and modify head-complement rules depending
 on what kind of word order variations clausal complements
 exhibit.
 '''
-def customize_order2(ch, cs, mylang, rules, typename, init, general, additional):
+def customize_order(ch, cs, mylang, rules, typename, init, general, additional):
     wo = ch.get(constants.WORD_ORDER)
     if not order_customization_needed(wo,cs):
         return
