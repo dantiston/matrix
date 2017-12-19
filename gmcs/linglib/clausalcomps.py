@@ -21,7 +21,9 @@ COMP_POS_AFTER = 'comp-pos-after' # Choice name for complementizer attaching aft
 
 COMPLEX = 'complex' # TDL file section name for complementizer lexical items
 
-COMP_LEX_ITEM_DEF = 'comp-lex-item := raise-sem-lex-item & basic-one-arg &\
+COMP_LEX_ITEM = 'comp-lex-item'
+
+COMP_LEX_ITEM_DEF = COMP_LEX_ITEM + ' := raise-sem-lex-item & basic-one-arg &\
       [ SYNSEM.LOCAL.CAT [ HEAD comp &\
                                 [ MOD < > ],\
                            VAL [ SPR < >,\
@@ -35,29 +37,55 @@ COMP_LEX_ITEM_DEF = 'comp-lex-item := raise-sem-lex-item & basic-one-arg &\
 FORM = 'FORM' # FORM feature name
 FORM_PATH = 'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT.HEAD' # FORM feature path
 
-# Note: the below lists do not include V2
+# Note: the below lists do not include V2 or free.
 OV_ORDERS = ['sov', 'ovs', 'osv', 'vfinal']
 VO_ORDERS = ['svo', 'vos', 'vso', 'vinitial']
 
 CLAUSALCOMP = 'clausalcomp'
-
+COMPLEMENTIZER = 'complementizer' # Choices key for choices pertaining
+                                  # to the complementizer defined for
+                                  # a particular complementation strategy.
 
 # Error messages:
 EXTRA_VO = 'Invalid choice: a VO order and extraposed clausal complement. '\
                             'You must choose same as nouns position of the complement clause.'\
                             'The only supporded word orders for extraposed complements are OV orders.'
 
+#### Methods ###
+
+'''
+Main function which will be called by customize.py.
+Should fully cover all the customization needed for
+what was specified on the Clausal Complements subpage
+of the Questionnaire.
+'''
 def customize_clausalcomps(mylang,ch,lexicon,rules,irules):
     if not COMPS in ch:
-        return None
+        return
+    # Note: clausal verb type will be added by lexical_items.py,
+    # just like a regular verb. It would be better to do it here instead?
     add_complementizers_to_lexicon(lexicon,ch)
     add_types_to_grammar(mylang,ch,rules)
+
+def add_complementizers_to_lexicon(lexicon,ch):
+    lexicon.add_literal(';;; Complementizers')
+    for comp_strategy in ch[COMPS]:
+        id = comp_strategy.full_key
+        typename = id + '-' + COMP_LEX_ITEM
+        for complementizer in comp_strategy[COMPLEMENTIZER]:
+            orth = complementizer[constants.ORTH]
+            typedef = complementizer.full_key + ' := ' + typename + '& \
+                          [ STEM < "' + orth + '" > ].'
+
+            lexicon.add(typedef)
+
 
 def add_types_to_grammar(mylang,ch,rules):
     mylang.set_section(COMPLEX)
     add_complementizer_supertype(mylang)
     init = False # Has the INIT feature been used?
-    # Note: iterating over ch.get(COMPS) twice on purpose here, to avoid convoluted logic
+    # Note: iterating over ch.get(COMPS) (the complementation strategies)
+    # twice on purpose here, to avoid convoluted logic
     # involving whether we are using the INIT feature. If we use it for any clausal complement
     # strategy, we must constrain all of them properly with respect to INIT. But if we don't need
     # it at all, best not to put an unnecessary feature into the grammar.
@@ -65,30 +93,45 @@ def add_types_to_grammar(mylang,ch,rules):
         init = init_needed(ch.get(constants.WORD_ORDER),cs,mylang)
         if init:
             break
-    # Which is the general rule and which needs to be added?
+    # Which is the default head-complement rule for nouns etc.,
+    # and which needs to be added for this complementation strategy?
     general, additional = determine_head_comp_rule_type(ch.get(constants.WORD_ORDER))
     for cs in ch.get(COMPS):
+        # There can only be one complementizer type per strategy
         typename = add_complementizer_subtype(cs, mylang)
+        # Some strategies require changes to the word order
         customize_order(ch, cs, mylang, rules, typename, init,general,additional)
+
+def add_complementizer_supertype(mylang):
+    mylang.add(COMP_LEX_ITEM_DEF, section=COMPLEX)
 
 def add_complementizer_subtype(cs, mylang):
     id = cs.full_key
-    typename = id + '-comp-lex-item'
-    mylang.add(typename + ' := comp-lex-item.', section=COMPLEX)
+    typename = id + '-' + COMP_LEX_ITEM
+    mylang.add(typename + ' := ' + COMP_LEX_ITEM + '.', section=COMPLEX)
     # merge feature information in
     path = FORM_PATH + '.' + FORM
     merge_constraints(choicedict=cs, mylang=mylang, typename=typename,
                       path=path, key1='feat', key2='name', val='form')
     return typename
 
-def add_complementizer_supertype(mylang):
-    mylang.add(COMP_LEX_ITEM_DEF, section=COMPLEX)
 
 
 '''
 Add and modify head-complement rules depending
 on what kind of word order variations clausal complements
 exhibit.
+General and additional are default and new head-comp rule
+(determined simply by the word order).
+For example, if the order is OV, the general rule will
+be comp-head, and the additional will be head-comp,
+to accommodate non-default orders.
+Typename is the name of the complementizer involved in this
+complementation strategy.
+cs is the complementation strategy.
+init tells if the INIT feature is needed or not. The value must
+be true if INIT feature will be used in at least one of
+the complementation strategies in this grammar.
 '''
 def customize_order(ch, cs, mylang, rules, typename, init, general, additional):
     wo = ch.get(constants.WORD_ORDER)
@@ -104,7 +147,7 @@ def customize_order(ch, cs, mylang, rules, typename, init, general, additional):
         constrain_lex_items(head,ch,cs,typename,init_value,default_init_value,mylang)
     # Constrain added and general rule wrt head and INIT
     constrain_head_comp_rules(mylang,rules,init,init_value,default_init_value,head,general,additional)
-    return init
+
 
 '''
 There are two combinations of choices for which no action is needed:
@@ -119,6 +162,12 @@ def order_customization_needed(wo,cs):
         return False
     return True
 
+'''
+If an additional head-comp rule is needed, it may also need constraints
+with respect to its head or the INIT feature. The default rule will
+also need to be constrained with respect to INIT, if INIT is used in
+the additional rule.
+'''
 def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,head,general,additional):
     rules.add(additional + ' := ' + additional + '-phrase.', merge=True) #TODO: But this should only be done once!
     supertype = 'head-initial' if additional == constants.HEAD_COMP else 'head-final'
@@ -141,8 +190,8 @@ def find_clausalverb_typename(ch,cs):
 
 
 '''
-This function assumes that INIT feature is needed.
-It will constrain verbs and/or complementizers with respect to INIT feature.
+This function assumes that the INIT feature is needed.
+It will constrain verbs and/or complementizers with respect to the INIT feature.
 '''
 def constrain_lex_items(head,ch,cs,comptype, init_value, default_init_value,mylang):
     clausalverb = find_clausalverb_typename(ch,cs)
@@ -206,16 +255,21 @@ calling this function once it returns True.
 
 def init_needed(wo, cs,mylang):
     if wo in OV_ORDERS:
+        # Note that cs is a dict which will return an empty string
+        # if the object is not there. In this case, the IF statement should
+        # return False, but perhaps it would be clearer to write this out.
         if cs[COMP_POS_BEFORE]:
             if not cs[COMP_POS_AFTER]: # complementizer before clause only
                 mylang.add('head :+ [ INIT bool ].', section='addenda')
                 return True
             else: # complementizer both before and after clause
+                # TODO: Am I sure that the below is correct if either of the objects is not in the dict?
                 res = cs[CLAUSE_POS_SAME] == constants.ON and not cs[CLAUSE_POS_EXTRA] == constants.ON
                 if res:
                     mylang.add('head :+ [ INIT bool ].', section='addenda')
                 return res
         elif cs[COMP_POS_AFTER]:
+            # TODO: Am I sure that the below is correct if either of the objects is not in the dict?
             res = cs[CLAUSE_POS_EXTRA] == constants.ON
             if res:
                 mylang.add('head :+ [ INIT bool ].', section='addenda')
@@ -223,64 +277,17 @@ def init_needed(wo, cs,mylang):
     elif wo in VO_ORDERS:
         if not cs[CLAUSE_POS_SAME]:
             raise Exception(EXTRA_VO)
+        # TODO: Am I sure that the below is correct if either of the objects is not in the dict?
         res = cs[COMP_POS_AFTER] == constants.ON and not cs[COMP_POS_BEFORE] == constants.ON
         if res:
             mylang.add('head :+ [ INIT bool ].', section='addenda')
         return res
 
-
 '''
-Add custom phrase-structure rules for case when the general order in the matrix clause
-and the order of complementizer and its complement differ.
-The function is very spaghetti at the moment.
-It would be ideal to extract some clearer logic from it.
+Add clausal verb supertype to the grammar.
 '''
-def add_phrase_structure_rules(ch,cs,mylang,rules):
-    if not cs[CLAUSE_POS_EXTRA]:
-        cs[CLAUSE_POS_SAME] = constants.ON
-        cs[CLAUSE_POS_EXTRA] = 'off'
-    if ch.get(constants.WORD_ORDER) in OV_ORDERS \
-            and (cs[COMP_POS_BEFORE] == constants.ON or cs[CLAUSE_POS_EXTRA] == constants.ON):
-        head = None
-        if (cs[CLAUSE_POS_EXTRA] == constants.ON and cs[COMP_POS_BEFORE] == constants.ON):
-            head = '+vc'
-        elif cs[CLAUSE_POS_EXTRA] == constants.ON:
-            head = 'verb'
-        elif cs[COMP_POS_BEFORE] == constants.ON:
-            head = 'comp'
-        rules.add('head-comp := head-comp-phrase.')
-        if not head:
-            raise Exception('Clausalcomps.py add_phrase_structure_rules() '
-                            'head could not be determined for the additional head-comp rule.')
-        mylang.add('head-comp-phrase := basic-head-1st-comp-phrase & head-initial & '
-                   '[ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + head + ' & [ INIT + ] ].',section='phrases')
-        # Need additional constraints to rule out comp-head licensing
-        # unless order is flexible and allows both comp-head and head-comp here.
-        if not (cs[COMP_POS_AFTER] == constants.ON and cs[CLAUSE_POS_SAME] == constants.ON):
-            #TODO: Does this mean all other lexical types should be made INIT - as well?
-            # Nouns, auxiliaries, what else?
-            mylang.add('comp-head-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT - ].',section='phrases')
-    #TODO should v2 be mentioned below as well?
-    elif ch.get(constants.WORD_ORDER) in VO_ORDERS and cs[COMP_POS_AFTER] == constants.ON:
-        rules.add('comp-head := comp-head-phrase.')
-        mylang.add('comp-head-phrase := basic-head-1st-comp-phrase & head-final & '
-                   '[ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp & [ INIT - ] ].',section='phrases')
-        if not cs[COMP_POS_BEFORE] == constants.ON:
-            mylang.add('head-comp-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT + ] ].',section='phrases')
-
-
-def add_complementizers_to_lexicon(lexicon,ch):
-    lexicon.add_literal(';;; Complementizers')
-    for comp_strategy in ch[COMPS]:
-        id = comp_strategy.full_key
-        typename = id + '-comp-lex-item'
-        for complementizer in comp_strategy['complementizer']:
-            orth = complementizer['orth']
-            typedef = complementizer.full_key + ' := ' + typename + '& \
-                          [ STEM < "' + orth + '" > ].'
-
-            lexicon.add(typedef)
-
+# Note: this function is currently called from within lexical_items.py.
+# It is possible that that call should be moved to this module.
 
 def add_clausalcomp_verb_supertype(ch, mainorverbtype,mylang):
     head = 'comp'

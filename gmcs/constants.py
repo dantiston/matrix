@@ -17,6 +17,7 @@ Append with new constants, if they are likely to be used across modules.
 ON = 'on' # Choice convention for checked box
 YES = 'yes' # Choice convention for selected radio button
 
+ORTH = 'orth' # Choice convention for orthographies associated with stems and affixes.
 ### Section names ###
 
 WORD_ORDER = 'word-order' # Choices section associated with word order subpage
