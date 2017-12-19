@@ -191,7 +191,8 @@ def constrain_lex_items(head,ch,cs,comptype, init_value, default_init_value,myla
         mylang.add('transitive-verb-lex := [ SYNSEM.LOCAL.CAT.HEAD.INIT ' + default_init_value + ' ].'
                    , merge=True)
     elif head == 'comp':
-        mylang.add(comptype + ':= [ SYNSEM.LOCAL.CAT.HEAD.INIT ' + init_value + ' ].')
+        if cs[COMP_POS_BEFORE] and not cs[COMP_POS_AFTER] and ch.get(constants.WORD_ORDER) in OV_ORDERS:
+            mylang.add(comptype + ':= [ SYNSEM.LOCAL.CAT.HEAD.INIT ' + init_value + ' ].')
 
 
 def constrain_lexitem_for_init(typename, init_value,mylang):
