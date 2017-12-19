@@ -309,3 +309,4 @@ evidentials-auxiliary-choose=testing evidential auxiliary verbs with selected ev
 vfinal=V-final basic word order: verb in final position, subject and object in either position in front.
 evidentials-infl-aux-kal=Testing the evidentiality library with Kalaallisut evidentials
 evidentials-infl-aux-shp=Testing the evidentiality library with the evidentials of Shipibo-Konibo
+clausalcomp-v2-oblig-bef-aft-same-pseudo0=Clausal complements: V2 wmatrix WO, same in the embedded clause; obligatory complementizer before and after; embedded clause position same as noun complements.

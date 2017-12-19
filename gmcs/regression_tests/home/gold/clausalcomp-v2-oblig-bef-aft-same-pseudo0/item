@@ -1,0 +1,13 @@
+1@unknown@formal@none@1@S@noun1 tverb noun2@@@@@@@olzama@2017-12-19
+2@unknown@formal@none@1@@delphin gmcs gmmt grammars gtest_regression_tests.sh install iso.tab LICENSE lisp matrix.cgi matrix-core matrix.py matrix-types web noun1 noun2 tverb@@@@@@@olzama@2017-12-19
+3@unknown@formal@none@1@@delphin gmcs gmmt grammars gtest_regression_tests.sh install iso.tab LICENSE lisp matrix.cgi matrix-core matrix.py matrix-types web tverb noun1 noun2@@@@@@@olzama@2017-12-19
+4@unknown@formal@none@1@@delphin gmcs gmmt grammars gtest_regression_tests.sh install iso.tab LICENSE lisp matrix.cgi matrix-core matrix.py matrix-types web noun1 cverb noun2@@@@@@@olzama@2017-12-19
+5@unknown@formal@none@1@@delphin gmcs gmmt grammars gtest_regression_tests.sh install iso.tab LICENSE lisp matrix.cgi matrix-core matrix.py matrix-types web noun1 noun2 cverb@@@@@@@olzama@2017-12-19
+6@unknown@formal@none@1@@delphin gmcs gmmt grammars gtest_regression_tests.sh install iso.tab LICENSE lisp matrix.cgi matrix-core matrix.py matrix-types web cverb noun1 noun2@@@@@@@olzama@2017-12-19
+7@unknown@formal@none@1@S@noun1 cverb comp1 noun2 tverb noun3@@@@@@@olzama@2017-12-19
+8@unknown@formal@none@1@S@noun1 cverb noun2 tverb noun3 comp1@@@@@@@olzama@2017-12-19
+9@unknown@formal@none@1@@delphin gmcs gmmt grammars gtest_regression_tests.sh install iso.tab LICENSE lisp matrix.cgi matrix-core matrix.py matrix-types web cverb noun1 noun2 tverb noun3 comp1@@@@@@@olzama@2017-12-19
+10@unknown@formal@none@1@@delphin gmcs gmmt grammars gtest_regression_tests.sh install iso.tab LICENSE lisp matrix.cgi matrix-core matrix.py matrix-types web noun1 noun2 tverb noun3 comp1 cverb@@@@@@@olzama@2017-12-19
+11@unknown@formal@none@1@@delphin gmcs gmmt grammars gtest_regression_tests.sh install iso.tab LICENSE lisp matrix.cgi matrix-core matrix.py matrix-types web noun1 cverb noun2 tverb noun3@@@@@@@olzama@2017-12-19
+12@unknown@formal@none@1@S@comp1 noun2 tverb noun3 cverb noun1@@@@@@@olzama@2017-12-19
+13@unknown@formal@none@1@S@noun2 tverb noun3 comp1 cverb noun1@@@@@@@olzama@2017-12-19
