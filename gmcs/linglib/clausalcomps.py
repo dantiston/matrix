@@ -50,7 +50,9 @@ COMPLEMENTIZER = 'complementizer' # Choices key for choices pertaining
 EXTRA_VO = 'Invalid choice: a VO order and extraposed clausal complement. '\
                             'You must choose same as nouns position of the complement clause.'\
                             'The only supporded word orders for extraposed complements are OV orders.'
-
+SAME_OR_EXTRA = 'Please choose whether the clausal complement takes the same position as noun ' \
+                        'complements or is extraposed to the end of the clause ' \
+                        '(the latter valid only for strict OV orders).'
 #### Methods ###
 
 '''
@@ -89,18 +91,21 @@ def add_types_to_grammar(mylang,ch,rules):
     # involving whether we are using the INIT feature. If we use it for any clausal complement
     # strategy, we must constrain all of them properly with respect to INIT. But if we don't need
     # it at all, best not to put an unnecessary feature into the grammar.
-    for cs in ch.get(COMPS):
-        init = init_needed(ch.get(constants.WORD_ORDER),cs,mylang)
-        if init:
-            break
-    # Which is the default head-complement rule for nouns etc.,
-    # and which needs to be added for this complementation strategy?
-    general, additional = determine_head_comp_rule_type(ch.get(constants.WORD_ORDER))
+    wo = ch.get(constants.WORD_ORDER)
+    if wo in OV_ORDERS or wo in OV_ORDERS:
+        for cs in ch.get(COMPS):
+            init = init_needed(ch.get(constants.WORD_ORDER),cs,mylang)
+            if init:
+                break
+        # Which is the default head-complement rule for nouns etc.,
+        # and which needs to be added for this complementation strategy?
+        general, additional = determine_head_comp_rule_type(ch.get(constants.WORD_ORDER))
     for cs in ch.get(COMPS):
         # There can only be one complementizer type per strategy
         typename = add_complementizer_subtype(cs, mylang)
+        if wo in OV_ORDERS or wo in OV_ORDERS:
         # Some strategies require changes to the word order
-        customize_order(ch, cs, mylang, rules, typename, init,general,additional)
+            customize_order(ch, cs, mylang, rules, typename, init,general,additional)
 
 def add_complementizer_supertype(mylang):
     mylang.add(COMP_LEX_ITEM_DEF, section=COMPLEX)
@@ -113,6 +118,9 @@ def add_complementizer_subtype(cs, mylang):
     path = FORM_PATH + '.' + FORM
     merge_constraints(choicedict=cs, mylang=mylang, typename=typename,
                       path=path, key1='feat', key2='name', val='form')
+    # the complement of this complementizer is the clausal verb
+    # that corresponds to this complementation strategy
+    #mylang.add(cs.full_key + '-verb-lex-item := ' + FORM_PATH,merge=True)
     return typename
 
 
@@ -269,7 +277,7 @@ def init_needed(wo, cs,mylang):
                     mylang.add('head :+ [ INIT bool ].', section='addenda')
                 return res
         elif cs[COMP_POS_AFTER]:
-            # TODO: Am I sure that the below is correct if either of the objects is not in the dict?
+            # TODO: Am I sure that the below is correct if the object is not in the dict?
             res = cs[CLAUSE_POS_EXTRA] == constants.ON
             if res:
                 mylang.add('head :+ [ INIT bool ].', section='addenda')
@@ -321,6 +329,7 @@ def validate(ch,vr):
     if ch.get(constants.WORD_ORDER) not in OV_ORDERS:
         for css in ch.get(COMPS):
             if css[CLAUSE_POS_EXTRA] == constants.ON:
-                vr.err(css.full_key + '_' + CLAUSE_POS_EXTRA,
-                       'Extraposed clausal complements are only supported for word orders '
-                       'where Object precedes Verb (e.g. SOV).')
+                vr.err(css.full_key + '_' + CLAUSE_POS_EXTRA,EXTRA_VO)
+    for css in ch.get(COMPS):
+        if not (css[CLAUSE_POS_EXTRA] or css[CLAUSE_POS_SAME]):
+            vr.err(css.full_key + '_' + CLAUSE_POS_SAME, SAME_OR_EXTRA)
