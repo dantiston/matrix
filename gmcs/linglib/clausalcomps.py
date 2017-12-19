@@ -57,11 +57,19 @@ def add_types_to_grammar(mylang,ch,rules):
     mylang.set_section(COMPLEX)
     add_complementizer_supertype(mylang)
     init = False # Has the INIT feature been used?
+    # Note: iterating over ch.get(COMPS) twice on purpose here, to avoid convoluted logic
+    # involving whether we are using the INIT feature. If we use it for any clausal complement
+    # strategy, we must constrain all of them properly with respect to INIT. But if we don't need
+    # it at all, best not to put an unnecessary feature into the grammar.
+    for cs in ch.get(COMPS):
+        init = init_needed(ch.get(constants.WORD_ORDER),cs,mylang)
+        if init:
+            break
     # Which is the general rule and which needs to be added?
     general, additional = determine_head_comp_rule_type(ch.get(constants.WORD_ORDER))
     for cs in ch.get(COMPS):
         typename = add_complementizer_subtype(cs, mylang)
-        init = customize_order2(ch, cs, mylang, rules, typename, init,general,additional)
+        customize_order2(ch, cs, mylang, rules, typename, init,general,additional)
 
 def add_complementizer_subtype(cs, mylang):
     id = cs.full_key
@@ -124,14 +132,11 @@ exhibit.
 def customize_order2(ch, cs, mylang, rules, typename, init, general, additional):
     wo = ch.get(constants.WORD_ORDER)
     if not order_customization_needed(wo,cs):
-        return init
+        return
     init_value = '+' if additional == constants.HEAD_COMP else '-'
     default_init_value = '-' if init_value == '+' else '+'
     # What is the head of the added rule's head daughter?
     head = determine_head(wo,cs)
-    # Do I need to modify the general rule? (== Is INIT feature needed?)
-    if not init:
-        init = init_needed(wo,cs,mylang)
     if init and head:
         # If INIT feature was used before or is needed now:
         # Which lexical types need to be constrained wrt INIT?
