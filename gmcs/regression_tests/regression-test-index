@@ -308,3 +308,4 @@ clausalcomp-v2-oblig-bef-aft-same-pseudo0=Clausal complements: V2 matrix word or
 ccomp-pseudo1-vos-noun-same-oblig-after-vf=Clausal comps: VOS matrix order, finite form on embedded verb, obligatory complementizer after the clause.
 clausalcomp-comp-oblig-after-svo=Clausal comps: SVO order, obligatory complementizer after the clause.
 ccomp-oblig-bef-aft-ovs=Clausal comps: OVS, obligatory complementizer before and after.
+clausalcomp-comp-oblig-before-sov=Clausal comps: SOV, obligatory complementizer before the clause.
