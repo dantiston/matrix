@@ -214,8 +214,9 @@ def constrain_lex_items(head,ch,cs,comptype, init_value, default_init_value,myla
         mylang.add('transitive-verb-lex := [ SYNSEM.LOCAL.CAT.HEAD.INIT ' + default_init_value + ' ].'
                    , merge=True)
     elif head == 'comp':
-        if cs[COMP_POS_BEFORE] and not cs[COMP_POS_AFTER] and ch.get(constants.WORD_ORDER) in OV_ORDERS:
-            mylang.add(comptype + ':= [ SYNSEM.LOCAL.CAT.HEAD.INIT ' + init_value + ' ].')
+        if (cs[COMP_POS_BEFORE] and not cs[COMP_POS_AFTER] and ch.get(constants.WORD_ORDER) in OV_ORDERS) \
+                or (cs[COMP_POS_AFTER] and ch.get(constants.WORD_ORDER) in VO_ORDERS):
+            mylang.add(comptype + ':= [ SYNSEM.LOCAL.CAT.HEAD.INIT ' + init_value + ' ].',merge=True)
 
 
 def constrain_lexitem_for_init(typename, init_value,mylang):
@@ -237,6 +238,9 @@ def determine_head(wo,cs):
         elif cs[COMP_POS_AFTER]:
             if cs[CLAUSE_POS_EXTRA]:
                 head = 'verb'
+    elif wo in VO_ORDERS:
+        if cs[COMP_POS_AFTER]:
+            head = 'comp'
     return head
 
 '''
