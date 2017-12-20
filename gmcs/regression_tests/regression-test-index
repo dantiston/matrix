@@ -308,3 +308,4 @@ clausalcomp-comp-oblig-after-svo=Clausal comps: SVO order, obligatory complement
 ccomp-oblig-bef-aft-ovs=Clausal comps: OVS, obligatory complementizer before and after.
 clausalcomp-comp-oblig-before-sov=Clausal comps: SOV, obligatory complementizer before the clause.
 ccomp-oblig-svo-form=Clausal comps: obligatory complementizer, SVO, subjunctive form on the embedded verb.
+ccomp-opt-svo=Clausal comps: SVO, optional complementizer
