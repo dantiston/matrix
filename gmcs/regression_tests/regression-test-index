@@ -308,3 +308,4 @@ ccomp-oblig-svo-form=Clausal comps: obligatory complementizer, SVO, subjunctive 
 ccomp-opt-svo=Clausal comps: SVO, optional complementizer
 clcomp-sov-extra=Clausal comps: SOV, extraposed complement.
 clausalcomp-extra-and-same=Clausal-complement: SOV, extraposed and nouny position complement.
+ccomp-v2-vfinal-aux=Clausal comps: V2 in matrix, Vfinal in embedded, auxiliaries cluster with the verb.
