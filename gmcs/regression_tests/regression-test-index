@@ -289,7 +289,6 @@ clausalmods-nom-mid=clausal modifiers thae nominalized at VP and contain a separ
 clausalmods-nom-low=clausal modifiers that are nominalized low in the tree (at V) and contain a separate nominalized_rel predication
 clausalmods-nom-no-rel=clausal modifiers that are nominalized high in the tree (at S) and do NOT have a separate nominalized cluse predication
 clausalcomp-comp-oblig-svo-embform-subjunct=A clause with a clausal complement (object) with an obligatory complementizer, SVO word order, and subjunctive form required on the embedded verb.
-clausalcomp-comp-oblig-before-sov=Complementizer attaching to the left of the complement clause with an otherwise SOV matrix word order.
 clausalcomp-comp-opt=Optional complementizer marking clausal complement.
 v2-vfinal-aux=German-like subordinate word order with auxiliary clustering with the verb at the end of the embedded clause.
 clausalcomp-extra-and-same=Clausal complement either extraposed or in the normal OV position in SOV language; complementizer attached on the right of the embedded clause.
