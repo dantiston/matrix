@@ -308,3 +308,4 @@ evidentials-infl-aux-kal=Testing the evidentiality library with Kalaallisut evid
 evidentials-infl-aux-shp=Testing the evidentiality library with the evidentials of Shipibo-Konibo
 clausalcomp-v2-oblig-bef-aft-same-pseudo0=Clausal complements: V2 matrix word order, embedded clause has the same order and the same distribution as noun complements. Obligatory complementizer before or after the embedded clause.
 ccomp-pseudo1-vos-noun-same-oblig-after-vf=Clausal comps: VOS matrix order, finite form on embedded verb, obligatory complementizer after the clause.
+clausalcomp-comp-oblig-after-svo=Clausal comps: SVO order, obligatory complementizer after the clause.
