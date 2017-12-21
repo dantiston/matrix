@@ -1441,10 +1441,10 @@ def validate_arg_opt(ch, vr):
                        "on the subject NP or the object NP."
                 vr.err(feat.full_key+'_head',mess)
 
-# validate_clausal_mods(ch, vr)
+# validate_clausalmods(ch, vr)
 #   Validate the user's choices clausal modifiers.
 
-def validate_clausal_mods(ch, vr):
+def validate_clausalmods(ch, vr):
     for cms in ch.get('cms'):
         pos = cms.get('position')
         subord = cms.get('subordinator')
@@ -1484,7 +1484,7 @@ def validate(ch, extra = False):
     gmcs.linglib.morphotactics.validate(ch, vr)
     validate_test_sentences(ch, vr)
     gmcs.linglib.clausalcomps.validate(ch, vr)
-    #validate_clausal_mods(ch, vr)
+    validate_clausalmods(ch, vr)
 
     validate_types(ch, vr)
     validate_features(ch, vr)
