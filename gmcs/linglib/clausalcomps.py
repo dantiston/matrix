@@ -39,6 +39,7 @@ FORM_PATH = 'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT.HEAD' # FORM feature pat
 
 # Note: the below lists do not include V2 or free.
 OV_ORDERS = ['sov', 'ovs', 'osv', 'v-final']
+#EXTRA_ORDERS = ['sov', 'v-final', 'osv'] # orders allowed with extraposed clausal complements
 VO_ORDERS = ['svo', 'vos', 'vso', 'v-initial']
 
 CLAUSALCOMP = 'clausalcomp'
@@ -47,9 +48,8 @@ COMPLEMENTIZER = 'complementizer' # Choices key for choices pertaining
                                   # a particular complementation strategy.
 
 # Error messages:
-EXTRA_VO = 'Invalid choice: a VO order and extraposed clausal complement. '\
-                            'You must choose same as nouns position of the complement clause.'\
-                            'The only supporded word orders for extraposed complements are OV orders.'
+EXTRA_VO = 'The only supporded word orders for extraposed complements are strictly-OV orders ' \
+           '(note: not free or V2; v-final is allowed).'
 SAME_OR_EXTRA = 'Please choose whether the clausal complement takes the same position as noun ' \
                         'complements or is extraposed to the end of the clause ' \
                         '(the latter valid only for strict OV orders).'
@@ -197,6 +197,7 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
 
                 mylang.add(additional + '-comp-phrase := '
                            + additional + '-phrase & [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].',section='phrases')
+        # Here, head must be either comp or verb, but not both
         else:
             rules.add(additional + ' := ' + additional + '-phrase.', merge=True)
             mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + head +' ].'
