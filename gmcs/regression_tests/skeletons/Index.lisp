@@ -22,6 +22,7 @@
 (
 ((:path . "tiniest") (:content . "tiniest: A very basic grammar just to get the regression tests started.  SOV word order, no frills."))
  ;;; new-regression-test-here
+((:path . "ccomp-pseudo2-vfinal-extra-opt-bef-aft") (:content . "ccomp-pseudo2-vfinal-extra-opt-bef-aft: Clausal comps: vfinal matrix, optional complementizer before or after the clause, strictly extraposed complement clause."))
  ((:path . "clausalmods-subord-pairs") (:content . "clausalmods-subord-pairs: Clausal modifiers makrked by a subordinaotr pair (one in the subordinate and one in the matrix clause)"))
 ((:path . "clausalmods-v2-vfinal-adv") (:content . "clausalmods-v2-vfinal-adv: Clausal modifiers marked by vfinal word order and an adverbial subordinator"))
 ((:path . "clausalmods-v2-vfinal-adp") (:content . "clausalmods-v2-vfinal-adp: Clausal modifiers marked by vfinal word order and an adposition (head) subordinator"))
