@@ -676,35 +676,35 @@ def add_head_compement_rules(mylang, rules, ch):
     for cms in ch.get('cms'):
         if cms.get('subordinator-type') == 'head':
             subpos.append(cms.get('subposition'))
-    wo = ch.get('word-order')
-    mylang.set_section('phrases')
-    if not cms.get('subord-word-order'):
-        if wo == 'sov' or wo == 'osv' or wo == 'ovs' or wo == 'v-final':
-            mylang.add('comp-head-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT - ].')
+        wo = ch.get('word-order')
+        mylang.set_section('phrases')
+        if not cms.get('subord-word-order'):
+            if wo == 'sov' or wo == 'osv' or wo == 'ovs' or wo == 'v-final':
+                mylang.add('comp-head-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT - ].')
+                if 'before' in subpos:
+                    mylang.add('adp-head-comp-phrase := basic-head-1st-comp-phrase & head-initial &\
+                        [ SYNSEM.LOCAL.CAT.MC #mc,\
+                        HEAD-DTR.SYNSEM.LOCAL.CAT [ MC #mc,\
+                                                HEAD adp & [ INIT + ] ]].')
+                    rules.add('adp-head-comp := adp-head-comp-phrase.')
+            elif wo == 'svo' or wo == 'vos' or wo == 'vso' or wo == 'v-initial':
+                mylang.add('head-comp-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT + ].')
+                if 'after' in subpos:
+                    mylang.add('adp-comp-head-phrase := basic-head-1st-comp-phrase & head-final &\
+                        [ SYNSEM.LOCAL.CAT.MC #mc,\
+                        HEAD-DTR.SYNSEM.LOCAL.CAT [ MC #mc,\
+                                                HEAD adp & [ INIT - ] ]].')
+                    rules.add('adp-comp-head := adp-comp-head-phrase.')
+            elif wo == 'free' or wo == 'v2':
+                mylang.add('comp-head-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT - ].')
+                mylang.add('head-comp-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT + ].')
+        if ch.get('subord-word-order') == 'vfinal':
             if 'before' in subpos:
                 mylang.add('adp-head-comp-phrase := basic-head-1st-comp-phrase & head-initial &\
-                    [ SYNSEM.LOCAL.CAT.MC #mc,\
-                    HEAD-DTR.SYNSEM.LOCAL.CAT [ MC #mc,\
-                                            HEAD adp & [ INIT + ] ]].')
+                                    [ SYNSEM.LOCAL.CAT.MC #mc,\
+                                    HEAD-DTR.SYNSEM.LOCAL.CAT [ MC #mc,\
+                                                            HEAD adp & [ INIT + ] ]].')
                 rules.add('adp-head-comp := adp-head-comp-phrase.')
-        elif wo == 'svo' or wo == 'vos' or wo == 'vso' or wo == 'v-initial':
-            mylang.add('head-comp-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT + ].')
-            if 'after' in subpos:
-                mylang.add('adp-comp-head-phrase := basic-head-1st-comp-phrase & head-final &\
-                    [ SYNSEM.LOCAL.CAT.MC #mc,\
-                    HEAD-DTR.SYNSEM.LOCAL.CAT [ MC #mc,\
-                                            HEAD adp & [ INIT - ] ]].')
-                rules.add('adp-comp-head := adp-comp-head-phrase.')
-        elif wo == 'free' or wo == 'v2':
-            mylang.add('comp-head-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT - ].')
-            mylang.add('head-comp-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT + ].')
-    if ch.get('subord-word-order') == 'vfinal':
-        if 'before' in subpos:
-            mylang.add('adp-head-comp-phrase := basic-head-1st-comp-phrase & head-initial &\
-                                [ SYNSEM.LOCAL.CAT.MC #mc,\
-                                HEAD-DTR.SYNSEM.LOCAL.CAT [ MC #mc,\
-                                                        HEAD adp & [ INIT + ] ]].')
-            rules.add('adp-head-comp := adp-head-comp-phrase.')
 
 def add_morphological_constraints(lextype, constraints, cms, type):
     for feat in cms.get('feat'):
