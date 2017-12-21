@@ -154,7 +154,7 @@ def customize_order(ch, cs, mylang, rules, typename, init, general, additional):
         # Which lexical types need to be constrained wrt INIT?
         constrain_lex_items(head,ch,cs,typename,init_value,default_init_value,mylang)
     # Constrain added and general rule wrt head and INIT
-    constrain_head_comp_rules(mylang,rules,init,init_value,default_init_value,head,general,additional)
+    constrain_head_comp_rules(mylang,rules,init,init_value,default_init_value,head,general,additional,cs)
 
 
 '''
@@ -176,13 +176,30 @@ with respect to its head or the INIT feature. The default rule will
 also need to be constrained with respect to INIT, if INIT is used in
 the additional rule.
 '''
-def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,head,general,additional):
-    rules.add(additional + ' := ' + additional + '-phrase.', merge=True) #TODO: But this should only be done once!
+def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,head,general,additional,cs):
     supertype = 'head-initial' if additional == constants.HEAD_COMP else 'head-final'
     mylang.add(additional + '-phrase := basic-head-1st-comp-phrase & ' + supertype + '.'
                ,section = 'phrases',merge=True)
-    if head:
-        mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + head +' ].'
+    if not head:
+        rules.add(additional + ' := ' + additional + '-phrase.', merge=True)
+    else:
+        # For flexible orders, we may need separate rules for complementizers
+        # and clausal verbs, to avoid spurious parses.
+        if head == '+vc':
+            if cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME] \
+                    and cs[COMP_POS_AFTER] and cs[COMP_POS_BEFORE]:
+                rules.add(additional + '-verb := ' + additional + '-verb-phrase.')
+                rules.add(additional + '-comp := ' + additional + '-comp-phrase.')
+                mylang.add(additional + '-verb-phrase := '
+                           + additional + '-phrase & [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD verb ].',section='phrases')
+                mylang.add(additional + '-verb-phrase := '
+                           + additional + '-phrase & [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < [ ] > ].',merge=True)
+
+                mylang.add(additional + '-comp-phrase := '
+                           + additional + '-phrase & [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].',section='phrases')
+        else:
+            rules.add(additional + ' := ' + additional + '-phrase.', merge=True)
+            mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + head +' ].'
                    ,merge=True)
     if init:
         mylang.add(additional +
