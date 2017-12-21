@@ -324,3 +324,4 @@ clausalmods-v2-vfinal-adp=Clausal modifiers marked by vfinal word order and an a
 clausalmods-v2-vfinal-adv=Clausal modifiers marked by vfinal word order and an adverbial subordinator
 clausalmods-subord-pairs=Clausal modifiers makrked by a subordinaotr pair (one in the subordinate and one in the matrix clause)
 ccomp-pseudo2-vfinal-extra-opt-bef-aft=Clausal comps: vfinal matrix, optional complementizer before or after the clause, strictly extraposed complement clause.
+ccomp-pseudo3-osv-extra-opt-bef-aft=Clausal comps: OSV matrix order, optional complementizer before or after a strictly extraposed complement clause.
