@@ -9,7 +9,7 @@ from gmcs import constants
 
 ######################################################################
 
-# Constants (specifict to this module)
+# Constants (specific to this module)
 COMPS = 'comps' # choice name for clausal complement strategies
 COMP = 'comp' # reserved head name for complementizers; should be a constant on some other page?
               # Also, the name for the choice for complementizer of a clausal complement strategy.
@@ -38,8 +38,8 @@ FORM = 'FORM' # FORM feature name
 FORM_PATH = 'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT.HEAD' # FORM feature path
 
 # Note: the below lists do not include V2 or free.
-OV_ORDERS = ['sov', 'ovs', 'osv', 'vfinal']
-VO_ORDERS = ['svo', 'vos', 'vso', 'vinitial']
+OV_ORDERS = ['sov', 'ovs', 'osv', 'v-final']
+VO_ORDERS = ['svo', 'vos', 'vso', 'v-initial']
 
 CLAUSALCOMP = 'clausalcomp'
 COMPLEMENTIZER = 'complementizer' # Choices key for choices pertaining
@@ -206,6 +206,8 @@ def constrain_lex_items(head,ch,cs,comptype, init_value, default_init_value,myla
     if head == '+vc':
         if cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME]:
             constrain_lexitem_for_init(clausalverb,init_value,mylang)
+            mylang.add('transitive-verb-lex := [ SYNSEM.LOCAL.CAT.HEAD.INIT ' + default_init_value + ' ].'
+                   , merge=True)
         if cs[COMP_POS_BEFORE] and not cs[COMP_POS_AFTER] and ch.get(constants.WORD_ORDER) in OV_ORDERS:
             constrain_lexitem_for_init(comptype,init_value,mylang)
     elif head == constants.VERB:
@@ -275,13 +277,12 @@ def init_needed(wo, cs,mylang):
                 mylang.add('head :+ [ INIT bool ].', section='addenda')
                 return True
             else: # complementizer both before and after clause
-                # TODO: Am I sure that the below is correct if either of the objects is not in the dict?
-                res = cs[CLAUSE_POS_SAME] == constants.ON and not cs[CLAUSE_POS_EXTRA] == constants.ON
+                res = (cs[CLAUSE_POS_SAME] and not cs[CLAUSE_POS_EXTRA]) \
+                      or (cs[CLAUSE_POS_EXTRA]and not cs[CLAUSE_POS_SAME])
                 if res:
                     mylang.add('head :+ [ INIT bool ].', section='addenda')
                 return res
         elif cs[COMP_POS_AFTER]:
-            # TODO: Am I sure that the below is correct if the object is not in the dict?
             res = cs[CLAUSE_POS_EXTRA] == constants.ON
             if res:
                 mylang.add('head :+ [ INIT bool ].', section='addenda')
@@ -289,7 +290,6 @@ def init_needed(wo, cs,mylang):
     elif wo in VO_ORDERS:
         if not cs[CLAUSE_POS_SAME]:
             raise Exception(EXTRA_VO)
-        # TODO: Am I sure that the below is correct if either of the objects is not in the dict?
         res = cs[COMP_POS_AFTER] == constants.ON and not cs[COMP_POS_BEFORE] == constants.ON
         if res:
             mylang.add('head :+ [ INIT bool ].', section='addenda')
