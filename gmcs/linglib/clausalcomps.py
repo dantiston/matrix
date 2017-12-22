@@ -181,8 +181,8 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
     supertype = 'head-initial' if additional == constants.HEAD_COMP else 'head-final'
     mylang.add(additional + '-phrase := basic-head-1st-comp-phrase & ' + supertype + '.'
                ,section = 'phrases',merge=True)
-
-    if wo == 'ovs' and cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME]:
+    # OVS order with extraposed complement is special in that it requires low subject attachment
+    if wo == 'ovs' and cs[CLAUSE_POS_EXTRA]:
         mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ <  > ].',merge=True)
         mylang.add(general + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ <  > ].',merge=True)
         mylang.remove_typedef('head-subj-phrase')

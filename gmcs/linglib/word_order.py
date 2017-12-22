@@ -111,8 +111,8 @@ def customize_major_constituent_order(wo, mylang, ch, rules):
         mylang.add(hs + '-phrase := decl-head-subj-phrase & head-initial.')
 
     # Complements attach before subjects
-
     if wo == 'ovs' or wo == 'vos' or wo == 'sov' or wo == 'svo':
+        #if not ['comps'] in ch or not extraposed_comps(ch):
         mylang.add(hs + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].')
 
     # Subjects attach before complements
@@ -283,7 +283,11 @@ def customize_major_constituent_order(wo, mylang, ch, rules):
 
     return {'hs': hs, 'hc': hc}
 
-
+def extraposed_comps(ch):
+    for css in ch.get('comps'):
+        if css['clause-pos-extra']:
+            return True
+    return False
 
 
 # ERB 2006-09-15 Subroutine for emitting additional information about
