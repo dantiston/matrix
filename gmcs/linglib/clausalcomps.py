@@ -262,7 +262,9 @@ should be constrained to just verbs, just complementizers, or both.
 '''
 def determine_head(wo,cs):
     head = None
-    if wo in OV_ORDERS:
+    if not cs[COMP]:
+        head = 'noun' #TODO: this is only for nominalization; probably will need other choices here, like verb
+    elif wo in OV_ORDERS:
         if cs[COMP_POS_BEFORE]:
             if cs[CLAUSE_POS_EXTRA]:
                 head = '+vc'
