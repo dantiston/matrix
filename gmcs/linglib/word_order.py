@@ -112,8 +112,9 @@ def customize_major_constituent_order(wo, mylang, ch, rules):
 
     # Complements attach before subjects
     if wo == 'ovs' or wo == 'vos' or wo == 'sov' or wo == 'svo':
-        #if not ['comps'] in ch or not extraposed_comps(ch):
-        mylang.add(hs + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].')
+        # If the language is OVS and extraposes clausal complements, we need subjects to attach low:
+        if not (wo == 'ovs' and 'comps' in ch and extraposed_comps(ch)):
+            mylang.add(hs + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].')
 
     # Subjects attach before complements
     # ASF 2008-11-20 in order to allow for aux with vp-comp for VSO and OSV
@@ -121,7 +122,7 @@ def customize_major_constituent_order(wo, mylang, ch, rules):
     # constraint on the hs-rule.
 
     auxcomp = ch.get('aux-comp')
-    if wo == 'vso' or wo == 'osv':
+    if wo == 'vso' or wo == 'osv' or (wo == 'ovs' and 'comps' in ch and extraposed_comps(ch)):
         if ch.get('has-aux') == 'yes' and auxcomp == 'vp':
             mylang.add(hs + '-phrase := [ HEAD-DTR.SYNSEM.LIGHT + ].')
         else:

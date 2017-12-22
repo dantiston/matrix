@@ -184,9 +184,9 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
     # OVS order with extraposed complement is special in that it requires low subject attachment
     if wo == 'ovs' and cs[CLAUSE_POS_EXTRA]:
         mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ <  > ].',merge=True)
-        mylang.add(general + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ <  > ].',merge=True)
-        mylang.remove_typedef('head-subj-phrase')
-        mylang.add('head-subj-phrase := decl-head-subj-phrase & head-initial.',section='phrases')
+    #    mylang.add(general + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ <  > ].',merge=True)
+    #    mylang.remove_typedef('head-subj-phrase')
+    #    mylang.add('head-subj-phrase := decl-head-subj-phrase & head-initial.',section='phrases')
     if not head:
         rules.add(additional + ' := ' + additional + '-phrase.', merge=True)
     else:
