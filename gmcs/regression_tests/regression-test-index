@@ -327,3 +327,4 @@ ccomp-pseudo2-vfinal-extra-opt-bef-aft=Clausal comps: vfinal matrix, optional co
 ccomp-pseudo3-osv-extra-opt-bef-aft=Clausal comps: OSV matrix order, optional complementizer before or after a strictly extraposed complement clause.
 ccomp-pseudo4-ovs-extra-opt-bef-aft=Clausal comps: OVS order, strictly extraposed complement, flexible optional complementizer.
 ccomp-pseudo6-ovs-extra-same-oblig-aft=Clausal comps: OVS, extraposed or nouny-position complement; obligatory complementizer after the complement.
+ccomp-pseudo22-v2-vfinal-comp-bef-oblig=Clausal comps V2-Vfinal oblig complementizer before the clause.
