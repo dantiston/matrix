@@ -1,0 +1,8 @@
+1@unknown@unknown@none@1@@noun1 tverb noun2@@@@0@3@@author-name@2017-12-22
+2@unknown@unknown@none@1@@noun1 noun2 tverb@@@@0@3@@author-name@2017-12-22
+3@unknown@unknown@none@1@S@tverb noun1 noun2@@@@1@3@@author-name@2017-12-22
+4@unknown@unknown@none@1@S@cverb noun3 tverb-NMZ noun1 noun2@@@@1@5@@author-name@2017-12-22
+5@unknown@unknown@none@1@S@cverb tverb-NMZ noun2 noun3 noun1@@@@1@5@@author-name@2017-12-22
+6@unknown@unknown@none@1@@cverb noun3 tverb noun1 noun2@@@@0@5@@author-name@2017-12-22
+7@unknown@unknown@none@1@@tverb-NMZ noun1 noun2 cverb noun3@@@@0@5@@author-name@2017-12-22
+8@unknown@unknown@none@1@@noun1 tverb-NMZ noun2@@@@0@3@@author-name@2017-12-22

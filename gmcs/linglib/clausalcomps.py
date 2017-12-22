@@ -107,6 +107,8 @@ def add_types_to_grammar(mylang,ch,rules,have_complementizer):
         general, additional = determine_head_comp_rule_type(ch.get(constants.WORD_ORDER))
     for cs in ch.get(COMPS):
         # There can only be one complementizer type per strategy
+        clausalverb = find_clausalverb_typename(ch,cs)
+        customize_clausal_verb(clausalverb,mylang,ch,cs)
         typename = add_complementizer_subtype(cs, mylang) if cs[COMP] else None
         if wo in OV_ORDERS or wo in VO_ORDERS:
         # Some strategies require changes to the word order
@@ -164,12 +166,16 @@ There are two combinations of choices for which no action is needed:
 complementizers and clausal verbs can just use the default head-comp rule.
 '''
 def order_customization_needed(wo,cs):
-    if wo in OV_ORDERS and cs[COMP_POS_AFTER] and cs[CLAUSE_POS_SAME] \
-            and not cs[COMP_POS_BEFORE] and not cs[CLAUSE_POS_EXTRA]:
-        return False
-    if wo in VO_ORDERS and cs[COMP_POS_BEFORE] and cs[CLAUSE_POS_SAME] \
-            and not cs[COMP_POS_AFTER] and not cs[CLAUSE_POS_EXTRA]:
-        return False
+    if cs[COMP]:
+        if wo in OV_ORDERS and cs[COMP_POS_AFTER] == 'on' and cs[CLAUSE_POS_SAME] == 'on' \
+                and not cs[COMP_POS_BEFORE] == 'on' and not cs[CLAUSE_POS_EXTRA] == 'on':
+            return False
+        if wo in VO_ORDERS and cs[COMP_POS_BEFORE] == 'on' and cs[CLAUSE_POS_SAME] == 'on' \
+                and not cs[COMP_POS_AFTER] == 'on' and not cs[CLAUSE_POS_EXTRA] == 'on':
+            return False
+    else:
+        if wo in VO_ORDERS or (wo in OV_ORDERS and not cs[CLAUSE_POS_EXTRA]):
+            return False
     return True
 
 '''
@@ -227,7 +233,6 @@ It will constrain verbs and/or complementizers with respect to the INIT feature.
 def constrain_lex_items(head,ch,cs,comptype, init_value, default_init_value,mylang):
     clausalverb = find_clausalverb_typename(ch,cs)
     init_path = 'SYNSEM.LOCAL.CAT.HEAD.INIT'
-    form_path = 'SYNSEM.LOCAL.CAT.HEAD.FORM'
     if head == '+vc':
         if cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME]:
             constrain_lexitem_for_feature(clausalverb,init_path, init_value,mylang)
@@ -238,18 +243,18 @@ def constrain_lex_items(head,ch,cs,comptype, init_value, default_init_value,myla
     elif head == constants.VERB:
         if cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME]:
             constrain_lexitem_for_feature(clausalverb,init_path,init_value,mylang)
-        mylang.add('transitive-verb-lex := [ SYNSEM.LOCAL.CAT.HEAD.INIT ' + default_init_value + ' ].'
+        mylang.add('transitive-verb-lex := [ ' + init_path + ' ' + default_init_value + ' ].'
                    , merge=True)
     elif head == 'comp':
         if (cs[COMP_POS_BEFORE] and not cs[COMP_POS_AFTER] and ch.get(constants.WORD_ORDER) in OV_ORDERS) \
                 or (cs[COMP_POS_AFTER] and ch.get(constants.WORD_ORDER) in VO_ORDERS):
-            mylang.add(comptype + ':= [ SYNSEM.LOCAL.CAT.HEAD.INIT ' + init_value + ' ].',merge=True)
+            mylang.add(comptype + ':= [ ' + init_path + ' ' + init_value + ' ].',merge=True)
 
 
 def constrain_lexitem_for_feature(typename, feature_path, feature_value,mylang):
     mylang.add( typename + ' := [ ' + feature_path + ' ' + feature_value + ' ]. ',
                             merge=True)
-    
+
 
 '''
 Determine whether the head of the additional head-comp rule
@@ -351,6 +356,16 @@ def determine_clausal_verb_head(cs):
     else:
         head = 'noun'
     return head
+
+def customize_clausal_verb(clausalverb,mylang,ch,cs):
+    for f in cs['feat']:
+        if f['name'] == 'nominalization':
+            path = 'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT.HEAD'
+            constrain_lexitem_for_feature(clausalverb, path, ' [ NMZ + ] ',mylang)
+        elif f['name'] == 'form':
+            path = 'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT.HEAD.FORM'
+            constrain_lexitem_for_feature(clausalverb, path, f['value'],mylang)
+
 
 # This is currently called by lexical_items.py
 def update_verb_lextype(ch,verb, vtype):
