@@ -123,9 +123,6 @@ def add_complementizer_subtype(cs, mylang):
     path = FORM_PATH + '.' + FORM
     merge_constraints(choicedict=cs, mylang=mylang, typename=typename,
                       path=path, key1='feat', key2='name', val='form')
-    # the complement of this complementizer is the clausal verb
-    # that corresponds to this complementation strategy
-    #mylang.add(cs.full_key + '-verb-lex-item := ' + FORM_PATH,merge=True)
     return typename
 
 
@@ -229,16 +226,18 @@ It will constrain verbs and/or complementizers with respect to the INIT feature.
 '''
 def constrain_lex_items(head,ch,cs,comptype, init_value, default_init_value,mylang):
     clausalverb = find_clausalverb_typename(ch,cs)
+    init_path = 'SYNSEM.LOCAL.CAT.HEAD.INIT'
+    form_path = 'SYNSEM.LOCAL.CAT.HEAD.FORM'
     if head == '+vc':
         if cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME]:
-            constrain_lexitem_for_init(clausalverb,init_value,mylang)
-            mylang.add('transitive-verb-lex := [ SYNSEM.LOCAL.CAT.HEAD.INIT ' + default_init_value + ' ].'
+            constrain_lexitem_for_feature(clausalverb,init_path, init_value,mylang)
+            mylang.add('transitive-verb-lex := [ ' + init_path + ' ' + default_init_value + ' ].'
                    , merge=True)
         if cs[COMP_POS_BEFORE] and not cs[COMP_POS_AFTER] and ch.get(constants.WORD_ORDER) in OV_ORDERS:
-            constrain_lexitem_for_init(comptype,init_value,mylang)
+            constrain_lexitem_for_feature(comptype,init_path,init_value,mylang)
     elif head == constants.VERB:
         if cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME]:
-            constrain_lexitem_for_init(clausalverb,init_value,mylang)
+            constrain_lexitem_for_feature(clausalverb,init_path,init_value,mylang)
         mylang.add('transitive-verb-lex := [ SYNSEM.LOCAL.CAT.HEAD.INIT ' + default_init_value + ' ].'
                    , merge=True)
     elif head == 'comp':
@@ -247,9 +246,10 @@ def constrain_lex_items(head,ch,cs,comptype, init_value, default_init_value,myla
             mylang.add(comptype + ':= [ SYNSEM.LOCAL.CAT.HEAD.INIT ' + init_value + ' ].',merge=True)
 
 
-def constrain_lexitem_for_init(typename, init_value,mylang):
-    mylang.add( typename + ' := [ SYNSEM.LOCAL.CAT.HEAD.INIT ' + init_value + ' ]. ',
+def constrain_lexitem_for_feature(typename, feature_path, feature_value,mylang):
+    mylang.add( typename + ' := [ ' + feature_path + ' ' + feature_value + ' ]. ',
                             merge=True)
+    
 
 '''
 Determine whether the head of the additional head-comp rule
