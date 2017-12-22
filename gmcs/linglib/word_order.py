@@ -120,9 +120,9 @@ def customize_major_constituent_order(wo, mylang, ch, rules):
     # ASF 2008-11-20 in order to allow for aux with vp-comp for VSO and OSV
     # languages, the standard analysis needs to be adapted to a LIGHT +
     # constraint on the hs-rule.
-
+    # OZ 2017-12-21 We also need low subject attachment for OVS languages with extraposed clausal complements.
     auxcomp = ch.get('aux-comp')
-    if wo == 'vso' or wo == 'osv' or (wo == 'ovs' and 'comps' in ch and extraposed_comps(ch)):
+    if (wo == 'vso' or wo == 'osv') or (wo == 'ovs' and 'comps' in ch and extraposed_comps(ch)):
         if ch.get('has-aux') == 'yes' and auxcomp == 'vp':
             mylang.add(hs + '-phrase := [ HEAD-DTR.SYNSEM.LIGHT + ].')
         else:
