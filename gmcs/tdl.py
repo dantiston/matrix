@@ -941,3 +941,13 @@ class TDLfile(object):
             l.section = self.section
 
         self.typedefs.append(l)
+
+    def remove_typedef(self,type):
+        new_typedefs = []
+        for typedef in self.typedefs:
+            if not isinstance(typedef,TDLelem_typedef):
+                new_typedefs.append(typedef)
+            else:
+                if typedef.type and not typedef.type == type:
+                    new_typedefs.append(typedef)
+        self.typedefs = new_typedefs
