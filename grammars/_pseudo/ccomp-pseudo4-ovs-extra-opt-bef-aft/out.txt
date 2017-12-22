@@ -1,0 +1,13 @@
+1 noun1 tverb noun2 1 17
+2 *noun1 noun2 tverb 0 11
+3 *tverb noun1 noun2 0 12
+4 cverb noun1 comp1 noun1 tverb noun2 1 34
+5 cverb noun1 noun1 tverb noun2 1 29
+6 cverb noun1 noun1 tverb noun2 comp1 1 36
+7 *comp1 noun1 tverb noun2 noun1 cverb 0 24
+8 *noun1 comp1 noun1 tverb noun2 cverb 0 24
+9 *comp1 noun1 tverb noun2 cverb noun1 0 25
+
+;;; Total CPU time: 14 msecs
+;;; Mean edges: 23.56
+;;; Mean parses: 0.44
