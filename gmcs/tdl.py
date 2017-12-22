@@ -942,6 +942,9 @@ class TDLfile(object):
 
         self.typedefs.append(l)
 
+    '''
+    Use with caution...
+    '''
     def remove_typedef(self,type):
         new_typedefs = []
         for typedef in self.typedefs:

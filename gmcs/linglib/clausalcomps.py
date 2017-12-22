@@ -181,10 +181,16 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
     supertype = 'head-initial' if additional == constants.HEAD_COMP else 'head-final'
     mylang.add(additional + '-phrase := basic-head-1st-comp-phrase & ' + supertype + '.'
                ,section = 'phrases',merge=True)
+
+    if wo == 'ovs' and cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME]:
+        mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ <  > ].',merge=True)
+        mylang.add(general + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ <  > ].',merge=True)
+        mylang.remove_typedef('head-subj-phrase')
+        mylang.add('head-subj-phrase := decl-head-subj-phrase & head-initial.',section='phrases')
     if not head:
         rules.add(additional + ' := ' + additional + '-phrase.', merge=True)
     else:
-        # For flexible orders, we may need separate rules for complementizers
+        # For some combinations of choices, we may need separate rules for complementizers
         # and clausal verbs, to avoid spurious parses.
         if head == '+vc':
             if cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME] \
@@ -196,11 +202,6 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
                 if wo in VFINAL:
                     mylang.add(additional + '-verb-phrase := '
                            + additional + '-phrase & [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < [ ] > ].',merge=True)
-                elif wo == 'ovs':
-                    mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ <  > ].',merge=True)
-                    mylang.add(general + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ <  > ].',merge=True)
-                    mylang.remove_typedef('head-subj-phrase')
-                    mylang.add('head-subj-phrase := decl-head-subj-phrase & head-initial.',section='phrases')
                 mylang.add(additional + '-comp-phrase := '
                            + additional + '-phrase & [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].',section='phrases')
         # Here, head must be either comp or verb, but not both
