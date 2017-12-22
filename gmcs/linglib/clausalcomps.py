@@ -40,6 +40,7 @@ FORM_PATH = 'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT.HEAD' # FORM feature pat
 # Note: the below lists do not include V2 or free.
 OV_ORDERS = ['sov', 'ovs', 'osv', 'v-final']
 #EXTRA_ORDERS = ['sov', 'v-final', 'osv'] # orders allowed with extraposed clausal complements
+VFINAL = ['sov','osv','v-final']
 VO_ORDERS = ['svo', 'vos', 'vso', 'v-initial']
 
 CLAUSALCOMP = 'clausalcomp'
@@ -192,7 +193,7 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
                 rules.add(additional + '-comp := ' + additional + '-comp-phrase.')
                 mylang.add(additional + '-verb-phrase := '
                            + additional + '-phrase & [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD verb ].',section='phrases')
-                if wo == 'v-final':
+                if wo in VFINAL:
                     mylang.add(additional + '-verb-phrase := '
                            + additional + '-phrase & [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < [ ] > ].',merge=True)
                 elif wo == 'ovs':
