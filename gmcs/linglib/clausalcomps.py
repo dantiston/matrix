@@ -67,11 +67,12 @@ def customize_clausalcomps(mylang,ch,lexicon,rules,irules):
         return
     # Note: clausal verb type will be added by lexical_items.py,
     # just like a regular verb. It would be better to do it here instead?
-    add_complementizers_to_lexicon(lexicon,ch)
-    add_types_to_grammar(mylang,ch,rules)
+    have_comp = add_complementizers_to_lexicon(lexicon,ch)
+    add_types_to_grammar(mylang,ch,rules,have_comp)
 
 def add_complementizers_to_lexicon(lexicon,ch):
     lexicon.add_literal(';;; Complementizers')
+    have_comp = False
     for comp_strategy in ch[COMPS]:
         id = comp_strategy.full_key
         typename = id + '-' + COMP_LEX_ITEM
@@ -81,11 +82,14 @@ def add_complementizers_to_lexicon(lexicon,ch):
                           [ STEM < "' + orth + '" > ].'
 
             lexicon.add(typedef)
+            have_comp = True
+    return have_comp
 
 
-def add_types_to_grammar(mylang,ch,rules):
-    mylang.set_section(COMPLEX)
-    add_complementizer_supertype(mylang)
+def add_types_to_grammar(mylang,ch,rules,have_complementizer):
+    if have_complementizer:
+        mylang.set_section(COMPLEX)
+        add_complementizer_supertype(mylang)
     init = False # Has the INIT feature been used?
     # Note: iterating over ch.get(COMPS) (the complementation strategies)
     # twice on purpose here, to avoid convoluted logic
@@ -103,7 +107,7 @@ def add_types_to_grammar(mylang,ch,rules):
         general, additional = determine_head_comp_rule_type(ch.get(constants.WORD_ORDER))
     for cs in ch.get(COMPS):
         # There can only be one complementizer type per strategy
-        typename = add_complementizer_subtype(cs, mylang)
+        typename = add_complementizer_subtype(cs, mylang) if cs[COMP] else None
         if wo in OV_ORDERS or wo in VO_ORDERS:
         # Some strategies require changes to the word order
             customize_order(ch, cs, mylang, rules, typename, init,general,additional)
@@ -324,30 +328,44 @@ Add clausal verb supertype to the grammar.
 # It is possible that that call should be moved to this module.
 
 def add_clausalcomp_verb_supertype(ch, mainorverbtype,mylang):
-    head = 'comp'
-    for ccs in ch.get(COMPS):
-        if ccs[COMP] == 'opt':
-            head = '+vc'
-            break
+    #head = 'comp'
+    #for ccs in ch.get(COMPS):
+    #    if ccs[COMP] == 'opt':
+    #        head = '+vc'
+    #        break
     typedef = CLAUSALCOMP + '-verb-lex := ' + mainorverbtype + '& clausal-second-arg-trans-lex-item &\
       [ SYNSEM.LOCAL.CAT.VAL.COMPS < #comps >,\
         ARG-ST < [ LOCAL.CAT.HEAD noun ],\
                  #comps &\
-                 [ LOCAL.CAT [ VAL [ SPR < >, COMPS < > ],' \
-                                                    'HEAD ' + head + ' ] ] > ].'
+                 [ LOCAL.CAT.VAL [ SPR < >, COMPS < > ] ] > ].' \
+                 #                                   'HEAD ' + head + ' ] ] > ].'
     mylang.add(typedef,section='verblex')
 
+def determine_clausal_verb_head(cs):
+    head = ''
+    if cs[COMP]:
+        if cs[COMP] == 'oblig':
+            head = 'comp'
+        elif cs[COMP] == 'opt':
+            head = '+vc'
+    else:
+        head = 'noun'
+    return head
+
+# This is currently called by lexical_items.py
 def update_verb_lextype(ch,verb, vtype):
     suffix = ''
+    head = ''
     val = verb.get(constants.VALENCE)
-    for css in ch.get(COMPS):
-        if val == css.full_key:
+    for ccs in ch.get(COMPS):
+        if val == ccs.full_key:
             suffix = val
+            head = determine_clausal_verb_head(ccs)
     if suffix:
         name = vtype.split('-',1)[0]
         rest = vtype.split('-',1)[1]
         vtype = name + '-' + val + '-' + rest
-    return vtype
+    return vtype,head
 
 def validate(ch,vr):
     if not ch.get(COMPS):

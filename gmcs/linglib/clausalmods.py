@@ -15,7 +15,7 @@ def customize_clausalmods(mylang, ch, lexicon, rules, roots):
     """
     mylang.set_section ('addenda')
     mylang.add('+nvcdmo :+ [ MOD < > ].')
-    add_head_compement_rules(mylang, rules, ch)
+    add_head_complement_rules(mylang, rules, ch)
 
     for cms in ch.get('cms'):
         cmsnum = str(cms.iter_num())
@@ -669,7 +669,7 @@ def create_subpair_feature(mylang, morphpair):
     mylang.set_section('verb-lex')
     mylang.add('verb-lex := [ SYNSEM.LOCAL.CAT.SUBPAIR nopair ].')
 
-def add_head_compement_rules(mylang, rules, ch):
+def add_head_complement_rules(mylang, rules, ch):
     mylang.set_section('addenda')
     mylang.add('head :+ [ INIT bool ].')
     subpos = []
