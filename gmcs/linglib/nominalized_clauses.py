@@ -3,7 +3,6 @@
 # Definitions
 ###
 
-NONEVENT_HEAD_SUBJ = 'non-event-head-subj-phrase'
 NHS_SUPERTYPE = 'basic-head-subj-phrase'
 NHS_DEF = '[ HEAD-DTR.SYNSEM [ LOCAL [ CONT.HOOK.INDEX ref-ind ],\
                                NON-LOCAL [ QUE 0-dlist,\
@@ -47,7 +46,8 @@ def customize_nmcs(mylang, ch, rules, lrules):
                 #                                  NON-LOCAL [ QUE 0-dlist,\
                 #                                                REL 0-dlist ]]\
                 #               NON-HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SPR < > ].')
-                rules.add('non-event-subj-head := non-event-subj-head-phrase.')
+                typename = 'non-event-subj-head-phrase'
+                rules.add('non-event-subj-head := ' + typename + '.')
                 super = 'head-final'
             elif wo == 'ovs' or wo == 'vos' or wo == 'vso' or wo == 'v-initial':
                 #mylang.add('non-event-head-subj-phrase := basic-head-subj-phrase & head-initial &\
@@ -55,11 +55,12 @@ def customize_nmcs(mylang, ch, rules, lrules):
                 #                                  NON-LOCAL [ QUE 0-dlist,\
                 #                                                REL 0-dlist ]]\
                 #                NON-HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SPR < > ].')
-                rules.add('non-event-head-subj := non-event-head-subj-phrase.')
+                typename = 'non-event-head-subj-phrase'
+                rules.add('non-event-head-subj := ' + typename + '.')
                 super = 'head-initial'
-            mylang.add(NONEVENT_HEAD_SUBJ +' := ' + NHS_SUPERTYPE + '&' + super + '&' + NHS_DEF)
+            mylang.add(typename + ' := ' + NHS_SUPERTYPE + '&' + super + '&' + NHS_DEF)
             if wo in [ 'sov', 'svo', 'ovs', 'vos']:
-                mylang.add(NONEVENT_HEAD_SUBJ + ' := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].',merge=True)
+                mylang.add(typename + ' := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].',merge=True)
         if level == 'mid' or level == 'high':
             mylang.set_section('lexrules')
             mylang.add('high-or-mid-nominalization-lex-rule := cat-change-with-ccont-lex-rule & same-cont-lex-rule &\
