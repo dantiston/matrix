@@ -330,3 +330,4 @@ ccomp-pseudo6-ovs-extra-same-oblig-aft=Clausal comps: OVS, extraposed or nouny-p
 ccomp-pseudo22-v2-vfinal-comp-bef-oblig=Clausal comps V2-Vfinal oblig complementizer before the clause.
 ccomp-pseudo5-vinitial-high-empty=Clausal comps: v-initial matrix order, high nominalization, semantically-empty.
 ccomp-pseudo23-sov-high-empty-extra=Clausal comps: SOV, high empty nominalization, extraposed complement.
+ccomp-pseudo20-sov-mid-nonempty-extra-same=Clausal comps: SOV, mid nominalization, extraposed-or-not complement.
