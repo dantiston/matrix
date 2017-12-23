@@ -48,7 +48,7 @@ def customize_nmcs(mylang, ch, rules, lrules):
                 typename = 'non-event-head-subj'
                 rules.add(typename + ' := ' + typename + '-phrase.')
                 super = 'head-initial'
-            mylang.add(typename + ' := ' + NHS_SUPERTYPE + '&' + super + '&' + NHS_DEF)
+            mylang.add(typename + '-phrase := ' + NHS_SUPERTYPE + '&' + super + '&' + NHS_DEF)
             #if wo in [ 'sov', 'svo', 'ovs', 'vos']:
             #    mylang.add(typename + ' := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].',merge=True)
         if level == 'mid' or level == 'high':
