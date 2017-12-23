@@ -363,8 +363,7 @@ def determine_clausal_verb_head(cs):
     return head
 
 def customize_clausal_verb(clausalverb,mylang,ch,cs):
-    if not 'feat' in cs:
-        mylang.add(clausalverb + ' := clausal-second-arg-trans-lex-item.',merge=True)
+    supertype = None
     for f in cs['feat']:
         if f['name'] == 'nominalization':
             path = 'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT.HEAD'
@@ -372,15 +371,13 @@ def customize_clausal_verb(clausalverb,mylang,ch,cs):
             for ns in ch['ns']:
                 if ns['name'] == f['value']:
                     if ns['nmzRel'] == 'yes':
-                        mylang.add(clausalverb + ' := transitive-lex-item.',merge=True)
-                    else:
-                        mylang.add(clausalverb + ' := clausal-second-arg-trans-lex-item.',merge=True)
+                        supertype = 'transitive-lex-item'
         elif f['name'] == 'form':
-            mylang.add(clausalverb + ' := clausal-second-arg-trans-lex-item.',merge=True)
             path = 'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT.HEAD.FORM'
             constrain_lexitem_for_feature(clausalverb, path, f['value'],mylang)
-            mylang.add(clausalverb + ' := clausal-second-arg-trans-lex-item.',merge=True)
-
+    if not supertype:
+        supertype = 'clausal-second-arg-trans-lex-item'
+    mylang.add(clausalverb +' := ' + supertype + '.',merge=True)
 
 # This is currently called by lexical_items.py
 def update_verb_lextype(ch,verb, vtype):

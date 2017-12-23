@@ -24,14 +24,13 @@ def customize_nmcs(mylang, ch, rules, lrules):
         add_features(mylang)
         mylang.add('+nvcdmo :+ [ MOD < > ].')
 
-
+        # CAT [ VAL.COMPS < > ]],\
         if level == 'low' or level == 'mid':
             mylang.set_section('phrases')
             wo = ch.get('word-order')
             if wo == 'osv' or wo == 'sov' or wo == 'svo' or wo == 'v-final':
                 mylang.add('non-event-subj-head-phrase := basic-head-subj-phrase & head-final &\
-                            [ HEAD-DTR.SYNSEM [ LOCAL [ CONT.HOOK.INDEX ref-ind,\
-                                                        CAT [ VAL.COMPS < > ]],\
+                            [ HEAD-DTR.SYNSEM [ LOCAL [ CONT.HOOK.INDEX ref-ind ],\
                                                   NON-LOCAL [ QUE 0-dlist,\
                                                                 REL 0-dlist ]]\
                                 NON-HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SPR < > ].')
