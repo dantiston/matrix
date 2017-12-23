@@ -97,3 +97,13 @@ def merge_constraints(choicedict, mylang, typename, path, key1, key2, val):
         if ch[key2] == val:
             mylang.add(typename + ' := [ ' + path + ' ' + ch['value'] + ' ].',
                        merge=True)
+
+def nonempty_ccomp_nmz(ch):
+    for cs in ch:
+        for f in cs['feat']:
+            if f['name'] == 'nominalization':
+                for ns in ch['ns']:
+                    if ns['name'] == f['value']:
+                        if ns['nmzRel'] == 'yes':
+                            return True
+    return False

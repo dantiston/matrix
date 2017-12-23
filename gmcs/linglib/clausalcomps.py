@@ -401,6 +401,7 @@ def nonempty_nmz(cs,ch):
                 if ns['name'] == f['value']:
                     if ns['nmzRel'] == 'yes':
                         return True
+    return False
 
 def validate(ch,vr):
     if not ch.get(COMPS):

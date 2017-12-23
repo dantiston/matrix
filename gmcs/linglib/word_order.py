@@ -1,6 +1,7 @@
 # from sets import Set
 from gmcs.linglib.parameters import determine_vcluster
 from gmcs.linglib.lexical_items import update_lex_items_vcluster
+from gmcs import utils
 
 ######################################################################
 # customize_word_order()
@@ -107,7 +108,7 @@ def customize_major_constituent_order(wo, mylang, ch, rules):
         mylang.add(hs + '-phrase := decl-head-subj-phrase & head-final.')
 
     if wo == 'ovs' or wo == 'vos' or wo == 'vso' or wo == 'v-initial' \
-            or (wo=='v-final' and extraposed_comps(ch)):
+            or (wo=='v-final' and extraposed_comps(ch) and utils.nonempty_ccomp_nmz(ch)):
         hs = 'head-subj'
         mylang.add(hs + '-phrase := decl-head-subj-phrase & head-initial.')
 
