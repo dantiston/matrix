@@ -126,7 +126,8 @@ def customize_major_constituent_order(wo, mylang, ch, rules):
         if ch.get('has-aux') == 'yes' and auxcomp == 'vp':
             mylang.add(hs + '-phrase := [ HEAD-DTR.SYNSEM.LIGHT + ].')
         else:
-            mylang.add(hc + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < > ].')
+            if not (wo == 'ovs' and 'comps' in ch and extraposed_comps(ch)):
+                mylang.add(hc + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < > ].')
 
         # LLD 2016-03-24 to allow argument optionality with VSO and OSV languages,
         # we have to move COMPS < > from basic-head-opt-subj-phrase in matrix.tdl and
