@@ -152,8 +152,15 @@ def customize_nmcs(mylang, ch, rules):
                 rules.add(typename + ' := ' + typename + '-phrase.')
                 super = 'head-initial'
             mylang.add(typename + '-phrase := ' + NHS_SUPERTYPE + '&' + super + '&' + NHS_DEF)
-            #if wo in [ 'sov', 'svo', 'ovs', 'vos']: #OZ: sov/ovs can turn into vso with extraposed complements
-            if wo in [ 'svo', 'vos']:
+            #if wo in [ 'sov', 'svo', 'ovs', 'vos']: #OZ: ovs can turn into vso with extraposed complements
+            #TODO: Need to handle OVS still! It seems to be a special case,
+            # if extraposition is involved (see also word_order.py)
+            if wo in ['svo', 'vos', 'sov'] or (wo == 'ovs' \
+                    and len([ cs for cs in ch.get('comps') if cs['clause-pos-extra'] ])==0):
+                   # The above just checks if any complementation strategy involves extraposition;
+                   # but what if there are several different ones? Am I sure that it
+                   # will be taken care of by INIT
+                   # on the clausal verb?
                 mylang.add(typename + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].',merge=True)
         if level == 'mid' or level == 'high':
             mylang.set_section('lexrules')
