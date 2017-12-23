@@ -122,7 +122,7 @@ def customize_major_constituent_order(wo, mylang, ch, rules):
     # constraint on the hs-rule.
     # OZ 2017-12-21 We also need low subject attachment for OVS languages with extraposed clausal complements.
     auxcomp = ch.get('aux-comp')
-    if (wo == 'vso' or wo == 'osv') or (wo == 'ovs' and 'comps' in ch and extraposed_comps(ch)):
+    if (wo == 'vso' or wo == 'osv'):
         if ch.get('has-aux') == 'yes' and auxcomp == 'vp':
             mylang.add(hs + '-phrase := [ HEAD-DTR.SYNSEM.LIGHT + ].')
         else:
