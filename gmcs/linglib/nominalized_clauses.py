@@ -9,7 +9,51 @@ NHS_DEF = '[ HEAD-DTR.SYNSEM [ LOCAL [ CONT.HOOK.INDEX ref-ind ],\
                                            REL 0-dlist ]]\
             NON-HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SPR < > ].'
 
-HIGH_OR_MID_LEXRULE = 'high-or-mid-nominalization-lex-rule := cat-change-with-ccont-lex-rule & same-cont-lex-rule &\
+
+def customize_nmcs(mylang, ch, rules, lrules):
+    """
+    the main nominalized clause customization routine
+    """
+    for vpc in ch['verb-pc']:
+        for lrt in vpc['lrt']:
+            for f in lrt['feat']:
+                if 'nominalization' in f['name']:
+                    for ns in ch.get('ns'):
+                        if ns.get('name') == f['value']:
+                            level = ns.get('level')
+                            if level == 'mid' or level == 'high':
+                                lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
+                                                      ['high-or-mid-nominalization-lex-rule'])
+                            if level == 'low':
+                                lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
+                                                  ['low-nominalization-lex-rule'])
+
+
+    for ns in ch.get('ns'):
+        name = ns.get('name')
+        level = ns.get('level')
+        nmzrel = ns.get('nmzRel')
+        add_features(mylang)
+        mylang.add('+nvcdmo :+ [ MOD < > ].')
+        # OZ 2017-12-23: Refactoring the first part of the function
+        super = ''
+        if level == 'low' or level == 'mid':
+            mylang.set_section('phrases')
+            wo = ch.get('word-order')
+            if wo == 'osv' or wo == 'sov' or wo == 'svo' or wo == 'v-final':
+                typename = 'non-event-subj-head'
+                rules.add(typename + ' := ' + typename + '-phrase.')
+                super = 'head-final'
+            elif wo == 'ovs' or wo == 'vos' or wo == 'vso' or wo == 'v-initial':
+                typename = 'non-event-head-subj'
+                rules.add(typename + ' := ' + typename + '-phrase.')
+                super = 'head-initial'
+            mylang.add(typename + ' := ' + NHS_SUPERTYPE + '&' + super + '&' + NHS_DEF)
+            if wo in [ 'sov', 'svo', 'ovs', 'vos']:
+                mylang.add(typename + ' := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].',merge=True)
+        if level == 'mid' or level == 'high':
+            mylang.set_section('lexrules')
+            mylang.add('high-or-mid-nominalization-lex-rule := cat-change-with-ccont-lex-rule & same-cont-lex-rule &\
     [ SYNSEM.LOCAL [ CONT [ HOOK [ INDEX event ]],\
 		   CAT [ HEAD verb &\
 			      [ NMZ +,\
@@ -33,9 +77,11 @@ HIGH_OR_MID_LEXRULE = 'high-or-mid-nominalization-lex-rule := cat-change-with-cc
                            MKG #mkg,\
                            HC-LIGHT #hc-light,\
                            POSTHEAD #posthead ]],\
-   C-CONT [ RELS <! !>, HCONS <! !> ] ].'
+   C-CONT [ RELS <! !>, HCONS <! !> ] ].')
 
-LOW_LEXRULE = 'low-nominalization-lex-rule := cat-change-with-ccont-lex-rule &\
+        if level == 'low':
+            mylang.set_section('lexrules')
+            mylang.add('low-nominalization-lex-rule := cat-change-with-ccont-lex-rule &\
                 [ SYNSEM.LOCAL.CAT [ HEAD noun & \
 			    [ MOD #mod ],\
 		        VAL [ SUBJ < [ LOCAL [ CAT [ HEAD noun,\
@@ -65,54 +111,7 @@ LOW_LEXRULE = 'low-nominalization-lex-rule := cat-change-with-ccont-lex-rule &\
 			     MKG #mkg,\
 			     HC-LIGHT #hc-light,\
 			     POSTHEAD #posthead ],\
-		       CONT.HOOK [ LTOP #larg ]]].'
-
-def customize_nmcs(mylang, ch, rules, lrules):
-    """
-    the main nominalized clause customization routine
-    """
-    for vpc in ch['verb-pc']:
-        for lrt in vpc['lrt']:
-            for f in lrt['feat']:
-                if 'nominalization' in f['name']:
-                    for ns in ch.get('ns'):
-                        if ns.get('name') == f['value']:
-                            level = ns.get('level')
-                            if level == 'mid' or level == 'high':
-                                lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
-                                                      ['high-or-mid-nominalization-lex-rule'])
-                            if level == 'low':
-                                lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
-                                                  ['low-nominalization-lex-rule'])
-    for ns in ch.get('ns'):
-        name = ns.get('name')
-        level = ns.get('level')
-        nmzrel = ns.get('nmzRel')
-        add_features(mylang)
-        mylang.add('+nvcdmo :+ [ MOD < > ].')
-        # OZ 2017-12-23: Refactoring the first part of the function
-        super = ''
-        if level == 'low' or level == 'mid':
-            mylang.set_section('phrases')
-            wo = ch.get('word-order')
-            if wo == 'osv' or wo == 'sov' or wo == 'svo' or wo == 'v-final':
-                typename = 'non-event-subj-head'
-                rules.add(typename + ' := ' + typename + '-phrase.')
-                super = 'head-final'
-            elif wo == 'ovs' or wo == 'vos' or wo == 'vso' or wo == 'v-initial':
-                typename = 'non-event-head-subj'
-                rules.add(typename + ' := ' + typename + '-phrase.')
-                super = 'head-initial'
-            mylang.add(typename + ' := ' + NHS_SUPERTYPE + '&' + super + '&' + NHS_DEF)
-            if wo in [ 'sov', 'svo', 'ovs', 'vos']:
-                mylang.add(typename + ' := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].',merge=True)
-        if level == 'mid' or level == 'high':
-            mylang.set_section('lexrules')
-            mylang.add(HIGH_OR_MID_LEXRULE)
-
-        if level == 'low':
-            mylang.set_section('lexrules')
-            mylang.add(LOW_LEXRULE)
+		       CONT.HOOK [ LTOP #larg ]]].')
         elif level == 'mid':
             mylang.set_section('phrases')
             mylang.add(level + '-nominalized-clause-phrase := basic-unary-phrase &\
