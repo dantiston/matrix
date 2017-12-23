@@ -49,8 +49,8 @@ def customize_nmcs(mylang, ch, rules, lrules):
                 rules.add(typename + ' := ' + typename + '-phrase.')
                 super = 'head-initial'
             mylang.add(typename + ' := ' + NHS_SUPERTYPE + '&' + super + '&' + NHS_DEF)
-            if wo in [ 'sov', 'svo', 'ovs', 'vos']:
-                mylang.add(typename + ' := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].',merge=True)
+            #if wo in [ 'sov', 'svo', 'ovs', 'vos']:
+            #    mylang.add(typename + ' := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].',merge=True)
         if level == 'mid' or level == 'high':
             mylang.set_section('lexrules')
             mylang.add('high-or-mid-nominalization-lex-rule := cat-change-with-ccont-lex-rule & same-cont-lex-rule &\
