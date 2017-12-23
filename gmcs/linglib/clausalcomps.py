@@ -375,7 +375,6 @@ def customize_clausal_verb(clausalverb,mylang,ch,cs):
                         mylang.add(clausalverb + ' := transitive-lex-item.',merge=True)
                     else:
                         mylang.add(clausalverb + ' := clausal-second-arg-trans-lex-item.',merge=True)
-            mylang.add(clausalverb + ' := transitive-lex-item.',merge=True)
         elif f['name'] == 'form':
             mylang.add(clausalverb + ' := clausal-second-arg-trans-lex-item.',merge=True)
             path = 'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT.HEAD.FORM'
