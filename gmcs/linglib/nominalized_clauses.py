@@ -133,21 +133,8 @@ def customize_nmcs(mylang, ch, rules, lrules):
     """
     the main nominalized clause customization routine
     """
-    for vpc in ch['verb-pc']:
-        for lrt in vpc['lrt']:
-            for f in lrt['feat']:
-                if 'nominalization' in f['name']:
-                    for ns in ch.get('ns'):
-                        if ns.get('name') == f['value']:
-                            level = ns.get('level')
-                            if level == 'mid' or level == 'high':
-                                lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
-                                                      ['high-or-mid-nominalization-lex-rule'])
-                            if level == 'low':
-                                lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
-                                                  ['low-nominalization-lex-rule'])
+    update_lexical_rules(ch)
     for ns in ch.get('ns'):
-        name = ns.get('name')
         level = ns.get('level')
         nmzrel = ns.get('nmzRel')
         add_features(mylang)
@@ -186,6 +173,23 @@ def customize_nmcs(mylang, ch, rules, lrules):
             elif nmzrel == 'yes':
                 mylang.add(level + SUBJ_NMZ_CLAUSE)
                 rules.add(level + '-nominalized-clause := ' + level + '-nominalized-clause-phrase.')
+
+
+def update_lexical_rules(ch):
+    for vpc in ch['verb-pc']:
+        for lrt in vpc['lrt']:
+            for f in lrt['feat']:
+                if 'nominalization' in f['name']:
+                    for ns in ch.get('ns'):
+                        if ns.get('name') == f['value']:
+                            level = ns.get('level')
+                            if level == 'mid' or level == 'high':
+                                lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
+                                                              ['high-or-mid-nominalization-lex-rule'])
+                            if level == 'low':
+                                lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
+                                                              ['low-nominalization-lex-rule'])
+
 
 def add_features(mylang):
     mylang.set_section('addenda')
