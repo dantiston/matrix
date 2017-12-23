@@ -122,12 +122,11 @@ def customize_major_constituent_order(wo, mylang, ch, rules):
     # constraint on the hs-rule.
     # OZ 2017-12-21 We also need low subject attachment for OVS languages with extraposed clausal complements.
     auxcomp = ch.get('aux-comp')
-    if (wo == 'vso' or wo == 'osv'):
+    if (wo == 'vso' or wo == 'osv') or (wo == 'ovs' and 'comps' in ch and extraposed_comps(ch)):
         if ch.get('has-aux') == 'yes' and auxcomp == 'vp':
             mylang.add(hs + '-phrase := [ HEAD-DTR.SYNSEM.LIGHT + ].')
         else:
-            if not (wo == 'ovs' and 'comps' in ch and extraposed_comps(ch)):
-                mylang.add(hc + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < > ].')
+            mylang.add(hc + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < > ].')
 
         # LLD 2016-03-24 to allow argument optionality with VSO and OSV languages,
         # we have to move COMPS < > from basic-head-opt-subj-phrase in matrix.tdl and
