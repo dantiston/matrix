@@ -1,4 +1,3 @@
-
 ###
 # Constants
 ###
@@ -129,7 +128,7 @@ SUBJ_NMZ_CLAUSE = '-nominalized-clause-phrase := basic-unary-phrase &\
 					  SPEC < > ]],\
 			      CONT.HOOK [ LTOP #larg ]]]] > ].'
 
-def customize_nmcs(mylang, ch, rules, lrules):
+def customize_nmcs(mylang, ch, rules):
     """
     the main nominalized clause customization routine
     """

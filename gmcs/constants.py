@@ -28,3 +28,8 @@ VALENCE = 'valence' # Valence attributes of a verb lexical item
 ### Widely used type names' prefixes ###
 COMP_HEAD = 'comp-head'
 HEAD_COMP = 'head-comp'
+
+### OFTEN USED COMBINATIONS ###
+OV_ORDERS = ['sov', 'ovs', 'osv', 'v-final']
+VFINAL = ['sov','osv','v-final']
+VO_ORDERS = ['svo', 'vos', 'vso', 'v-initial']
