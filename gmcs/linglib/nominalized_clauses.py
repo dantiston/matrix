@@ -1,3 +1,16 @@
+
+###
+# Definitions
+###
+
+NONEVENT_HEAD_SUBJ = 'non-event-head-subj-phrase'
+NHS_SUPERTYPE = 'basic-head-subj-phrase'
+NHS_DEF = '[ HEAD-DTR.SYNSEM [ LOCAL [ CONT.HOOK.INDEX ref-ind ],\
+                               NON-LOCAL [ QUE 0-dlist,\
+                                           REL 0-dlist ]]\
+            NON-HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SPR < > ].'
+
+
 def customize_nmcs(mylang, ch, rules, lrules):
     """
     the main nominalized clause customization routine
@@ -24,25 +37,29 @@ def customize_nmcs(mylang, ch, rules, lrules):
         add_features(mylang)
         mylang.add('+nvcdmo :+ [ MOD < > ].')
 
-        # CAT [ VAL.COMPS < > ]],\
         if level == 'low' or level == 'mid':
             mylang.set_section('phrases')
             wo = ch.get('word-order')
             if wo == 'osv' or wo == 'sov' or wo == 'svo' or wo == 'v-final':
-                mylang.add('non-event-subj-head-phrase := basic-head-subj-phrase & head-final &\
-                            [ HEAD-DTR.SYNSEM [ LOCAL [ CONT.HOOK.INDEX ref-ind,\
-                                                 CAT [ VAL.COMPS < > ]],\
-                                                  NON-LOCAL [ QUE 0-dlist,\
-                                                                REL 0-dlist ]]\
-                                NON-HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SPR < > ].')
+                #mylang.add('non-event-subj-head-phrase := basic-head-subj-phrase & head-final &\
+                #            [ HEAD-DTR.SYNSEM [ LOCAL [ CONT.HOOK.INDEX ref-ind,\
+                #                                 CAT [ VAL.COMPS < > ]],\
+                #                                  NON-LOCAL [ QUE 0-dlist,\
+                #                                                REL 0-dlist ]]\
+                #               NON-HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SPR < > ].')
                 rules.add('non-event-subj-head := non-event-subj-head-phrase.')
-            if wo == 'ovs' or wo == 'vos' or wo == 'vso' or wo == 'v-initial':
-                mylang.add('non-event-head-subj-phrase := basic-head-subj-phrase & head-initial &\
-                            [ HEAD-DTR.SYNSEM [ LOCAL [ CONT.HOOK.INDEX ref-ind ],\
-                                                  NON-LOCAL [ QUE 0-dlist,\
-                                                                REL 0-dlist ]]\
-                                NON-HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SPR < > ].')
+                super = 'head-final'
+            elif wo == 'ovs' or wo == 'vos' or wo == 'vso' or wo == 'v-initial':
+                #mylang.add('non-event-head-subj-phrase := basic-head-subj-phrase & head-initial &\
+                #            [ HEAD-DTR.SYNSEM [ LOCAL [ CONT.HOOK.INDEX ref-ind ],\
+                #                                  NON-LOCAL [ QUE 0-dlist,\
+                #                                                REL 0-dlist ]]\
+                #                NON-HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SPR < > ].')
                 rules.add('non-event-head-subj := non-event-head-subj-phrase.')
+                super = 'head-initial'
+            mylang.add(NONEVENT_HEAD_SUBJ +' := ' + NHS_SUPERTYPE + '&' + super + '&' + NHS_DEF)
+            if wo in [ 'sov', 'svo', 'ovs', 'vos']:
+                mylang.add(NONEVENT_HEAD_SUBJ + ' := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].',merge=True)
         if level == 'mid' or level == 'high':
             mylang.set_section('lexrules')
             mylang.add('high-or-mid-nominalization-lex-rule := cat-change-with-ccont-lex-rule & same-cont-lex-rule &\
