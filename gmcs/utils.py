@@ -107,3 +107,10 @@ def nonempty_ccomp_nmz(ch):
                         if ns['nmzRel'] == 'yes':
                             return True
     return False
+
+def has_nmz_ccomp(ch):
+    for cs in ch['comps']:
+        for f in cs['feat']:
+            if f['name'] == 'nominalization':
+                return True
+    return False
