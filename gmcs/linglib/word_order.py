@@ -107,7 +107,7 @@ def customize_major_constituent_order(wo, mylang, ch, rules):
         mylang.add(hs + '-phrase := decl-head-subj-phrase & head-final.')
 
     if wo == 'ovs' or wo == 'vos' or wo == 'vso' or wo == 'v-initial' \
-            or (wo=='v-final' and extraposed_comps()):
+            or (wo=='v-final' and extraposed_comps(ch)):
         hs = 'head-subj'
         mylang.add(hs + '-phrase := decl-head-subj-phrase & head-initial.')
 
