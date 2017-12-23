@@ -30,15 +30,15 @@ def customize_nmcs(mylang, ch, rules, lrules):
             wo = ch.get('word-order')
             if wo == 'osv' or wo == 'sov' or wo == 'svo' or wo == 'v-final':
                 mylang.add('non-event-subj-head-phrase := basic-head-subj-phrase & head-final &\
-                            [ HEAD-DTR.SYNSEM [ LOCAL [ CONT.HOOK.INDEX ref-ind ],\
+                            [ HEAD-DTR.SYNSEM [ LOCAL [ CONT.HOOK.INDEX ref-ind,\
+                                                 CAT [ VAL.COMPS < > ]],\
                                                   NON-LOCAL [ QUE 0-dlist,\
                                                                 REL 0-dlist ]]\
                                 NON-HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SPR < > ].')
                 rules.add('non-event-subj-head := non-event-subj-head-phrase.')
             if wo == 'ovs' or wo == 'vos' or wo == 'vso' or wo == 'v-initial':
                 mylang.add('non-event-head-subj-phrase := basic-head-subj-phrase & head-initial &\
-                            [ HEAD-DTR.SYNSEM [ LOCAL [ CONT.HOOK.INDEX ref-ind,\
-                                                        CAT [ VAL.COMPS < > ]],\
+                            [ HEAD-DTR.SYNSEM [ LOCAL [ CONT.HOOK.INDEX ref-ind ],\
                                                   NON-LOCAL [ QUE 0-dlist,\
                                                                 REL 0-dlist ]]\
                                 NON-HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SPR < > ].')
