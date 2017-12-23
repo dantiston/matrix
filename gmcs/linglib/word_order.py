@@ -108,16 +108,16 @@ def customize_major_constituent_order(wo, mylang, ch, rules):
         mylang.add(hs + '-phrase := decl-head-subj-phrase & head-final.')
 
     if wo == 'ovs' or wo == 'vos' or wo == 'vso' or wo == 'v-initial'  \
-            or (wo=='v-final' and extraposed_comps(ch)):
+            or (wo=='v-final' and extraposed_comps(ch) and utils.has_nmz_ccomp(ch)):
         hs = 'head-subj'
         mylang.add(hs + '-phrase := decl-head-subj-phrase & head-initial.')
         if wo == 'v-final':
-            if utils.has_nmz_ccomp(ch):
-                mylang.add(hs + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.NMZ + ] > ].'
+            #if utils.has_nmz_ccomp(ch):
+            mylang.add(hs + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.NMZ + ] > ].'
                        ,merge=True)
-            else:
-                mylang.add(hs + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD comp ] > ].'
-                       ,merge=True)
+            #else:
+            #    mylang.add(hs + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD comp ] > ].'
+            #           ,merge=True)
 
     # Complements attach before subjects
     if wo == 'ovs' or wo == 'vos' or wo == 'sov' or wo == 'svo':
