@@ -263,7 +263,7 @@ should be constrained to just verbs, just complementizers, or both.
 def determine_head(wo,cs):
     head = None
     if not cs[COMP]:
-        head = 'noun' #TODO: this is only for nominalization; probably will need other choices here, like verb
+        head = 'verb'
     elif wo in OV_ORDERS:
         if cs[COMP_POS_BEFORE]:
             if cs[CLAUSE_POS_EXTRA]:
@@ -301,32 +301,35 @@ calling this function once it returns True.
 '''
 
 def init_needed(wo, cs,mylang):
-    if wo in OV_ORDERS:
-        # Note that cs is a dict which will return an empty string
-        # if the object is not there. In this case, the IF statement should
-        # return False, but perhaps it would be clearer to write this out.
-        if cs[COMP_POS_BEFORE]:
-            if not cs[COMP_POS_AFTER]: # complementizer before clause only
-                mylang.add('head :+ [ INIT bool ].', section='addenda')
-                return True
-            else: # complementizer both before and after clause
-                res = (cs[CLAUSE_POS_SAME] and not cs[CLAUSE_POS_EXTRA]) \
-                      or (cs[CLAUSE_POS_EXTRA]and not cs[CLAUSE_POS_SAME])
+    if cs[COMP]:
+        if wo in OV_ORDERS:
+            # Note that cs is a dict which will return an empty string
+            # if the object is not there. In this case, the IF statement should
+            # return False, but perhaps it would be clearer to write this out.
+            if cs[COMP_POS_BEFORE]:
+                if not cs[COMP_POS_AFTER]: # complementizer before clause only
+                    mylang.add('head :+ [ INIT bool ].', section='addenda')
+                    return True
+                else: # complementizer both before and after clause
+                    res = (cs[CLAUSE_POS_SAME] and not cs[CLAUSE_POS_EXTRA]) \
+                          or (cs[CLAUSE_POS_EXTRA]and not cs[CLAUSE_POS_SAME])
+                    if res:
+                        mylang.add('head :+ [ INIT bool ].', section='addenda')
+                    return res
+            elif cs[COMP_POS_AFTER]:
+                res = cs[CLAUSE_POS_EXTRA] == constants.ON
                 if res:
                     mylang.add('head :+ [ INIT bool ].', section='addenda')
                 return res
-        elif cs[COMP_POS_AFTER]:
-            res = cs[CLAUSE_POS_EXTRA] == constants.ON
+        elif wo in VO_ORDERS:
+            if not cs[CLAUSE_POS_SAME]:
+                raise Exception(EXTRA_VO)
+            res = cs[COMP_POS_AFTER] == constants.ON and not cs[COMP_POS_BEFORE] == constants.ON
             if res:
                 mylang.add('head :+ [ INIT bool ].', section='addenda')
             return res
-    elif wo in VO_ORDERS:
-        if not cs[CLAUSE_POS_SAME]:
-            raise Exception(EXTRA_VO)
-        res = cs[COMP_POS_AFTER] == constants.ON and not cs[COMP_POS_BEFORE] == constants.ON
-        if res:
-            mylang.add('head :+ [ INIT bool ].', section='addenda')
-        return res
+    else:
+        return wo in OV_ORDERS and cs[CLAUSE_POS_EXTRA] == 'on'
 
 '''
 Add clausal verb supertype to the grammar.

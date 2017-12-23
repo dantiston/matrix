@@ -1,0 +1,11 @@
+1 noun1 noun2 tverb 1 17
+2 *noun tverb noun2 0 8
+3 *tverb noun1 noun2 0 11
+4 noun1 cverb noun2 noun3 tverb-NMZ 1 33
+5 *noun1 cverb noun2 noun3 tverb 0 20
+6 *noun1 noun2 noun3 tverb-NMZ cverb 0 22
+7 *noun1 noun2 tverb-NMZ 0 15
+
+;;; Total CPU time: 10 msecs
+;;; Mean edges: 18.00
+;;; Mean parses: 0.29
