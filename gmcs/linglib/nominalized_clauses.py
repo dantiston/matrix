@@ -9,6 +9,31 @@ NHS_DEF = '[ HEAD-DTR.SYNSEM [ LOCAL [ CONT.HOOK.INDEX ref-ind ],\
                                            REL 0-dlist ]]\
             NON-HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SPR < > ].'
 
+HIGH_OR_MID_LEX_RULE = 'high-or-mid-nominalization-lex-rule := cat-change-with-ccont-lex-rule & same-cont-lex-rule &\
+    [ SYNSEM.LOCAL [ CONT [ HOOK [ INDEX event ]],\
+		   CAT [ HEAD verb &\
+			      [ NMZ +,\
+                     MOD #mod ],\
+                         VAL [ SUBJ < [ LOCAL [ CAT [ HEAD noun,\
+                                                      VAL.SPR < > ],\
+                                                CONT.HOOK.INDEX #subj ] ] >,\
+                               COMPS #comps,\
+                               SPR #spr,\
+                               SPEC #spec ],\
+                         MC #mc,\
+                         MKG #mkg,\
+                         HC-LIGHT #hc-light,\
+                         POSTHEAD #posthead ] ],\
+    DTR.SYNSEM.LOCAL [ CAT [ HEAD [ MOD #mod ],\
+                           VAL [ SUBJ < [ LOCAL.CONT.HOOK.INDEX #subj ] >,\
+                                 COMPS #comps,\
+                                 SPR #spr,\
+                                 SPEC #spec ],\
+                           MC #mc,\
+                           MKG #mkg,\
+                           HC-LIGHT #hc-light,\
+                           POSTHEAD #posthead ]],\
+   C-CONT [ RELS <! !>, HCONS <! !> ] ].'
 
 def customize_nmcs(mylang, ch, rules, lrules):
     """
@@ -53,31 +78,7 @@ def customize_nmcs(mylang, ch, rules, lrules):
                 mylang.add(typename + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].',merge=True)
         if level == 'mid' or level == 'high':
             mylang.set_section('lexrules')
-            mylang.add('high-or-mid-nominalization-lex-rule := cat-change-with-ccont-lex-rule & same-cont-lex-rule &\
-    [ SYNSEM.LOCAL [ CONT [ HOOK [ INDEX event ]],\
-		   CAT [ HEAD verb &\
-			      [ NMZ +,\
-                     MOD #mod ],\
-                         VAL [ SUBJ < [ LOCAL [ CAT [ HEAD noun,\
-                                                      VAL.SPR < > ],\
-                                                CONT.HOOK.INDEX #subj ] ] >,\
-                               COMPS #comps,\
-                               SPR #spr,\
-                               SPEC #spec ],\
-                         MC #mc,\
-                         MKG #mkg,\
-                         HC-LIGHT #hc-light,\
-                         POSTHEAD #posthead ] ],\
-    DTR.SYNSEM.LOCAL [ CAT [ HEAD [ MOD #mod ],\
-                           VAL [ SUBJ < [ LOCAL.CONT.HOOK.INDEX #subj ] >,\
-                                 COMPS #comps,\
-                                 SPR #spr,\
-                                 SPEC #spec ],\
-                           MC #mc,\
-                           MKG #mkg,\
-                           HC-LIGHT #hc-light,\
-                           POSTHEAD #posthead ]],\
-   C-CONT [ RELS <! !>, HCONS <! !> ] ].')
+            mylang.add(HIGH_OR_MID_LEX_RULE)
 
         if level == 'low':
             mylang.set_section('lexrules')
