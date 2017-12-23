@@ -158,7 +158,7 @@ def customize_order(ch, cs, mylang, rules, typename, init, general, additional):
         # Which lexical types need to be constrained wrt INIT?
         constrain_lex_items(head,ch,cs,typename,init_value,default_init_value,mylang)
     # Constrain added and general rule wrt head and INIT
-    constrain_head_comp_rules(mylang,rules,init,init_value,default_init_value,head,general,additional,cs,wo)
+    constrain_head_comp_rules(mylang,rules,init,init_value,default_init_value,head,general,additional,cs,wo,ch)
 
 
 '''
@@ -184,12 +184,12 @@ with respect to its head or the INIT feature. The default rule will
 also need to be constrained with respect to INIT, if INIT is used in
 the additional rule.
 '''
-def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,head,general,additional,cs,wo):
+def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,head,general,additional,cs,wo,ch):
     supertype = 'head-initial' if additional == constants.HEAD_COMP else 'head-final'
     mylang.add(additional + '-phrase := basic-head-1st-comp-phrase & ' + supertype + '.'
                ,section = 'phrases',merge=True)
     # OVS order with extraposed complement is special in that it requires low subject attachment
-    if wo == 'ovs' and cs[CLAUSE_POS_EXTRA]:
+    if wo == 'ovs' and cs[CLAUSE_POS_EXTRA] and not nonempty_nmz(ch=ch,cs=cs):
         mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ <  > ].',merge=True)
     if not head:
         rules.add(additional + ' := ' + additional + '-phrase.', merge=True)
@@ -393,6 +393,14 @@ def update_verb_lextype(ch,verb, vtype):
         rest = vtype.split('-',1)[1]
         vtype = name + '-' + val + '-' + rest
     return vtype,head
+
+def nonempty_nmz(cs,ch):
+    for f in cs['feat']:
+        if f['name'] == 'nominalization':
+            for ns in ch['ns']:
+                if ns['name'] == f['value']:
+                    if ns['nmzRel'] == 'yes':
+                        return True
 
 def validate(ch,vr):
     if not ch.get(COMPS):
