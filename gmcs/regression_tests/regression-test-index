@@ -331,3 +331,4 @@ ccomp-pseudo22-v2-vfinal-comp-bef-oblig=Clausal comps V2-Vfinal oblig complement
 ccomp-pseudo5-vinitial-high-empty=Clausal comps: v-initial matrix order, high nominalization, semantically-empty.
 ccomp-pseudo23-sov-high-empty-extra=Clausal comps: SOV, high empty nominalization, extraposed complement.
 ccomp-pseudo20-sov-mid-nonempty-extra-same=Clausal comps: SOV, mid nominalization, extraposed-or-not complement.
+ccomp-pseudo19-vso-low-nonempty-feat=Clausal comps: VSO matrix order, low nominalization, feature on the embedded verb.
