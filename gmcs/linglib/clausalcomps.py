@@ -343,7 +343,7 @@ def add_clausalcomp_verb_supertype(ch, mainorverbtype,mylang):
     #    if ccs[COMP] == 'opt':
     #        head = '+vc'
     #        break
-    typedef = CLAUSALCOMP + '-verb-lex := ' + mainorverbtype + '& clausal-second-arg-trans-lex-item &\
+    typedef = CLAUSALCOMP + '-verb-lex := ' + mainorverbtype + '&\
       [ SYNSEM.LOCAL.CAT.VAL.COMPS < #comps >,\
         ARG-ST < [ LOCAL.CAT.HEAD noun ],\
                  #comps &\
@@ -363,13 +363,24 @@ def determine_clausal_verb_head(cs):
     return head
 
 def customize_clausal_verb(clausalverb,mylang,ch,cs):
+    if not 'feat' in cs:
+        mylang.add(clausalverb + ' := clausal-second-arg-trans-lex-item.',merge=True)
     for f in cs['feat']:
         if f['name'] == 'nominalization':
             path = 'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT.HEAD'
             constrain_lexitem_for_feature(clausalverb, path, ' [ NMZ + ] ',mylang)
+            for ns in ch['ns']:
+                if ns['name'] == f['value']:
+                    if ns['nmzRel'] == 'yes':
+                        mylang.add(clausalverb + ' := transitive-lex-item.',merge=True)
+                    else:
+                        mylang.add(clausalverb + ' := clausal-second-arg-trans-lex-item.',merge=True)
+            mylang.add(clausalverb + ' := transitive-lex-item.',merge=True)
         elif f['name'] == 'form':
+            mylang.add(clausalverb + ' := clausal-second-arg-trans-lex-item.',merge=True)
             path = 'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT.HEAD.FORM'
             constrain_lexitem_for_feature(clausalverb, path, f['value'],mylang)
+            mylang.add(clausalverb + ' := clausal-second-arg-trans-lex-item.',merge=True)
 
 
 # This is currently called by lexical_items.py
