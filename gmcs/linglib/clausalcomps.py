@@ -361,6 +361,7 @@ calling this function once it returns True.
 '''
 
 def init_needed(wo, cs,mylang):
+    res = False
     if cs[COMP]:
         if wo in OV_ORDERS:
             # Note that cs is a dict which will return an empty string
@@ -368,28 +369,21 @@ def init_needed(wo, cs,mylang):
             # return False, but perhaps it would be clearer to write this out.
             if cs[COMP_POS_BEFORE]:
                 if not cs[COMP_POS_AFTER]: # complementizer before clause only
-                    mylang.add('head :+ [ INIT bool ].', section='addenda')
-                    return True
+                    res = True
                 else: # complementizer both before and after clause
                     res = (cs[CLAUSE_POS_SAME] and not cs[CLAUSE_POS_EXTRA]) \
                           or (cs[CLAUSE_POS_EXTRA]and not cs[CLAUSE_POS_SAME])
-                    if res:
-                        mylang.add('head :+ [ INIT bool ].', section='addenda')
-                    return res
             elif cs[COMP_POS_AFTER]:
                 res = cs[CLAUSE_POS_EXTRA] == constants.ON
-                if res:
-                    mylang.add('head :+ [ INIT bool ].', section='addenda')
-                return res
         elif wo in VO_ORDERS:
-            #if not cs[CLAUSE_POS_SAME]:
-            #    raise Exception(EXTRA_VO)
             res = (cs[COMP_POS_AFTER] == constants.ON and not cs[COMP_POS_BEFORE] == constants.ON)
-            if res:
-                mylang.add('head :+ [ INIT bool ].', section='addenda')
-            return res
     else:
-        return (wo in OV_ORDERS or wo == 'vos') and cs[CLAUSE_POS_EXTRA] == 'on'
+         res = (wo in OV_ORDERS or wo == 'vos') and cs[CLAUSE_POS_EXTRA] == 'on'
+    if res:
+        mylang.add('head :+ [ INIT bool ].', section='addenda')
+    return res
+
+
 
 '''
 Add clausal verb supertype to the grammar.
