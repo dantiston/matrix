@@ -338,3 +338,4 @@ ccomp-pseudo26-vfin-low-nonempty-feat-extra=Clausal-comps: V-final language with
 ccomp-pseudo27-vos-extra=Clausal comps: VOS with extraposed complement, obligatory complementizer before the clause.
 ccomp-pseudo28-vin-extra=Clausal comps: V-initial language with extraposed complement, obligatory complementizer before the clause.
 ccomp-pseudo29-vso-opt=Clausal comps: VSO matrix order with optional complementizer before the clause.
+ccomp-pseudo30-sov-nonfin=Clausal comps: SOV, ccomp marked by FORM.
