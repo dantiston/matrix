@@ -174,9 +174,11 @@ def order_customization_needed(wo,cs):
                 and not cs[COMP_POS_AFTER] == 'on' and not cs[CLAUSE_POS_EXTRA] == 'on':
             return False
     else:
-        if wo in VO_ORDERS or (wo in OV_ORDERS and not cs[CLAUSE_POS_EXTRA]):
+        if (wo in VO_ORDERS and not (wo == 'vos' and cs[CLAUSE_POS_EXTRA])) \
+                or (wo in OV_ORDERS and not cs[CLAUSE_POS_EXTRA]):
             return False
     return True
+
 
 '''
 If an additional head-comp rule is needed, it may also need constraints
@@ -282,7 +284,13 @@ def determine_head(wo,cs):
                 head = 'verb'
     elif wo in VO_ORDERS:
         if cs[COMP_POS_AFTER]:
-            head = 'comp'
+            if cs[CLAUSE_POS_EXTRA]:
+                head = '+vc'
+            elif cs[CLAUSE_POS_SAME]:
+                head = 'comp'
+        elif cs[COMP_POS_BEFORE]:
+            if cs[CLAUSE_POS_EXTRA]:
+                head = 'verb'
     return head
 
 '''
@@ -329,14 +337,15 @@ def init_needed(wo, cs,mylang):
                     mylang.add('head :+ [ INIT bool ].', section='addenda')
                 return res
         elif wo in VO_ORDERS:
-            if not cs[CLAUSE_POS_SAME]:
-                raise Exception(EXTRA_VO)
-            res = cs[COMP_POS_AFTER] == constants.ON and not cs[COMP_POS_BEFORE] == constants.ON
+            #if not cs[CLAUSE_POS_SAME]:
+            #    raise Exception(EXTRA_VO)
+            res = (wo == 'vos' and cs[CLAUSE_POS_EXTRA] == constants.ON) or \
+                  (cs[COMP_POS_AFTER] == constants.ON and not cs[COMP_POS_BEFORE] == constants.ON)
             if res:
                 mylang.add('head :+ [ INIT bool ].', section='addenda')
             return res
     else:
-        return wo in OV_ORDERS and cs[CLAUSE_POS_EXTRA] == 'on'
+        return (wo in OV_ORDERS or wo == 'vos') and cs[CLAUSE_POS_EXTRA] == 'on'
 
 '''
 Add clausal verb supertype to the grammar.
@@ -413,10 +422,10 @@ def nonempty_nmz(cs,ch):
 def validate(ch,vr):
     if not ch.get(COMPS):
         pass
-    if ch.get(constants.WORD_ORDER) not in OV_ORDERS:
-        for css in ch.get(COMPS):
-            if css[CLAUSE_POS_EXTRA] == constants.ON:
-                vr.err(css.full_key + '_' + CLAUSE_POS_EXTRA,EXTRA_VO)
+    # if ch.get(constants.WORD_ORDER) not in OV_ORDERS:
+    #     for css in ch.get(COMPS):
+    #         if css[CLAUSE_POS_EXTRA] == constants.ON:
+    #             vr.err(css.full_key + '_' + CLAUSE_POS_EXTRA,EXTRA_VO)
     for css in ch.get(COMPS):
         if not (css[CLAUSE_POS_EXTRA] or css[CLAUSE_POS_SAME]):
             vr.err(css.full_key + '_' + CLAUSE_POS_SAME, SAME_OR_EXTRA)
