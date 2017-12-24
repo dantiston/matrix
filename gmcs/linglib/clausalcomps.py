@@ -172,7 +172,7 @@ def need_customize_hc(wo,cs):
                 and not cs[COMP_POS_BEFORE] == 'on' and not cs[CLAUSE_POS_EXTRA] == 'on':
             return False
         if wo in VO_ORDERS and cs[COMP_POS_BEFORE] == 'on'and not cs[COMP_POS_AFTER] == 'on':
-            if wo == 'vos':
+            if wo == 'vos' or wo == 'svo':
                 return False
             if wo == 'v-initial' and cs[CLAUSE_POS_SAME] and not cs[CLAUSE_POS_EXTRA]:
                 return False
