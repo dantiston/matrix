@@ -234,6 +234,7 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
     # OVS order with extraposed complement is special in that it requires low subject attachment
     if (wo == 'ovs' or wo == 'v-initial') and cs[CLAUSE_POS_EXTRA] and not nonempty_nmz(ch=ch,cs=cs):
         mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ <  > ].',merge=True)
+    #TODO: this special case below should be handled together with the todo in the lowers else block
     if wo == 'v-initial' and cs[CLAUSE_POS_EXTRA]:
         head2 = '[ NMZ + ]' if utils.has_nmz_ccomp(ch) else 'comp'
         mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD +nv ].')
@@ -263,7 +264,7 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
             #TODO: here, try adding [ NMZ + ] (where?), for nominalized extraposed complements
             mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + head +' ].'
                    ,merge=True)
-            if wo == 'v-final' and utils.has_nmz_ccomp(ch):
+            if utils.has_nmz_ccomp(ch):
                 mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD [ NMZ + ] ].'
                    ,merge=True)
 
