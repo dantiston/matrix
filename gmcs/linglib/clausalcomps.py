@@ -464,14 +464,17 @@ def determine_ccomp_mark_type(ch):
 def validate(ch,vr):
     if not ch.get(COMPS):
         pass
-    if (ch.get(constants.WORD_ORDER) not in OV_ORDERS) \
-            or (ch.get(constants.WORD_ORDER) not in ['v-initial','vos']):
-        for css in ch.get(COMPS):
-            if css[CLAUSE_POS_EXTRA] == constants.ON:
-                vr.err(css.full_key + '_' + CLAUSE_POS_EXTRA,EXTRA_VO)
+    #if (ch.get(constants.WORD_ORDER) not in OV_ORDERS) \
+    #        or (ch.get(constants.WORD_ORDER) not in ['v-initial','vos']):
+    #    for css in ch.get(COMPS):
+    #        if css[CLAUSE_POS_EXTRA] == constants.ON:
+    #            vr.err(css.full_key + '_' + CLAUSE_POS_EXTRA,EXTRA_VO)
     for ccs in ch.get(COMPS):
         if not (ccs[CLAUSE_POS_EXTRA] or ccs[CLAUSE_POS_SAME]):
             vr.err(ccs.full_key + '_' + CLAUSE_POS_SAME, SAME_OR_EXTRA)
+        if ccs[CLAUSE_POS_EXTRA]:
+            if ch.get(constants.WORD_ORDER) in ['free','v2','svo','vso']:
+                vr.err(ccs.full_key + '_' + CLAUSE_POS_EXTRA,EXTRA_VO)
     #TODO: Will possibly have to disallow extraposition with optional complementizers
     if ch.get(constants.WORD_ORDER) == 'v-initial':
          for ccs in ch.get(COMPS):
