@@ -22,6 +22,7 @@
 (
 ((:path . "tiniest") (:content . "tiniest: A very basic grammar just to get the regression tests started.  SOV word order, no frills."))
  ;;; new-regression-test-here
+((:path . "ccomp-pseudo27-vos-extra") (:content . "ccomp-pseudo27-vos-extra: Clausal comps: VOS with extraposed complement, obligatory complementizer before the clause."))
 ((:path . "ccomp-pseudo27-vos-extra") (:content . "ccomp-pseudo27-vos-extra: Clausal comps: VOS language with extraposed complement, obligatory complementizer before the clause."))
 ((:path . "ccomp-pseudo26-vfin-low-nonempty-feat-extra") (:content . "ccomp-pseudo26-vfin-low-nonempty-feat-extra: Clausal-comps: V-final language with extraposed nominalized complements."))
 ((:path . "ccomp-pseudo25-ovs-low-nonempty-feat-extra") (:content . "ccomp-pseudo25-ovs-low-nonempty-feat-extra: Clausal comps: OVS with low nominalization and extraposition."))
