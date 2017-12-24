@@ -168,8 +168,7 @@ def need_customize_hc(wo,cs):
         if wo in OV_ORDERS and cs[COMP_POS_AFTER] == 'on' and cs[CLAUSE_POS_SAME] == 'on' \
                 and not cs[COMP_POS_BEFORE] == 'on' and not cs[CLAUSE_POS_EXTRA] == 'on':
             return False
-        if wo in VO_ORDERS and cs[COMP_POS_BEFORE] == 'on' and cs[CLAUSE_POS_SAME] == 'on' \
-                and not cs[COMP_POS_AFTER] == 'on' and not cs[CLAUSE_POS_EXTRA] == 'on':
+        if wo in VO_ORDERS and cs[COMP_POS_BEFORE] == 'on'and not cs[COMP_POS_AFTER] == 'on':
             return False
         return True
     else:
