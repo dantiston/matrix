@@ -340,3 +340,4 @@ ccomp-pseudo28-vin-extra=Clausal comps: V-initial language with extraposed compl
 ccomp-pseudo29-vso-opt=Clausal comps: VSO matrix order with optional complementizer before the clause.
 ccomp-pseudo30-sov-nonfin=Clausal comps: SOV, ccomp marked by FORM.
 ccomp-pseudo31-sov-nonfin-extra=Clausal comps: SOV, extraposed complement marked by FORM.
+ccomp-pseudo32-sov-nonfin-extra-opt=Clausal comps: SOV, extraposed nonfinite complement with optional complementizer.
