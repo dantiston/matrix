@@ -49,8 +49,8 @@ COMPLEMENTIZER = 'complementizer' # Choices key for choices pertaining
                                   # a particular complementation strategy.
 
 # Error messages:
-EXTRA_VO = 'The only supporded word orders for extraposed complements are strictly-OV orders ' \
-           '(note: not free or V2; v-final is allowed, but not with nominalization).'
+EXTRA_VO = 'The only supporded word orders for extraposed complements are: SOV, VOS, OVS, OSV, v-final. ' \
+           'V-initial is not supported with optional complementizer.'
 SAME_OR_EXTRA = 'Please choose whether the clausal complement takes the same position as noun ' \
                         'complements or is extraposed to the end of the clause ' \
                         '(the latter valid only for strict OV orders).'
@@ -105,6 +105,8 @@ def add_types_to_grammar(mylang,ch,rules,have_complementizer):
         # Which is the default head-complement rule for nouns etc.,
         # and which needs to be added for this complementation strategy?
         general, additional = determine_head_comp_rule_type(ch.get(constants.WORD_ORDER))
+        if wo=='v-initial':
+            additional = 'head-comp-ccomp'
     for cs in ch.get(COMPS):
         ccomp_type = determine_ccomp_mark_type(ch)
         # There can only be one complementizer type per strategy
@@ -158,6 +160,7 @@ def customize_order(ch, cs, mylang, rules, typename, init, general, additional):
         constrain_lex_items(head,ch,cs,typename,init_value,default_init_value,mylang)
     # Constrain added and general rule wrt head and INIT
     if need_customize_hc(wo,cs):
+        #TODO: this should probably be split somehow; the number of args is unhealthy.
         constrain_head_comp_rules(mylang,rules,init,init_value,default_init_value,head,general,additional,cs,wo,ch)
     if need_customize_hs(wo,cs):
         constrain_head_subj_rules(wo,cs,ch,mylang,rules)
@@ -169,7 +172,10 @@ def need_customize_hc(wo,cs):
                 and not cs[COMP_POS_BEFORE] == 'on' and not cs[CLAUSE_POS_EXTRA] == 'on':
             return False
         if wo in VO_ORDERS and cs[COMP_POS_BEFORE] == 'on'and not cs[COMP_POS_AFTER] == 'on':
-            return False
+            if wo == 'vos':
+                return False
+            if wo == 'v-initial' and cs[CLAUSE_POS_SAME] and not cs[CLAUSE_POS_EXTRA]:
+                return False
         return True
     else:
         return wo in OV_ORDERS and cs[CLAUSE_POS_EXTRA]
@@ -222,12 +228,16 @@ also need to be constrained with respect to INIT, if INIT is used in
 the additional rule.
 '''
 def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,head,general,additional,cs,wo,ch):
-    supertype = 'head-initial' if additional == constants.HEAD_COMP else 'head-final'
+    supertype = 'head-initial' if additional.startswith(constants.HEAD_COMP) else 'head-final'
     mylang.add(additional + '-phrase := basic-head-1st-comp-phrase & ' + supertype + '.'
                ,section = 'phrases',merge=True)
     # OVS order with extraposed complement is special in that it requires low subject attachment
-    if wo == 'ovs' and cs[CLAUSE_POS_EXTRA] and not nonempty_nmz(ch=ch,cs=cs):
+    if (wo == 'ovs' or wo == 'v-initial') and cs[CLAUSE_POS_EXTRA] and not nonempty_nmz(ch=ch,cs=cs):
         mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ <  > ].',merge=True)
+    if wo == 'v-initial' and cs[CLAUSE_POS_EXTRA]:
+        head2 = '[ NMZ + ]' if utils.has_nmz_ccomp(ch) else 'comp'
+        mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD +nv ].')
+        mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + head2 + ' ].')
     elif wo == 'v-final' and cs[CLAUSE_POS_EXTRA] and utils.has_nmz_ccomp(ch):
         mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < [ ] > ].',merge=True)
     if not head:
@@ -388,17 +398,11 @@ Add clausal verb supertype to the grammar.
 # It is possible that that call should be moved to this module.
 
 def add_clausalcomp_verb_supertype(ch, mainorverbtype,mylang):
-    #head = 'comp'
-    #for ccs in ch.get(COMPS):
-    #    if ccs[COMP] == 'opt':
-    #        head = '+vc'
-    #        break
     typedef = CLAUSALCOMP + '-verb-lex := ' + mainorverbtype + '&\
       [ SYNSEM.LOCAL.CAT.VAL.COMPS < #comps >,\
         ARG-ST < [ LOCAL.CAT.HEAD noun ],\
                  #comps &\
-                 [ LOCAL.CAT.VAL [ SPR < >, COMPS < > ] ] > ].' \
-                 #                                   'HEAD ' + head + ' ] ] > ].'
+                 [ LOCAL.CAT.VAL [ SPR < >, COMPS < > ] ] > ].'
     mylang.add(typedef,section='verblex')
 
 def determine_clausal_verb_head(cs):
@@ -428,6 +432,7 @@ def customize_clausal_verb(clausalverb,mylang,ch,cs):
     if not supertype:
         supertype = 'clausal-second-arg-trans-lex-item'
     mylang.add(clausalverb +' := ' + supertype + '.',merge=True)
+
 
 # This is currently called by lexical_items.py
 def update_verb_lextype(ch,verb, vtype):
@@ -463,10 +468,13 @@ def validate(ch,vr):
     #     for css in ch.get(COMPS):
     #         if css[CLAUSE_POS_EXTRA] == constants.ON:
     #             vr.err(css.full_key + '_' + CLAUSE_POS_EXTRA,EXTRA_VO)
-    for css in ch.get(COMPS):
-        if not (css[CLAUSE_POS_EXTRA] or css[CLAUSE_POS_SAME]):
-            vr.err(css.full_key + '_' + CLAUSE_POS_SAME, SAME_OR_EXTRA)
-    # if ch.get(constants.WORD_ORDER) == 'v-final':
-    #      for css in ch.get(COMPS):
-    #        if css[CLAUSE_POS_EXTRA] == constants.ON:
-    #            vr.err(css.full_key + '_' + CLAUSE_POS_EXTRA,EXTRA_VO)
+    for ccs in ch.get(COMPS):
+        if not (ccs[CLAUSE_POS_EXTRA] or ccs[CLAUSE_POS_SAME]):
+            vr.err(ccs.full_key + '_' + CLAUSE_POS_SAME, SAME_OR_EXTRA)
+    #TODO: Will possibly have to disallow extraposition with optional complementizers
+    if ch.get(constants.WORD_ORDER) == 'v-initial':
+         for ccs in ch.get(COMPS):
+           if ccs[CLAUSE_POS_EXTRA] == constants.ON:
+               if not utils.has_nmz_ccomp(ch):
+                   if not (ccs[COMP] and ccs[COMP] == 'oblig'):
+                        vr.err(ccs.full_key + '_' + CLAUSE_POS_EXTRA,EXTRA_VO)
