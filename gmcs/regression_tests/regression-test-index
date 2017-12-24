@@ -334,3 +334,4 @@ ccomp-pseudo20-sov-mid-nonempty-extra-same=Clausal comps: SOV, mid nominalizatio
 ccomp-pseudo19-vso-low-nonempty-feat=Clausal comps: VSO matrix order, low nominalization, feature on the embedded verb.
 ccomp-pseudo24-sov-low-nonempty-feat-extra=Clausal comps: SOV, low nominalization, extraposed complement.
 ccomp-pseudo25-ovs-low-nonempty-feat-extra=Clausal comps: OVS with low nominalization and extraposition.
+ccomp-pseudo26-vfin-low-nonempty-feat-extra=Clausal-comps: V-final language with extraposed nominalized complements.
