@@ -1,6 +1,6 @@
 from gmcs.utils import merge_constraints, get_name
 
-from gmcs import constants
+from gmcs import constants, utils
 
 ######################################################################
 # Clausal Complements
@@ -50,7 +50,7 @@ COMPLEMENTIZER = 'complementizer' # Choices key for choices pertaining
 
 # Error messages:
 EXTRA_VO = 'The only supporded word orders for extraposed complements are strictly-OV orders ' \
-           '(note: not free or V2; v-final is allowed).'
+           '(note: not free or V2; v-final is allowed, but not with nominalization).'
 SAME_OR_EXTRA = 'Please choose whether the clausal complement takes the same position as noun ' \
                         'complements or is extraposed to the end of the clause ' \
                         '(the latter valid only for strict OV orders).'
@@ -191,6 +191,8 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
     # OVS order with extraposed complement is special in that it requires low subject attachment
     if wo == 'ovs' and cs[CLAUSE_POS_EXTRA] and not nonempty_nmz(ch=ch,cs=cs):
         mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ <  > ].',merge=True)
+    elif wo == 'v-final' and cs[CLAUSE_POS_EXTRA] and utils.has_nmz_ccomp(ch):
+        mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < [ ] > ].',merge=True)
     if not head:
         rules.add(additional + ' := ' + additional + '-phrase.', merge=True)
     else:
@@ -211,8 +213,13 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
         # Here, head must be either comp or verb, but not both
         else:
             rules.add(additional + ' := ' + additional + '-phrase.', merge=True)
+            #TODO: here, try adding [ NMZ + ] (where?), for nominalized extraposed complements
             mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + head +' ].'
                    ,merge=True)
+            if wo == 'v-final' and utils.has_nmz_ccomp(ch):
+                mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD [ NMZ + ] ].'
+                   ,merge=True)
+
     if init:
         mylang.add(additional +
                    '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + init_value + ' ].',
@@ -413,3 +420,7 @@ def validate(ch,vr):
     for css in ch.get(COMPS):
         if not (css[CLAUSE_POS_EXTRA] or css[CLAUSE_POS_SAME]):
             vr.err(css.full_key + '_' + CLAUSE_POS_SAME, SAME_OR_EXTRA)
+    # if ch.get(constants.WORD_ORDER) == 'v-final':
+    #      for css in ch.get(COMPS):
+    #        if css[CLAUSE_POS_EXTRA] == constants.ON:
+    #            vr.err(css.full_key + '_' + CLAUSE_POS_EXTRA,EXTRA_VO)
