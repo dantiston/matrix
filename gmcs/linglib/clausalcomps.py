@@ -408,7 +408,7 @@ def determine_clausal_verb_head(cs):
         elif cs[COMP] == 'opt':
             head = '+vc'
     else:
-        head = 'noun'
+        head = 'noun' if 'nominalization' in [ f['name'] for f in cs['feat'] ] else 'verb'
     return head
 
 def customize_clausal_verb(clausalverb,mylang,ch,cs):
@@ -453,8 +453,14 @@ def nonempty_nmz(cs,ch):
                         return True
     return False
 
-def determine_ccomp_mark_type(ch):
-    pass
+def determine_ccomp_mark_type(cs):
+    if cs[COMP]:
+        return 'COMP'
+    else:
+        for f in cs['feat']:
+            if f['name'] == 'nominalization':
+                return 'NMZ'
+        return 'FEAT'
 
 def validate(ch,vr):
     if not ch.get(COMPS):
