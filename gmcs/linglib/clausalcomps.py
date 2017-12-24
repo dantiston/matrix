@@ -237,6 +237,7 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
     #TODO: this special case below should be handled together with the todo in the lowers else block
     if wo == 'v-initial' and cs[CLAUSE_POS_EXTRA]:
         head2 = '[ NMZ + ]' if utils.has_nmz_ccomp(ch) else 'comp'
+        #TODO: the below constraint on general should also fire for pseudo34 and similar
         mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD +nv ].')
         mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + head2 + ' ].')
     elif wo == 'v-final' and cs[CLAUSE_POS_EXTRA] and utils.has_nmz_ccomp(ch):
@@ -258,6 +259,8 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
                            + additional + '-phrase & [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < [ ] > ].',merge=True)
                 mylang.add(additional + '-comp-phrase := '
                            + additional + '-phrase & [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].',section='phrases')
+            else:
+                rules.add(additional + ' := ' + additional + '-phrase.', merge=True)
         # Here, head must be either comp or verb, but not both
         else:
             rules.add(additional + ' := ' + additional + '-phrase.', merge=True)
@@ -365,6 +368,8 @@ def init_needed(wo, cs,mylang):
     res = False
     if cs[COMP]:
         if wo in OV_ORDERS:
+            if cs[COMP] == 'opt' and cs[CLAUSE_POS_EXTRA]:
+                res = True
             # Note that cs is a dict which will return an empty string
             # if the object is not there. In this case, the IF statement should
             # return False, but perhaps it would be clearer to write this out.
