@@ -464,10 +464,11 @@ def determine_ccomp_mark_type(ch):
 def validate(ch,vr):
     if not ch.get(COMPS):
         pass
-    # if ch.get(constants.WORD_ORDER) not in OV_ORDERS:
-    #     for css in ch.get(COMPS):
-    #         if css[CLAUSE_POS_EXTRA] == constants.ON:
-    #             vr.err(css.full_key + '_' + CLAUSE_POS_EXTRA,EXTRA_VO)
+    if (ch.get(constants.WORD_ORDER) not in OV_ORDERS) \
+            or (ch.get(constants.WORD_ORDER) not in ['v-initial','vos']):
+        for css in ch.get(COMPS):
+            if css[CLAUSE_POS_EXTRA] == constants.ON:
+                vr.err(css.full_key + '_' + CLAUSE_POS_EXTRA,EXTRA_VO)
     for ccs in ch.get(COMPS):
         if not (ccs[CLAUSE_POS_EXTRA] or ccs[CLAUSE_POS_SAME]):
             vr.err(ccs.full_key + '_' + CLAUSE_POS_SAME, SAME_OR_EXTRA)
