@@ -106,6 +106,7 @@ def add_types_to_grammar(mylang,ch,rules,have_complementizer):
         # and which needs to be added for this complementation strategy?
         general, additional = determine_head_comp_rule_type(ch.get(constants.WORD_ORDER))
     for cs in ch.get(COMPS):
+        ccomp_type = determine_ccomp_mark_type(ch)
         # There can only be one complementizer type per strategy
         clausalverb = find_clausalverb_typename(ch,cs)
         customize_clausal_verb(clausalverb,mylang,ch,cs)
@@ -147,8 +148,6 @@ the complementation strategies in this grammar.
 '''
 def customize_order(ch, cs, mylang, rules, typename, init, general, additional):
     wo = ch.get(constants.WORD_ORDER)
-    if not order_customization_needed(wo,cs):
-        return
     init_value = '+' if additional == constants.HEAD_COMP else '-'
     default_init_value = '-' if init_value == '+' else '+'
     # What is the head of the added rule's head daughter?
@@ -158,8 +157,28 @@ def customize_order(ch, cs, mylang, rules, typename, init, general, additional):
         # Which lexical types need to be constrained wrt INIT?
         constrain_lex_items(head,ch,cs,typename,init_value,default_init_value,mylang)
     # Constrain added and general rule wrt head and INIT
-    constrain_head_comp_rules(mylang,rules,init,init_value,default_init_value,head,general,additional,cs,wo,ch)
+    if need_customize_hc(wo,cs):
+        constrain_head_comp_rules(mylang,rules,init,init_value,default_init_value,head,general,additional,cs,wo,ch)
+    if need_customize_hs(wo,cs):
+        constrain_head_subj_rules(wo,cs,ch,mylang,rules)
 
+
+def need_customize_hc(wo,cs):
+    if cs[COMP]:
+        if wo in OV_ORDERS and cs[COMP_POS_AFTER] == 'on' and cs[CLAUSE_POS_SAME] == 'on' \
+                and not cs[COMP_POS_BEFORE] == 'on' and not cs[CLAUSE_POS_EXTRA] == 'on':
+            return False
+        if wo in VO_ORDERS and cs[COMP_POS_BEFORE] == 'on' and cs[CLAUSE_POS_SAME] == 'on' \
+                and not cs[COMP_POS_AFTER] == 'on' and not cs[CLAUSE_POS_EXTRA] == 'on':
+            return False
+        return True
+    else:
+        return wo in OV_ORDERS and cs[CLAUSE_POS_EXTRA]
+
+
+
+def need_customize_hs(wo,cs):
+    return (wo == 'v-initial' or wo == 'vos') and cs[CLAUSE_POS_EXTRA]
 
 '''
 There are two combinations of choices for which no action is needed:
@@ -187,6 +206,16 @@ def customize_cverb_ccomp_order():
     pass
 
 
+def constrain_head_subj_rules(wo,cs,ch,mylang,rules):
+    if wo == 'vos' and cs[CLAUSE_POS_EXTRA]:
+        if cs[COMP]:
+            head = 'comp'
+        elif utils.has_nmz_ccomp(ch):
+            head = '[ NMZ + ]'
+        mylang.add('head-subj-ccomp-phrase := decl-head-subj-phrase & head-initial & '
+                   '[ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD ' + head + ' ] > ].')
+        rules.add('head-subj-ccomp := head-subject-ccomp-phrase.')
+
 '''
 If an additional head-comp rule is needed, it may also need constraints
 with respect to its head or the INIT feature. The default rule will
@@ -198,12 +227,12 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
     mylang.add(additional + '-phrase := basic-head-1st-comp-phrase & ' + supertype + '.'
                ,section = 'phrases',merge=True)
     # OVS order with extraposed complement is special in that it requires low subject attachment
-    if (wo == 'ovs' or wo == 'vos') and cs[CLAUSE_POS_EXTRA] and not nonempty_nmz(ch=ch,cs=cs):
+    if wo == 'ovs' and cs[CLAUSE_POS_EXTRA] and not nonempty_nmz(ch=ch,cs=cs):
         mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ <  > ].',merge=True)
     elif wo == 'v-final' and cs[CLAUSE_POS_EXTRA] and utils.has_nmz_ccomp(ch):
         mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < [ ] > ].',merge=True)
     if not head:
-        rules.add(additional + ' := ' + additional + '-phrase.', merge=True)
+        rules.add(additional + ' := ' + additional + '-phrase.')
     else:
         # For some combinations of choices, we may need separate rules for complementizers
         # and clausal verbs, to avoid spurious parses.
@@ -424,6 +453,9 @@ def nonempty_nmz(cs,ch):
                     if ns['nmzRel'] == 'yes':
                         return True
     return False
+
+def determine_ccomp_mark_type(ch):
+    pass
 
 def validate(ch,vr):
     if not ch.get(COMPS):
