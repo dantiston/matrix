@@ -1,0 +1,12 @@
+1 noun1 noun2 tverb-FIN 1 19
+2 *noun1 noun2 tverb-NFIN 0 14
+3 *noun3 noun1 noun2 tverb-NFIN cverb 0 21
+4 *noun3 noun1 noun2 tverb-FIN cverb 0 21
+5 noun3 cverb-FIN noun1 noun2 tverb-NFIN 1 33
+6 noun3 cverb-FIN noun1 noun2 tverb-NFIN comp1 1 40
+7 *noun3 noun1 noun2 tverb-NFIN comp1 cverb 0 25
+8 noun3 cverb-FIN comp1 noun1 noun2 tverb-NFIN 1 38
+
+;;; Total CPU time: 61 msecs
+;;; Mean edges: 26.38
+;;; Mean parses: 0.50
