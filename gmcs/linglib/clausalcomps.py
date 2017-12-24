@@ -292,9 +292,13 @@ def constrain_lex_items(head,ch,cs,comptype, init_value, default_init_value,myla
     clausalverb = find_clausalverb_typename(ch,cs)
     init_path = 'SYNSEM.LOCAL.CAT.HEAD.INIT'
     if head == '+vc':
-        if cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME]:
-            constrain_lexitem_for_feature(clausalverb,init_path, init_value,mylang)
-            mylang.add('transitive-verb-lex := [ ' + init_path + ' ' + default_init_value + ' ].'
+        if cs[CLAUSE_POS_EXTRA]:
+            if not cs[CLAUSE_POS_SAME]:
+                constrain_lexitem_for_feature(clausalverb,init_path, init_value,mylang)
+                mylang.add('transitive-verb-lex := [ ' + init_path + ' ' + default_init_value + ' ].'
+                   , merge=True)
+            elif cs[COMP] == 'opt':
+                mylang.add('transitive-verb-lex := [ ' + init_path + ' ' + default_init_value + ' ].'
                    , merge=True)
         if cs[COMP_POS_BEFORE] and not cs[COMP_POS_AFTER] and ch.get(constants.WORD_ORDER) in OV_ORDERS:
             constrain_lexitem_for_feature(comptype,init_path,init_value,mylang)
@@ -373,7 +377,7 @@ def init_needed(wo, cs,mylang):
             # Note that cs is a dict which will return an empty string
             # if the object is not there. In this case, the IF statement should
             # return False, but perhaps it would be clearer to write this out.
-            if cs[COMP_POS_BEFORE]:
+            elif cs[COMP_POS_BEFORE]:
                 if not cs[COMP_POS_AFTER]: # complementizer before clause only
                     res = True
                 else: # complementizer both before and after clause
