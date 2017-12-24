@@ -335,4 +335,3 @@ ccomp-pseudo19-vso-low-nonempty-feat=Clausal comps: VSO matrix order, low nomina
 ccomp-pseudo24-sov-low-nonempty-feat-extra=Clausal comps: SOV, low nominalization, extraposed complement.
 ccomp-pseudo25-ovs-low-nonempty-feat-extra=Clausal comps: OVS with low nominalization and extraposition.
 ccomp-pseudo26-vfin-low-nonempty-feat-extra=Clausal-comps: V-final language with extraposed nominalized complements.
-ccomp-pseudo27-vos-extra=Clausal comps: VOS language with extraposed complement, obligatory complementizer before the clause.
