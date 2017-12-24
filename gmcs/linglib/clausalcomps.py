@@ -180,6 +180,13 @@ def order_customization_needed(wo,cs):
     return True
 
 
+def customize_complementizer_order():
+    pass
+
+def customize_cverb_ccomp_order():
+    pass
+
+
 '''
 If an additional head-comp rule is needed, it may also need constraints
 with respect to its head or the INIT feature. The default rule will
@@ -191,7 +198,7 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
     mylang.add(additional + '-phrase := basic-head-1st-comp-phrase & ' + supertype + '.'
                ,section = 'phrases',merge=True)
     # OVS order with extraposed complement is special in that it requires low subject attachment
-    if wo == 'ovs' and cs[CLAUSE_POS_EXTRA] and not nonempty_nmz(ch=ch,cs=cs):
+    if (wo == 'ovs' or wo == 'vos') and cs[CLAUSE_POS_EXTRA] and not nonempty_nmz(ch=ch,cs=cs):
         mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ <  > ].',merge=True)
     elif wo == 'v-final' and cs[CLAUSE_POS_EXTRA] and utils.has_nmz_ccomp(ch):
         mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < [ ] > ].',merge=True)
@@ -339,8 +346,7 @@ def init_needed(wo, cs,mylang):
         elif wo in VO_ORDERS:
             #if not cs[CLAUSE_POS_SAME]:
             #    raise Exception(EXTRA_VO)
-            res = (wo == 'vos' and cs[CLAUSE_POS_EXTRA] == constants.ON) or \
-                  (cs[COMP_POS_AFTER] == constants.ON and not cs[COMP_POS_BEFORE] == constants.ON)
+            res = (cs[COMP_POS_AFTER] == constants.ON and not cs[COMP_POS_BEFORE] == constants.ON)
             if res:
                 mylang.add('head :+ [ INIT bool ].', section='addenda')
             return res
