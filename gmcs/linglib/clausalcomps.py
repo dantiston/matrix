@@ -105,7 +105,7 @@ def add_types_to_grammar(mylang,ch,rules,have_complementizer):
         # Which is the default head-complement rule for nouns etc.,
         # and which needs to be added for this complementation strategy?
         general, additional = determine_head_comp_rule_type(ch.get(constants.WORD_ORDER))
-        if wo=='v-initial' or wo == 'vos' and cs[CLAUSE_POS_EXTRA]:
+        if wo=='v-initial' or wo == 'vos' and has_extraposition(ch):
             additional = 'head-comp-ccomp'
     for cs in ch.get(COMPS):
         ccomp_type = determine_ccomp_mark_type(ch)
@@ -465,6 +465,9 @@ def update_verb_lextype(ch,verb, vtype):
         rest = vtype.split('-',1)[1]
         vtype = name + '-' + val + '-' + rest
     return vtype,head
+
+def has_extraposition(ch):
+    return len([cs for cs in ch.get(COMPS) if cs[CLAUSE_POS_EXTRA]]) > 0
 
 def nonempty_nmz(cs,ch):
     for f in cs['feat']:
