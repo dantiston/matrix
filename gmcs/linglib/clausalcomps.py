@@ -183,7 +183,7 @@ def need_customize_hc(wo,cs):
 
 
 def need_customize_hs(wo,cs):
-    return (wo == 'v-initial' or wo == 'vos') and cs[CLAUSE_POS_EXTRA]
+    return wo == 'vos' and cs[CLAUSE_POS_EXTRA]
 
 '''
 There are two combinations of choices for which no action is needed:
@@ -236,9 +236,16 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
         mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ <  > ].',merge=True)
     #TODO: this special case below should be handled together with the todo in the lowers else block
     if wo == 'v-initial' and cs[CLAUSE_POS_EXTRA]:
-        head2 = '[ NMZ + ]' if utils.has_nmz_ccomp(ch) else 'comp'
-        mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD +nv ].')
-        mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + head2 + ' ].')
+        if cs[COMP] == 'oblig':
+            head2 = '[ NMZ + ]' if utils.has_nmz_ccomp(ch) else 'comp'
+            mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD +nv ].')
+            mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + head2 + ' ].')
+        elif cs[COMP] =='opt':
+            mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD noun ].')
+            mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD +vc ].')
+            mylang.add('head-comp-complementizer-phrase := basic-head-1st-comp-phrase & head-initial & '
+                       '[ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].',section = 'phrases',merge=True)
+            rules.add('head-comp-cmpl := head-comp-complementizer-phrase.')
     elif wo == 'v-final' and cs[CLAUSE_POS_EXTRA] and utils.has_nmz_ccomp(ch):
         mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < [ ] > ].',merge=True)
     if not head:
@@ -247,6 +254,8 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
         # For some combinations of choices, we may need separate rules for complementizers
         # and clausal verbs, to avoid spurious parses.
         if head == '+vc':
+            #TODO: Different rules for complementizer and noun head-comp rule are also
+            # needed for v-initial extraposed with optional complementizer
             if cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME] \
                     and cs[COMP_POS_AFTER] and cs[COMP_POS_BEFORE]:
                 rules.add(additional + '-verb := ' + additional + '-verb-phrase.')
@@ -489,4 +498,5 @@ def validate(ch,vr):
            if ccs[CLAUSE_POS_EXTRA] == constants.ON:
                if not utils.has_nmz_ccomp(ch):
                    if not (ccs[COMP] and ccs[COMP] == 'oblig'):
-                        vr.err(ccs.full_key + '_' + CLAUSE_POS_EXTRA,EXTRA_VO)
+                       pass
+                        #vr.err(ccs.full_key + '_' + CLAUSE_POS_EXTRA,EXTRA_VO)
