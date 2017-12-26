@@ -105,7 +105,7 @@ def add_types_to_grammar(mylang,ch,rules,have_complementizer):
         # Which is the default head-complement rule for nouns etc.,
         # and which needs to be added for this complementation strategy?
         general, additional = determine_head_comp_rule_type(ch.get(constants.WORD_ORDER))
-        if wo=='v-initial':
+        if wo=='v-initial' or wo == 'vos':
             additional = 'head-comp-ccomp'
     for cs in ch.get(COMPS):
         ccomp_type = determine_ccomp_mark_type(ch)
@@ -172,9 +172,9 @@ def need_customize_hc(wo,cs):
                 and not cs[COMP_POS_BEFORE] == 'on' and not cs[CLAUSE_POS_EXTRA] == 'on':
             return False
         if wo in VO_ORDERS and cs[COMP_POS_BEFORE] == 'on'and not cs[COMP_POS_AFTER] == 'on':
-            if wo in ['vos','svo']:
+            if wo in ['svo','vso']:
                 return False
-            if wo == 'v-initial' and cs[CLAUSE_POS_SAME] and not cs[CLAUSE_POS_EXTRA]:
+            if wo in ['v-initial','vos'] and cs[CLAUSE_POS_SAME] and not cs[CLAUSE_POS_EXTRA]:
                 return False
         return True
     else:
@@ -214,12 +214,13 @@ def customize_cverb_ccomp_order():
 def constrain_head_subj_rules(wo,cs,ch,mylang,rules):
     if wo == 'vos' and cs[CLAUSE_POS_EXTRA]:
         if cs[COMP]:
-            head = 'comp'
+             head = 'comp' if cs[COMP] == 'oblig' else '+vc'
         elif utils.has_nmz_ccomp(ch):
             head = '[ NMZ + ]'
         mylang.add('head-subj-ccomp-phrase := decl-head-subj-phrase & head-initial & '
-                   '[ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD ' + head + ' ] > ].')
-        rules.add('head-subj-ccomp := head-subject-ccomp-phrase.')
+                   '[ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD ' + head + ' ] > ].',section='phrases')
+        rules.add('head-subj-ccomp := head-subj-ccomp-phrase.')
+        mylang.add('head-subj-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].',merge=True)
 
 '''
 If an additional head-comp rule is needed, it may also need constraints
@@ -231,23 +232,7 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
     supertype = 'head-initial' if additional.startswith(constants.HEAD_COMP) else 'head-final'
     mylang.add(additional + '-phrase := basic-head-1st-comp-phrase & ' + supertype + '.'
                ,section = 'phrases',merge=True)
-    # OVS order with extraposed complement is special in that it requires low subject attachment
-    if (wo == 'ovs' or wo == 'v-initial') and cs[CLAUSE_POS_EXTRA] and not nonempty_nmz(ch=ch,cs=cs):
-        mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ <  > ].',merge=True)
-    #TODO: this special case below should be handled together with the todo in the lowers else block
-    if wo == 'v-initial' and cs[CLAUSE_POS_EXTRA]:
-        if cs[COMP] == 'oblig':
-            head2 = '[ NMZ + ]' if utils.has_nmz_ccomp(ch) else 'comp'
-            mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD +nv ].')
-            mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + head2 + ' ].')
-        elif cs[COMP] =='opt':
-            mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD noun ].')
-            mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD +vc ].')
-            mylang.add('head-comp-complementizer-phrase := basic-head-1st-comp-phrase & head-initial & '
-                       '[ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].',section = 'phrases',merge=True)
-            rules.add('head-comp-cmpl := head-comp-complementizer-phrase.')
-    elif wo == 'v-final' and cs[CLAUSE_POS_EXTRA] and utils.has_nmz_ccomp(ch):
-        mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < [ ] > ].',merge=True)
+    handle_special_cases(additional, ch, cs, general, mylang, rules, wo)
     if not head:
         rules.add(additional + ' := ' + additional + '-phrase.')
     else:
@@ -278,13 +263,33 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
             if utils.has_nmz_ccomp(ch):
                 mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD [ NMZ + ] ].'
                    ,merge=True)
-
     if init:
         mylang.add(additional +
                    '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + init_value + ' ].',
                    merge=True)
         mylang.add(general + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + default_init_value + ' ].',
                    merge=True)
+
+#TODO: I haven't still grasped the general logic here, hopefully one day it'll generalize.
+def handle_special_cases(additional, ch, cs, general, mylang, rules, wo):
+    if (wo in ['ovs', 'v-initial','vos']) and cs[CLAUSE_POS_EXTRA] and not nonempty_nmz(ch=ch, cs=cs):
+        mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ <  > ].', merge=True)
+    if wo in ['v-initial','vos'] and cs[CLAUSE_POS_EXTRA]:
+        if cs[COMP] == 'oblig':
+            gen_head = '+nv'
+            add_head = 'comp'
+        elif cs[COMP] == 'opt':
+            gen_head = 'noun'
+            add_head = '+vc'
+            mylang.add('head-comp-complementizer-phrase := basic-head-1st-comp-phrase & head-initial & '
+                       '[ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].', section='phrases', merge=True)
+            rules.add('head-comp-cmpl := head-comp-complementizer-phrase.')
+        mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + gen_head + ' ].')
+        mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + add_head + ' ].')
+
+    elif wo == 'v-final' and cs[CLAUSE_POS_EXTRA] and utils.has_nmz_ccomp(ch):
+        mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < [ ] > ].', merge=True)
+
 
 def find_clausalverb_typename(ch,cs):
     for v in ch.get(constants.VERB):
