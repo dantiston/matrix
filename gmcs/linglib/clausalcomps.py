@@ -273,7 +273,8 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
 #TODO: I haven't still grasped the general logic here, hopefully one day it'll generalize.
 def handle_special_cases(additional, ch, cs, general, mylang, rules, wo):
     if (wo in ['ovs', 'v-initial','vos']) and cs[CLAUSE_POS_EXTRA] and not nonempty_nmz(ch=ch, cs=cs):
-        mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ <  > ].', merge=True)
+        if not cs[CLAUSE_POS_SAME]:
+            mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ <  > ].', merge=True)
     if wo in ['v-initial','vos'] and cs[CLAUSE_POS_EXTRA]:
         if cs[COMP] == 'oblig':
             gen_head = '+nv'
@@ -281,12 +282,16 @@ def handle_special_cases(additional, ch, cs, general, mylang, rules, wo):
         elif cs[COMP] == 'opt':
             gen_head = 'noun'
             add_head = '+vc'
-            mylang.add('head-comp-complementizer-phrase := basic-head-1st-comp-phrase & head-initial & '
+            if not cs[CLAUSE_POS_SAME]:
+                mylang.add('head-comp-complementizer-phrase := basic-head-1st-comp-phrase & head-initial & '
                        '[ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].', section='phrases', merge=True)
-            rules.add('head-comp-cmpl := head-comp-complementizer-phrase.')
+                rules.add('head-comp-cmpl := head-comp-complementizer-phrase.')
         mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + gen_head + ' ].')
         mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + add_head + ' ].')
-
+        if cs[CLAUSE_POS_SAME]:
+            mylang.add('comp-head-phrase := basic-head-1st-comp-phrase & head-final '
+                       '& [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].',section='phrases')
+            rules.add('comp-head := comp-head-phrase.')
     elif wo == 'v-final' and cs[CLAUSE_POS_EXTRA] and utils.has_nmz_ccomp(ch):
         mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < [ ] > ].', merge=True)
 
