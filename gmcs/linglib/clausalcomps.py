@@ -237,7 +237,6 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
     #TODO: this special case below should be handled together with the todo in the lowers else block
     if wo == 'v-initial' and cs[CLAUSE_POS_EXTRA]:
         head2 = '[ NMZ + ]' if utils.has_nmz_ccomp(ch) else 'comp'
-        #TODO: the below constraint on general should also fire for pseudo34 and similar
         mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD +nv ].')
         mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + head2 + ' ].')
     elif wo == 'v-final' and cs[CLAUSE_POS_EXTRA] and utils.has_nmz_ccomp(ch):
@@ -406,7 +405,7 @@ def add_clausalcomp_verb_supertype(ch, mainorverbtype,mylang):
       [ SYNSEM.LOCAL.CAT.VAL.COMPS < #comps >,\
         ARG-ST < [ LOCAL.CAT.HEAD noun ],\
                  #comps &\
-                 [ LOCAL.CAT.VAL [ SPR < >, COMPS < > ] ] > ].'
+                 [ LOCAL.CAT.VAL [ SPR < >, COMPS < >, SUBJ < > ] ] > ].'
     mylang.add(typedef,section='verblex')
 
 def determine_clausal_verb_head(cs):
@@ -485,7 +484,6 @@ def validate(ch,vr):
         if ccs[CLAUSE_POS_EXTRA]:
             if ch.get(constants.WORD_ORDER) in ['free','v2','svo','vso']:
                 vr.err(ccs.full_key + '_' + CLAUSE_POS_EXTRA,EXTRA_VO)
-    #TODO: Will possibly have to disallow extraposition with optional complementizers
     if ch.get(constants.WORD_ORDER) == 'v-initial':
          for ccs in ch.get(COMPS):
            if ccs[CLAUSE_POS_EXTRA] == constants.ON:
