@@ -105,7 +105,7 @@ def add_types_to_grammar(mylang,ch,rules,have_complementizer):
         # Which is the default head-complement rule for nouns etc.,
         # and which needs to be added for this complementation strategy?
         general, additional = determine_head_comp_rule_type(ch.get(constants.WORD_ORDER))
-        if wo=='v-initial' or wo == 'vos':
+        if wo=='v-initial' or wo == 'vos' and cs[CLAUSE_POS_EXTRA]:
             additional = 'head-comp-ccomp'
     for cs in ch.get(COMPS):
         ccomp_type = determine_ccomp_mark_type(ch)
