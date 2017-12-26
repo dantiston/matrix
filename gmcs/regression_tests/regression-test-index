@@ -344,3 +344,4 @@ ccomp-pseudo34-sov-nonfin-extra-same-opt-bef-aft=Clausal comps: SOV extraposed a
 ccomp-pseudo35-vin-extra-opt-bef=Clausal comps: V-initial with strictly extraposed complement, optional complementizer before the clause.
 ccomp-pseudo27-vos-extra=Clausal comps: VOS with strictly extraposed complement, obligatory complementizer before the clause.
 ccomp-pseudo36-vos-extra-opt-bef=Clausal comps: VOS with extraposed complement and optional complementizer before the clause.
+ccomp-sov-extra-oblig-after=Clausal comps: SOV, extraposed complement, obligatory complementizer after the clause.
