@@ -269,7 +269,7 @@ def constrain_phrase_for_head_features(phrasename, cs, mylang):
 
 #TODO: I haven't still grasped the general logic here, hopefully one day it'll generalize.
 def handle_special_cases(additional, cs, general, mylang, rules, wo):
-    if (wo in ['ovs', 'v-initial','vos']) and cs[CLAUSE_POS_EXTRA]:
+    if (wo in ['ovs', 'v-initial','vos','v-final']) and cs[CLAUSE_POS_EXTRA]:
         if not cs[CLAUSE_POS_SAME]:
             mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ <  > ].',
                        section='phrases',merge=True)
@@ -295,14 +295,14 @@ def handle_special_cases(additional, cs, general, mylang, rules, wo):
                        '& [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].',section='phrases')
             rules.add('comp-head := comp-head-phrase.')
 
-        if wo == 'v-final' and cs[CLAUSE_POS_EXTRA]:
-            if cs[COMP] == 'opt' or not cs[COMP]:
-                mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < [ ] > ].', merge=True)
-                #if cs[COMP] == 'opt':
-                #    mylang.add('head-comp-complementizer-phrase := basic-head-1st-comp-phrase '
-                #               '& head-initial & [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp & [ INIT + ] ].',
-                #               section='phrases')
-                #    rules.add('head-comp-cmpl := head-comp-complementizer-phrase.')
+        # if wo == 'v-final' and cs[CLAUSE_POS_EXTRA]:
+        #     if cs[COMP] == 'opt' or not cs[COMP]:
+        #         mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < [ ] > ].', merge=True)
+        #         if cs[COMP] == 'opt':
+        #             mylang.add('head-comp-complementizer-phrase := basic-head-1st-comp-phrase '
+        #                        '& head-initial & [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp & [ INIT + ] ].',
+        #                        section='phrases')
+        #             rules.add('head-comp-cmpl := head-comp-complementizer-phrase.')
 
 def find_clausalverb_typename(ch,cs):
     for v in ch.get(constants.VERB):
