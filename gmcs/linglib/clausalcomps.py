@@ -313,11 +313,11 @@ def handle_special_cases(additional, ch, cs, general, mylang, rules, wo):
     elif wo == 'v-final' and cs[CLAUSE_POS_EXTRA]:
         if cs[COMP] == 'opt' or not cs[COMP]:
             mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < [ ] > ].', merge=True)
-            if cs[COMP] == 'opt':
-                mylang.add('head-comp-complementizer-phrase := basic-head-1st-comp-phrase '
-                           '& head-initial & [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp & [ INIT + ] ].',
-                           section='phrases')
-                rules.add('head-comp-cmpl := head-comp-complementizer-phrase.')
+            #if cs[COMP] == 'opt':
+            #    mylang.add('head-comp-complementizer-phrase := basic-head-1st-comp-phrase '
+            #               '& head-initial & [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp & [ INIT + ] ].',
+            #               section='phrases')
+            #    rules.add('head-comp-cmpl := head-comp-complementizer-phrase.')
 
 def find_clausalverb_typename(ch,cs):
     for v in ch.get(constants.VERB):
