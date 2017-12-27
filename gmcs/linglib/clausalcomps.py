@@ -272,17 +272,17 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
 
 #TODO: I haven't still grasped the general logic here, hopefully one day it'll generalize.
 def handle_special_cases(additional, ch, cs, general, mylang, rules, wo):
-    if (wo in ['ovs', 'v-initial','vos']) and cs[CLAUSE_POS_EXTRA] and not nonempty_nmz(ch=ch, cs=cs):
+    if (wo in ['ovs', 'v-initial','vos']) and cs[CLAUSE_POS_EXTRA]: #and not nonempty_nmz(ch=ch, cs=cs):
         if not cs[CLAUSE_POS_SAME]:
             mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ <  > ].', merge=True)
     if wo in ['v-initial','vos'] and cs[CLAUSE_POS_EXTRA]:
         if cs[COMP] == 'oblig':
             gen_head = '+nv'
             add_head = 'comp'
-        elif cs[COMP] == 'opt':
+        elif not cs[COMP] or cs[COMP] == 'opt':
             gen_head = 'noun'
-            add_head = '+vc'
-            if not cs[CLAUSE_POS_SAME]:
+            add_head = '+vc' if cs[COMP] == 'opt' else 'verb'
+            if not cs[CLAUSE_POS_SAME] and cs[COMP]:
                 mylang.add('head-comp-complementizer-phrase := basic-head-1st-comp-phrase & head-initial & '
                        '[ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].', section='phrases', merge=True)
                 rules.add('head-comp-cmpl := head-comp-complementizer-phrase.')
