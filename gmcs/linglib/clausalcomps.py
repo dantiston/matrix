@@ -209,7 +209,7 @@ def constrain_head_subj_rules(wo,cs,ch,mylang,rules):
         mylang.add('head-subj-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].',merge=True)
 
 def additional_needed(cs,wo):
-    return not (wo in ['v-initial', 'vos'] and cs[CLAUSE_POS_SAME] and cs[COMP_POS_AFTER])
+    return not (wo in ['v-initial', 'vos'] and cs[CLAUSE_POS_SAME] and cs[COMP_POS_AFTER] and cs[COMP_POS_BEFORE])
 
 '''
 If an additional head-comp rule is needed, it may also need constraints
