@@ -178,7 +178,6 @@ def need_customize_hc(wo,cs):
                 return False
         return True
     else:
-        #return wo in OV_ORDERS and cs[CLAUSE_POS_EXTRA]
         return not (wo in ['vso','svo'] or not cs[CLAUSE_POS_EXTRA])
 
 
@@ -280,20 +279,27 @@ def handle_special_cases(additional, ch, cs, general, mylang, rules, wo):
         if cs[COMP] == 'oblig':
             gen_head = '+nv'
             add_head = 'comp'
-        elif not cs[COMP] or cs[COMP] == 'opt':
+        elif cs[COMP] == 'opt':
             gen_head = 'noun'
             add_head = '+vc' if cs[COMP] == 'opt' else 'verb'
-            if not cs[CLAUSE_POS_SAME] and cs[COMP]:
+            if not cs[CLAUSE_POS_SAME]:
                 mylang.add('head-comp-complementizer-phrase := basic-head-1st-comp-phrase & head-initial & '
                        '[ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].', section='phrases', merge=True)
                 rules.add('head-comp-cmpl := head-comp-complementizer-phrase.')
+        elif not cs[COMP]:
+            if is_nominalized_complement(cs):
+                gen_head = '[ NMZ - ]'
+                add_head = '[ NMZ + ]'
+            else:
+                gen_head = 'noun'
+                add_head = 'verb' #TODO write method to put features here like FORM
         mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + gen_head + ' ].')
         mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + add_head + ' ].')
-        if cs[CLAUSE_POS_SAME]:
+        if cs[CLAUSE_POS_SAME] and cs[COMP]:
             mylang.add('comp-head-phrase := basic-head-1st-comp-phrase & head-final '
                        '& [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].',section='phrases')
             rules.add('comp-head := comp-head-phrase.')
-    elif wo == 'v-final' and cs[CLAUSE_POS_EXTRA]: #and utils.has_nmz_ccomp(ch):
+    elif wo == 'v-final' and cs[CLAUSE_POS_EXTRA]:
         if cs[COMP] == 'opt' or not cs[COMP]:
             mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < [ ] > ].', merge=True)
             if cs[COMP] == 'opt':
@@ -441,8 +447,11 @@ def determine_clausal_verb_head(cs):
         elif cs[COMP] == 'opt':
             head = '+vc'
     else:
-        head = 'noun' if 'nominalization' in [ f['name'] for f in cs['feat'] ] else 'verb'
+        head = 'noun' if is_nominalized_complement(cs) else 'verb'
     return head
+
+def is_nominalized_complement(cs):
+    return 'nominalization' in [ f['name'] for f in cs['feat'] ]
 
 def customize_clausal_verb(clausalverb,mylang,ch,cs):
     supertype = None
