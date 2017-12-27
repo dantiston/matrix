@@ -218,51 +218,51 @@ also need to be constrained with respect to INIT, if INIT is used in
 the additional rule.
 '''
 def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,head,general,additional,cs,wo,ch):
-    supertype = 'head-initial' if additional.startswith(constants.HEAD_COMP) else 'head-final'
     if additional_needed(cs,wo):
+        supertype = 'head-initial' if additional.startswith(constants.HEAD_COMP) else 'head-final'
         mylang.add(additional + '-phrase := basic-head-1st-comp-phrase & ' + supertype + '.'
                ,section = 'phrases',merge=True)
-    handle_special_cases(additional, ch, cs, general, mylang, rules, wo)
-    if not head:
-        rules.add(additional + ' := ' + additional + '-phrase.')
-    else:
-        # For some combinations of choices, we may need separate rules for complementizers
-        # and clausal verbs, to avoid spurious parses.
-        if head == '+vc':
-            #TODO: Different rules for complementizer and noun head-comp rule are also
-            # needed for v-initial extraposed with optional complementizer
-            if cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME] \
-                    and cs[COMP_POS_AFTER] and cs[COMP_POS_BEFORE]:
-                rules.add(additional + '-verb := ' + additional + '-verb-phrase.')
-                rules.add(additional + '-comp := ' + additional + '-comp-phrase.')
-                mylang.add(additional + '-verb-phrase := '
-                           + additional + '-phrase & [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD verb ].',section='phrases')
-                if wo in VFINAL:
+        handle_special_cases(additional, ch, cs, general, mylang, rules, wo)
+        if not head:
+            rules.add(additional + ' := ' + additional + '-phrase.')
+        else:
+            # For some combinations of choices, we may need separate rules for complementizers
+            # and clausal verbs, to avoid spurious parses.
+            if head == '+vc':
+                #TODO: Different rules for complementizer and noun head-comp rule are also
+                # needed for v-initial extraposed with optional complementizer
+                if cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME] \
+                        and cs[COMP_POS_AFTER] and cs[COMP_POS_BEFORE]:
+                    rules.add(additional + '-verb := ' + additional + '-verb-phrase.')
+                    rules.add(additional + '-comp := ' + additional + '-comp-phrase.')
                     mylang.add(additional + '-verb-phrase := '
-                           + additional + '-phrase & [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < [ ] > ].',merge=True)
-                mylang.add(additional + '-comp-phrase := '
-                           + additional + '-phrase & [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].',section='phrases')
+                               + additional + '-phrase & [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD verb ].',section='phrases')
+                    if wo in VFINAL:
+                        mylang.add(additional + '-verb-phrase := '
+                               + additional + '-phrase & [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < [ ] > ].',merge=True)
+                    mylang.add(additional + '-comp-phrase := '
+                               + additional + '-phrase & [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].',section='phrases')
+                else:
+                    rules.add(additional + ' := ' + additional + '-phrase.', merge=True)
+            # Here, head must be either comp or verb, but not both
             else:
                 rules.add(additional + ' := ' + additional + '-phrase.', merge=True)
-        # Here, head must be either comp or verb, but not both
-        else:
-            rules.add(additional + ' := ' + additional + '-phrase.', merge=True)
-            mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + head +' ].'
-                   ,merge=True)
-            if is_nominalized_complement(cs):
-                mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD [ NMZ + ] ].'
-                   ,merge=True)
-    if init:
-        mylang.add(additional +
-                   '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + init_value + ' ].',
-                   merge=True)
-        mylang.add(general + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + default_init_value + ' ].',
-                   merge=True)
-    for f in cs['feat']:
-        if f['name'] != 'nominalization':
-            mylang.add(additional + '-phrase := '
-                                   '[ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.' + f['name'].upper() +' '
-                      + f['value'] + ' ].',merge=True)
+                mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + head +' ].'
+                       ,merge=True)
+                if is_nominalized_complement(cs):
+                    mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD [ NMZ + ] ].'
+                       ,merge=True)
+        if init:
+            mylang.add(additional +
+                       '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + init_value + ' ].',
+                       merge=True)
+            mylang.add(general + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + default_init_value + ' ].',
+                       merge=True)
+        for f in cs['feat']:
+            if f['name'] != 'nominalization':
+                mylang.add(additional + '-phrase := '
+                                       '[ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.' + f['name'].upper() +' '
+                          + f['value'] + ' ].',merge=True)
 
 #TODO: I haven't still grasped the general logic here, hopefully one day it'll generalize.
 def handle_special_cases(additional, ch, cs, general, mylang, rules, wo):
