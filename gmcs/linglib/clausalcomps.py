@@ -275,7 +275,8 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
         mylang.add(general + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + default_init_value + ' ].',
                    merge=True)
     for f in cs['feat']:
-       mylang.add(additional + '-phrase := '
+        if f != 'nominalization':
+            mylang.add(additional + '-phrase := '
                                    '[ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.' + f['name'].upper() +' '
                       + f['value'] + ' ].',merge=True)
 
