@@ -106,11 +106,11 @@ def add_types_to_grammar(mylang,ch,rules,have_complementizer):
             if init:
                 break
     for cs in ch.get(COMPS):
-        general, additional = determine_head_comp_rule_type(ch.get(constants.WORD_ORDER),cs)
         clausalverb = find_clausalverb_typename(ch,cs)
         customize_clausal_verb(clausalverb,mylang,ch,cs)
         typename = add_complementizer_subtype(cs, mylang) if cs[COMP] else None
         if wo in OV_ORDERS or wo in VO_ORDERS:
+            general, additional = determine_head_comp_rule_type(ch.get(constants.WORD_ORDER),cs)
             customize_order(ch, cs, mylang, rules, typename, init,general,additional)
 
 def add_complementizer_supertype(mylang):
