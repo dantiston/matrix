@@ -105,20 +105,12 @@ def add_types_to_grammar(mylang,ch,rules,have_complementizer):
             init = init_needed(ch.get(constants.WORD_ORDER),cs,mylang)
             if init:
                 break
-        # Which is the default head-complement rule for nouns etc.,
-        # and which needs to be added for this complementation strategy?
-        general, additional = determine_head_comp_rule_type(ch.get(constants.WORD_ORDER))
-        #if wo=='v-initial' or wo == 'vos' and has_extraposition(ch):
-        #    additional = 'head-comp-ccomp'
-    mylang.add('head :+ [ EXTRA bool ].', section='addenda')
     for cs in ch.get(COMPS):
-        ccomp_type = determine_ccomp_mark_type(ch)
-        # There can only be one complementizer type per strategy
+        general, additional = determine_head_comp_rule_type(ch.get(constants.WORD_ORDER),cs)
         clausalverb = find_clausalverb_typename(ch,cs)
         customize_clausal_verb(clausalverb,mylang,ch,cs)
         typename = add_complementizer_subtype(cs, mylang) if cs[COMP] else None
         if wo in OV_ORDERS or wo in VO_ORDERS:
-        # Some strategies require changes to the word order
             customize_order(ch, cs, mylang, rules, typename, init,general,additional)
 
 def add_complementizer_supertype(mylang):
@@ -375,12 +367,15 @@ Determine which head-complement rule is the generally applicable one
 and which one would be the secondary one, applicable only to complementizers
 and/or clausal complement verbs.
 '''
-def determine_head_comp_rule_type(wo):
+def determine_head_comp_rule_type(wo,cs):
     if wo == 'v2' or wo == 'free':
         # Note: it is possible that not much is needed here, as v2 and free are very flexible
         raise Exception('Currently only supporting strict VO/OV orders, but not V2 or free.')
+    if wo=='v-initial' or wo == 'vos' and cs[CLAUSE_POS_EXTRA]:
+            return(constants.HEAD_COMP, 'head-comp-ccomp')
     return (constants.HEAD_COMP, constants.COMP_HEAD) if wo in VO_ORDERS \
         else (constants.COMP_HEAD,constants.HEAD_COMP)
+
 
 '''
 Given word order and clausal complement choices,
@@ -491,9 +486,6 @@ def update_verb_lextype(ch,verb, vtype):
         rest = vtype.split('-',1)[1]
         vtype = name + '-' + val + '-' + rest
     return vtype,head
-
-def has_extraposition(ch):
-    return len([cs for cs in ch.get(COMPS) if cs[CLAUSE_POS_EXTRA]]) > 0
 
 def nonempty_nmz(cs,ch):
     for f in cs['feat']:
