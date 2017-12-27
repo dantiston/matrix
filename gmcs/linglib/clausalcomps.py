@@ -303,7 +303,8 @@ def handle_special_cases(additional, ch, cs, general, mylang, rules, wo):
                 gen_head = 'noun'
                 add_head = 'verb' #TODO write method to put features here like FORM? Or is this already working?
         mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
-        mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
+        if not cs[CLAUSE_POS_SAME]:
+            mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
         #mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + gen_head + ' ].')
         mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + add_head + ' ].')
         if cs[CLAUSE_POS_SAME] and cs[COMP]:
@@ -313,11 +314,11 @@ def handle_special_cases(additional, ch, cs, general, mylang, rules, wo):
     elif wo == 'v-final' and cs[CLAUSE_POS_EXTRA]:
         if cs[COMP] == 'opt' or not cs[COMP]:
             mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < [ ] > ].', merge=True)
-            #if cs[COMP] == 'opt':
-            #    mylang.add('head-comp-complementizer-phrase := basic-head-1st-comp-phrase '
-            #               '& head-initial & [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp & [ INIT + ] ].',
-            #               section='phrases')
-            #    rules.add('head-comp-cmpl := head-comp-complementizer-phrase.')
+            if cs[COMP] == 'opt':
+                mylang.add('head-comp-complementizer-phrase := basic-head-1st-comp-phrase '
+                           '& head-initial & [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp & [ INIT + ] ].',
+                           section='phrases')
+                rules.add('head-comp-cmpl := head-comp-complementizer-phrase.')
 
 def find_clausalverb_typename(ch,cs):
     for v in ch.get(constants.VERB):
@@ -437,7 +438,8 @@ def extra_needed(ch,mylang):
            and len([cs for cs in ch[COMPS] if cs[CLAUSE_POS_EXTRA]]) > 0
     if res:
         mylang.add('head :+ [ EXTRA bool ].', section='addenda')
-        mylang.add('transitive-verb-lex := [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA - ] > ].'
+        if len([cs for cs in ch[COMPS] if cs[CLAUSE_POS_SAME]]) == 0:
+            mylang.add('transitive-verb-lex := [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA - ] > ].'
                        ,merge=True)
     return res
 
