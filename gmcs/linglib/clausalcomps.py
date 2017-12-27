@@ -278,7 +278,7 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
     for f in cs['feat']:
         #if f['name'] == 'form':
         mylang.add(additional + '-phrase := '
-                                    '[ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.' + f['name'] +'. '
+                                    '[ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.' + f['name'].upper() +' '
                        + f['value'] + ' ].',merge=True)
 
 #TODO: I haven't still grasped the general logic here, hopefully one day it'll generalize.
