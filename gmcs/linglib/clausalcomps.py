@@ -290,14 +290,15 @@ def handle_special_cases(additional, ch, cs, general, mylang, rules, wo):
         elif cs[COMP] == 'opt':
             gen_head = 'noun'
             add_head = '+vc' if cs[COMP] == 'opt' else 'verb'
-            if not cs[CLAUSE_POS_SAME]:
-                mylang.add('head-comp-complementizer-phrase := basic-head-1st-comp-phrase & head-initial & '
-                       '[ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].', section='phrases', merge=True)
-                rules.add('head-comp-cmpl := head-comp-complementizer-phrase.')
+            #if not cs[CLAUSE_POS_SAME]:
+            #    mylang.add('head-comp-complementizer-phrase := basic-head-1st-comp-phrase & head-initial & '
+            #           '[ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].', section='phrases', merge=True)
+            #    rules.add('head-comp-cmpl := head-comp-complementizer-phrase.')
         elif not cs[COMP]:
             if is_nominalized_complement(cs):
                 gen_head = '[ NMZ - ]'
                 add_head = '[ NMZ + ]'
+                mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + gen_head + ' ].')
             else:
                 gen_head = 'noun'
                 add_head = 'verb' #TODO write method to put features here like FORM? Or is this already working?
