@@ -348,3 +348,4 @@ ccomp-sov-extra-oblig-after=Clausal comps: SOV, extraposed complement, obligator
 ccomp-pseudo37-vos-extra-same-opt-bef-after=Clausal comps: VOS order with extraposition and normally positioned complement; flexible optional complementizer.
 ccomp-pseudo38-vin-extra-same-opt-bef-after=Clausal comps: V-initial, extraposed or normally positioned complement, flexible optional complementizer.
 ccomp-pseudo39-vfin-extra-same-opt-bef-aft=Clausal comps: V-final with extraposed and normally positioned complement and flexible optional complementizer.
+ccomp-pseudo40-vin-extra-low=Clausal comps: V-initial matrix with extraposed nominalized complement (low).
