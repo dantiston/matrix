@@ -350,3 +350,5 @@ ccomp-pseudo38-vin-extra-same-opt-bef-after=Clausal comps: V-initial, extraposed
 ccomp-pseudo39-vfin-extra-same-opt-bef-aft=Clausal comps: V-final with extraposed and normally positioned complement and flexible optional complementizer.
 ccomp-pseudo40-vin-extra-low=Clausal comps: V-initial matrix with extraposed nominalized complement (low).
 ccomp-pseudo41-vin-extra-feat=Clausal comps: VOS matrix with extraposed complement marked with FORM.
+ccomp-pseudo42-vos-extra-feat=Clausal comps: VOS with extraposed complement marked with FORM.
+ccomp-pseudo43-vos-same-extra-feat=Clausal comps: VOS order, extraposed or nouny-positioned complement marked by FORM.
