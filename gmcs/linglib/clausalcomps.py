@@ -182,7 +182,7 @@ def need_customize_hc(wo,cs):
         return not (wo in ['vso','svo'] or not cs[CLAUSE_POS_EXTRA])
 
 def need_customize_hs(wo,cs):
-    return wo == 'vos' and cs[CLAUSE_POS_EXTRA]
+    return wo in ['vos','ovs'] and cs[CLAUSE_POS_EXTRA]
 
 def customize_complementizer_order():
     pass
@@ -191,24 +191,24 @@ def customize_cverb_ccomp_order():
     pass
 
 def constrain_head_subj_rules(wo,cs,mylang,rules):
-    if wo == 'vos' and cs[CLAUSE_POS_EXTRA]:
-        if cs[COMP]:
-             head = 'comp' if cs[COMP] == 'oblig' else '+vc'
-        elif is_nominalized_complement(cs):
-            head = '[ NMZ + ]'
-        else:
-            head = 'verb'
-        mylang.add('head-subj-ccomp-phrase := decl-head-subj-phrase & head-initial & '
-                   '[ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD ' + head + ' ] > ].',section='phrases')
-        for f in cs['feat']:
-            if f['name'] == 'form':
-                mylang.add('head-subj-ccomp-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS '
-                           '< [ LOCAL.CAT.HEAD.FORM ' + f['value'] + ' ] > ].')
-        rules.add('head-subj-ccomp := head-subj-ccomp-phrase.')
-        mylang.add('head-subj-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].',merge=True)
+    #if wo == 'vos' and cs[CLAUSE_POS_EXTRA]:
+    if cs[COMP]:
+        head = 'comp' if cs[COMP] == 'oblig' else '+vc'
+    elif is_nominalized_complement(cs):
+        head = '[ NMZ + ]'
+    else:
+        head = 'verb'
+    mylang.add('head-subj-ccomp-phrase := decl-head-subj-phrase & head-initial & '
+               '[ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD ' + head + ' ] > ].',section='phrases')
+    for f in cs['feat']:
+        if f['name'] == 'form':
+            mylang.add('head-subj-ccomp-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS '
+                       '< [ LOCAL.CAT.HEAD.FORM ' + f['value'] + ' ] > ].')
+    rules.add('head-subj-ccomp := head-subj-ccomp-phrase.')
+    mylang.add('head-subj-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].',merge=True)
 
 '''
-An additional HCR will not be needed if:
+An additional HCR will *not* be needed if:
 The matrix order is VO and clausal complements can take the nouny complement position,
 and there is not a complementizer or
 there is a complementizer but it can use the normal HCR.
