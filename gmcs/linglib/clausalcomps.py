@@ -108,8 +108,8 @@ def add_types_to_grammar(mylang,ch,rules,have_complementizer):
         # Which is the default head-complement rule for nouns etc.,
         # and which needs to be added for this complementation strategy?
         general, additional = determine_head_comp_rule_type(ch.get(constants.WORD_ORDER))
-        if wo=='v-initial' or wo == 'vos' and has_extraposition(ch):
-            additional = 'head-comp-ccomp'
+        #if wo=='v-initial' or wo == 'vos' and has_extraposition(ch):
+        #    additional = 'head-comp-ccomp'
     mylang.add('head :+ [ EXTRA bool ].', section='addenda')
     for cs in ch.get(COMPS):
         ccomp_type = determine_ccomp_mark_type(ch)
@@ -166,7 +166,7 @@ def customize_order(ch, cs, mylang, rules, typename, init, general, additional):
         handle_special_cases(additional, cs, general, mylang, rules, wo)
         constrain_head_comp_rules(mylang,rules,init,init_value,default_init_value,head,general,additional,cs,wo)
     if need_customize_hs(wo,cs):
-        constrain_head_subj_rules(wo,cs,mylang,rules)
+        constrain_head_subj_rules(cs,mylang,rules)
 
 def need_customize_hc(wo,cs):
     return (wo in ['vos', 'v-initial', 'sov', 'v-final', 'osv', 'ovs'] and cs[CLAUSE_POS_EXTRA]) \
@@ -179,13 +179,19 @@ def need_customize_hs(wo,cs):
 # Assume OV order and complemetizer can attach before clause
 # or
 # VO order and complementizer can attach after.
-def customize_complementizer_order():
-    pass
+def customize_complementizer_order(wo,cs,mylang,rules):
+    if wo in OV_ORDERS and cs[COMP_POS_BEFORE]:
+        pass
+    elif wo in VO_ORDERS and cs[COMP_POS_AFTER]:
+        if wo in ['v-initial','vos']:
+            mylang.add('comp-head-phrase := basic-head-1st-comp-phrase & head-final '
+                       '& [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].',section='phrases')
+            rules.add('comp-head := comp-head-phrase.')
 
 def customize_cverb_ccomp_order():
     pass
 
-def constrain_head_subj_rules(wo,cs,mylang,rules):
+def constrain_head_subj_rules(cs,mylang,rules):
     if cs[COMP]:
         head = 'comp' if cs[COMP] == 'oblig' else '+vc'
     elif is_nominalized_complement(cs):
@@ -208,8 +214,6 @@ and there is not a complementizer or
 there is a complementizer but it can use the normal HCR.
 '''
 def additional_needed(cs,wo):
-    #TODO: Currently, there is a special case that has
-    # to do with cs[COMP_POS_AFTER] and v-intial orders. I can probably get rid of it.
     return not (wo in ['v-initial', 'vos'] and cs[CLAUSE_POS_SAME]
                 and (not cs[COMP] or (cs[COMP_POS_AFTER] and cs[COMP_POS_BEFORE])))
 
@@ -272,27 +276,19 @@ def handle_special_cases(additional, cs, general, mylang, rules, wo):
             mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ <  > ].', merge=True)
     if wo in ['v-initial','vos'] and cs[CLAUSE_POS_EXTRA]:
         if cs[COMP] == 'oblig':
-            gen_head = '+nv'
             add_head = 'comp'
         elif cs[COMP] == 'opt':
-            gen_head = 'noun'
             add_head = '+vc' if cs[COMP] == 'opt' else 'verb'
-            #if not cs[CLAUSE_POS_SAME]:
-            #    mylang.add('head-comp-complementizer-phrase := basic-head-1st-comp-phrase & head-initial & '
-            #           '[ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].', section='phrases', merge=True)
-            #    rules.add('head-comp-cmpl := head-comp-complementizer-phrase.')
         elif not cs[COMP]:
             if is_nominalized_complement(cs):
                 gen_head = '[ NMZ - ]'
                 add_head = '[ NMZ + ]'
                 mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + gen_head + ' ].')
             else:
-                gen_head = 'noun'
                 add_head = 'verb'
         if not cs[CLAUSE_POS_SAME]:
             mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
             mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
-        #mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + gen_head + ' ].')
         if not wo in ['v-initial', 'vos']:
             mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + add_head + ' ].')
         if cs[CLAUSE_POS_SAME] and cs[COMP]:
