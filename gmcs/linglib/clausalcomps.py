@@ -274,11 +274,10 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
                    merge=True)
         mylang.add(general + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + default_init_value + ' ].',
                    merge=True)
-    #for f in cs['feat']:
-        #if f['name'] == 'form':
-    #    mylang.add(additional + '-phrase := '
-    #                                '[ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.' + f['name'].upper() +' '
-    #                   + f['value'] + ' ].',merge=True)
+    for f in cs['feat']:
+       mylang.add(additional + '-phrase := '
+                                   '[ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.' + f['name'].upper() +' '
+                      + f['value'] + ' ].',merge=True)
 
 #TODO: I haven't still grasped the general logic here, hopefully one day it'll generalize.
 def handle_special_cases(additional, ch, cs, general, mylang, rules, wo):
@@ -520,21 +519,9 @@ def determine_ccomp_mark_type(cs):
 def validate(ch,vr):
     if not ch.get(COMPS):
         pass
-    #if (ch.get(constants.WORD_ORDER) not in OV_ORDERS) \
-    #        or (ch.get(constants.WORD_ORDER) not in ['v-initial','vos']):
-    #    for css in ch.get(COMPS):
-    #        if css[CLAUSE_POS_EXTRA] == constants.ON:
-    #            vr.err(css.full_key + '_' + CLAUSE_POS_EXTRA,EXTRA_VO)
     for ccs in ch.get(COMPS):
         if not (ccs[CLAUSE_POS_EXTRA] or ccs[CLAUSE_POS_SAME]):
             vr.err(ccs.full_key + '_' + CLAUSE_POS_SAME, SAME_OR_EXTRA)
         if ccs[CLAUSE_POS_EXTRA]:
             if ch.get(constants.WORD_ORDER) in ['free','v2','svo','vso']:
                 vr.err(ccs.full_key + '_' + CLAUSE_POS_EXTRA,EXTRA_VO)
-    if ch.get(constants.WORD_ORDER) == 'v-initial':
-         for ccs in ch.get(COMPS):
-           if ccs[CLAUSE_POS_EXTRA] == constants.ON:
-               if not utils.has_nmz_ccomp(ch):
-                   if not (ccs[COMP] and ccs[COMP] == 'oblig'):
-                       pass
-                        #vr.err(ccs.full_key + '_' + CLAUSE_POS_EXTRA,EXTRA_VO)
