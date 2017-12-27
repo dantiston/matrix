@@ -40,6 +40,7 @@ section=arg-opt
 section=nominalclause
   ns1_name=low
   ns1_level=low
+  ns1_nmzRel=yes
 
 section=clausalmods
 
