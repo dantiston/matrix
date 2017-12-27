@@ -218,11 +218,11 @@ also need to be constrained with respect to INIT, if INIT is used in
 the additional rule.
 '''
 def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,head,general,additional,cs,wo,ch):
+    handle_special_cases(additional, cs, general, mylang, rules, wo)
     if additional_needed(cs,wo):
         supertype = 'head-initial' if additional.startswith(constants.HEAD_COMP) else 'head-final'
         mylang.add(additional + '-phrase := basic-head-1st-comp-phrase & ' + supertype + '.'
                ,section = 'phrases',merge=True)
-        handle_special_cases(additional, ch, cs, general, mylang, rules, wo)
         if not head:
             rules.add(additional + ' := ' + additional + '-phrase.')
         else:
@@ -265,7 +265,7 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
                           + f['value'] + ' ].',merge=True)
 
 #TODO: I haven't still grasped the general logic here, hopefully one day it'll generalize.
-def handle_special_cases(additional, ch, cs, general, mylang, rules, wo):
+def handle_special_cases(additional, cs, general, mylang, rules, wo):
     if (wo in ['ovs', 'v-initial','vos']) and cs[CLAUSE_POS_EXTRA]:
         if not cs[CLAUSE_POS_SAME]:
             mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ <  > ].', merge=True)
