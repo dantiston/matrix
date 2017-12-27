@@ -355,7 +355,7 @@ def constrain_lex_items(head,ch,cs,comptype, init_value, default_init_value,myla
 
 
 def constrain_lexitem_for_feature(typename, feature_path, feature_name, feature_value,mylang):
-    mylang.add( typename + ' := [ ' + feature_path + '.' + feature_name + ' ' + feature_value + ' ]. ',
+    mylang.add( typename + ' := [ ' + feature_path + '.' + feature_name.upper() + ' ' + feature_value + ' ]. ',
                             merge=True)
 
 
