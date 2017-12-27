@@ -185,24 +185,6 @@ def need_customize_hc(wo,cs):
 def need_customize_hs(wo,cs):
     return wo == 'vos' and cs[CLAUSE_POS_EXTRA]
 
-'''
-There are two combinations of choices for which no action is needed:
-complementizers and clausal verbs can just use the default head-comp rule.
-'''
-def order_customization_needed(wo,cs):
-    if cs[COMP]:
-        if wo in OV_ORDERS and cs[COMP_POS_AFTER] == 'on' and cs[CLAUSE_POS_SAME] == 'on' \
-                and not cs[COMP_POS_BEFORE] == 'on' and not cs[CLAUSE_POS_EXTRA] == 'on':
-            return False
-        if wo in VO_ORDERS and cs[COMP_POS_BEFORE] == 'on' and cs[CLAUSE_POS_SAME] == 'on' \
-                and not cs[COMP_POS_AFTER] == 'on' and not cs[CLAUSE_POS_EXTRA] == 'on':
-            return False
-    else:
-        if (wo in VO_ORDERS and not (wo == 'vos' and cs[CLAUSE_POS_EXTRA])) \
-                or (wo in OV_ORDERS and not cs[CLAUSE_POS_EXTRA]):
-            return False
-    return True
-
 def customize_complementizer_order():
     pass
 
@@ -226,6 +208,9 @@ def constrain_head_subj_rules(wo,cs,ch,mylang,rules):
         rules.add('head-subj-ccomp := head-subj-ccomp-phrase.')
         mylang.add('head-subj-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].',merge=True)
 
+def additional_needed(cs,wo):
+    return not (wo == 'v-initial' and cs[CLAUSE_POS_SAME])
+
 '''
 If an additional head-comp rule is needed, it may also need constraints
 with respect to its head or the INIT feature. The default rule will
@@ -234,7 +219,8 @@ the additional rule.
 '''
 def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,head,general,additional,cs,wo,ch):
     supertype = 'head-initial' if additional.startswith(constants.HEAD_COMP) else 'head-final'
-    mylang.add(additional + '-phrase := basic-head-1st-comp-phrase & ' + supertype + '.'
+    if additional_needed(cs,wo):
+        mylang.add(additional + '-phrase := basic-head-1st-comp-phrase & ' + supertype + '.'
                ,section = 'phrases',merge=True)
     handle_special_cases(additional, ch, cs, general, mylang, rules, wo)
     if not head:
@@ -301,12 +287,13 @@ def handle_special_cases(additional, ch, cs, general, mylang, rules, wo):
                 mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + gen_head + ' ].')
             else:
                 gen_head = 'noun'
-                add_head = 'verb' #TODO write method to put features here like FORM? Or is this already working?
+                add_head = 'verb'
         if not cs[CLAUSE_POS_SAME]:
             mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
             mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
         #mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + gen_head + ' ].')
-        mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + add_head + ' ].')
+        if not wo == 'v-initial':
+            mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + add_head + ' ].')
         if cs[CLAUSE_POS_SAME] and cs[COMP]:
             mylang.add('comp-head-phrase := basic-head-1st-comp-phrase & head-final '
                        '& [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].',section='phrases')
