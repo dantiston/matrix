@@ -274,12 +274,11 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
                    merge=True)
         mylang.add(general + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + default_init_value + ' ].',
                    merge=True)
-
-    for f in cs['feat']:
+    #for f in cs['feat']:
         #if f['name'] == 'form':
-        mylang.add(additional + '-phrase := '
-                                    '[ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.' + f['name'].upper() +' '
-                       + f['value'] + ' ].',merge=True)
+    #    mylang.add(additional + '-phrase := '
+    #                                '[ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.' + f['name'].upper() +' '
+    #                   + f['value'] + ' ].',merge=True)
 
 #TODO: I haven't still grasped the general logic here, hopefully one day it'll generalize.
 def handle_special_cases(additional, ch, cs, general, mylang, rules, wo):
