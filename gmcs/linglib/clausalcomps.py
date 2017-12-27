@@ -207,7 +207,15 @@ def constrain_head_subj_rules(wo,cs,mylang,rules):
         rules.add('head-subj-ccomp := head-subj-ccomp-phrase.')
         mylang.add('head-subj-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].',merge=True)
 
+'''
+An additional HCR will not be needed if:
+The matrix order is VO and clausal complements can take the nouny complement position,
+and there is not a complementizer or
+there is a complementizer but it can use the normal HCR.
+'''
 def additional_needed(cs,wo):
+    #TODO: Currently, there is a special case that has
+    # to do with cs[COMP_POS_AFTER] and v-intial orders. I can probably get rid of it.
     return not (wo in ['v-initial', 'vos'] and cs[CLAUSE_POS_SAME]
                 and (not cs[COMP] or (cs[COMP_POS_AFTER] and cs[COMP_POS_BEFORE])))
 
