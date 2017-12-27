@@ -215,10 +215,16 @@ def constrain_head_subj_rules(wo,cs,ch,mylang,rules):
     if wo == 'vos' and cs[CLAUSE_POS_EXTRA]:
         if cs[COMP]:
              head = 'comp' if cs[COMP] == 'oblig' else '+vc'
-        elif utils.has_nmz_ccomp(ch):
+        elif is_nominalized_complement(cs):
             head = '[ NMZ + ]'
+        else:
+            head = 'verb'
         mylang.add('head-subj-ccomp-phrase := decl-head-subj-phrase & head-initial & '
                    '[ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD ' + head + ' ] > ].',section='phrases')
+        for f in cs['feat']:
+            if f['name'] == 'form':
+                mylang.add('head-subj-ccomp-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS '
+                           '< [ LOCAL.CAT.HEAD.FORM ' + f['value'] + ' ] > ].')
         rules.add('head-subj-ccomp := head-subj-ccomp-phrase.')
         mylang.add('head-subj-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].',merge=True)
 
@@ -257,10 +263,9 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
         # Here, head must be either comp or verb, but not both
         else:
             rules.add(additional + ' := ' + additional + '-phrase.', merge=True)
-            #TODO: here, try adding [ NMZ + ] (where?), for nominalized extraposed complements
             mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + head +' ].'
                    ,merge=True)
-            if utils.has_nmz_ccomp(ch):
+            if is_nominalized_complement(cs):
                 mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD [ NMZ + ] ].'
                    ,merge=True)
     if init:
@@ -269,6 +274,12 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
                    merge=True)
         mylang.add(general + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + default_init_value + ' ].',
                    merge=True)
+
+    for f in cs['feat']:
+        if f['name'] == 'form':
+            mylang.add(additional + '-phrase := '
+                                    '[ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.FORM '
+                       + f['value'] + ' ].',merge=True)
 
 #TODO: I haven't still grasped the general logic here, hopefully one day it'll generalize.
 def handle_special_cases(additional, ch, cs, general, mylang, rules, wo):

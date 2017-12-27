@@ -715,11 +715,12 @@ Label "<p>To start, your
 grammar may utilize a syntactic feature characterizing the form the
 verb takes. The <span class=\"feat\">form</span> feature distinguishes
 finite from non-finite forms and can be used to constrain auxiliary
-complement forms. If not applicable, you may leave this section
+complement forms and for marking clausal complements (e.g. via morphology).
+If not applicable, you may leave this section
 blank.</p>"
 
 Label "<p>If you have indicated on the word order page that your
-language has auxiliary verbs, your grammar will include
+language has auxiliary verbs, your grammar must include
 <span class=\"tt\">finite</span> and <span class=\"tt\">nonfinite</span> as values of <span
 class=\"feat\">form</span>. If your language does not have auxiliaries
 you may still include <span class=\"tt\">finite</span> and <span class=\"tt\">nonfinite</span> as values
