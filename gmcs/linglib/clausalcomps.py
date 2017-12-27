@@ -209,7 +209,7 @@ def constrain_head_subj_rules(wo,cs,mylang,rules):
 
 def additional_needed(cs,wo):
     return not (wo in ['v-initial', 'vos'] and cs[CLAUSE_POS_SAME]
-                and not cs[COMP] or (cs[COMP_POS_AFTER] and cs[COMP_POS_BEFORE]))
+                and (not cs[COMP] or (cs[COMP_POS_AFTER] and cs[COMP_POS_BEFORE])))
 
 '''
 If an additional head-comp rule is needed, it may also need constraints
