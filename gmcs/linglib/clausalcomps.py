@@ -335,22 +335,22 @@ def constrain_lex_items(head,ch,cs,comptype, init_value, default_init_value,myla
         if cs[CLAUSE_POS_EXTRA]:
             if not cs[CLAUSE_POS_SAME]:
                 constrain_lexitem_for_feature(clausalverb,init_path, 'INIT',init_value,mylang)
-                mylang.add('transitive-verb-lex := [ ' + init_path + ' ' + default_init_value + ' ].'
+                mylang.add('transitive-verb-lex := [ '  + init_path + '.INIT ' + default_init_value + ' ].'
                    , merge=True)
             elif cs[COMP] == 'opt':
-                mylang.add('transitive-verb-lex := [ ' + init_path + ' ' + default_init_value + ' ].'
+                mylang.add('transitive-verb-lex := [ ' + init_path + '.INIT ' + default_init_value + ' ].'
                    , merge=True)
         if cs[COMP_POS_BEFORE] and not cs[COMP_POS_AFTER] and ch.get(constants.WORD_ORDER) in OV_ORDERS:
             constrain_lexitem_for_feature(comptype,init_path,'INIT',init_value,mylang)
     elif head == constants.VERB:
         if cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME]:
             constrain_lexitem_for_feature(clausalverb,init_path, 'INIT', init_value,mylang)
-        mylang.add('transitive-verb-lex := [ ' + init_path + ' ' + default_init_value + ' ].'
+        mylang.add('transitive-verb-lex := [ ' + init_path + '.INIT ' + default_init_value + ' ].'
                    , merge=True)
     elif head == 'comp':
         if (cs[COMP_POS_BEFORE] and not cs[COMP_POS_AFTER] and ch.get(constants.WORD_ORDER) in OV_ORDERS) \
                 or (cs[COMP_POS_AFTER] and ch.get(constants.WORD_ORDER) in VO_ORDERS):
-            mylang.add(comptype + ':= [ ' + init_path + ' ' + init_value + ' ].',merge=True)
+            mylang.add(comptype + ':= [ ' + init_path + '.INIT ' + init_value + ' ].',merge=True)
 
 
 def constrain_lexitem_for_feature(typename, feature_path, feature_name, feature_value,mylang):
