@@ -47,6 +47,8 @@ CLAUSALCOMP = 'clausalcomp'
 COMPLEMENTIZER = 'complementizer' # Choices key for choices pertaining
                                   # to the complementizer defined for
                                   # a particular complementation strategy.
+EXTRA = 'EXTRA' # Feature for extraposed complements
+
 
 # Error messages:
 EXTRA_VO = 'The only supporded word orders for extraposed complements are: SOV, VOS, OVS, OSV, v-final. ' \
@@ -54,6 +56,7 @@ EXTRA_VO = 'The only supporded word orders for extraposed complements are: SOV, 
 SAME_OR_EXTRA = 'Please choose whether the clausal complement takes the same position as noun ' \
                         'complements or is extraposed to the end of the clause ' \
                         '(the latter valid only for strict OV orders).'
+
 #### Methods ###
 
 '''
@@ -107,6 +110,7 @@ def add_types_to_grammar(mylang,ch,rules,have_complementizer):
         general, additional = determine_head_comp_rule_type(ch.get(constants.WORD_ORDER))
         if wo=='v-initial' or wo == 'vos' and has_extraposition(ch):
             additional = 'head-comp-ccomp'
+    mylang.add('head :+ [ EXTRA bool ].', section='addenda')
     for cs in ch.get(COMPS):
         ccomp_type = determine_ccomp_mark_type(ch)
         # There can only be one complementizer type per strategy
@@ -129,8 +133,6 @@ def add_complementizer_subtype(cs, mylang):
     merge_constraints(choicedict=cs, mylang=mylang, typename=typename,
                       path=path, key1='feat', key2='name', val='form')
     return typename
-
-
 
 '''
 Add and modify head-complement rules depending
@@ -180,8 +182,6 @@ def need_customize_hc(wo,cs):
     else:
         return not (wo in ['vso','svo'] or not cs[CLAUSE_POS_EXTRA])
 
-
-
 def need_customize_hs(wo,cs):
     return wo == 'vos' and cs[CLAUSE_POS_EXTRA]
 
@@ -203,13 +203,11 @@ def order_customization_needed(wo,cs):
             return False
     return True
 
-
 def customize_complementizer_order():
     pass
 
 def customize_cverb_ccomp_order():
     pass
-
 
 def constrain_head_subj_rules(wo,cs,ch,mylang,rules):
     if wo == 'vos' and cs[CLAUSE_POS_EXTRA]:
@@ -282,7 +280,7 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
 
 #TODO: I haven't still grasped the general logic here, hopefully one day it'll generalize.
 def handle_special_cases(additional, ch, cs, general, mylang, rules, wo):
-    if (wo in ['ovs', 'v-initial','vos']) and cs[CLAUSE_POS_EXTRA]: #and not nonempty_nmz(ch=ch, cs=cs):
+    if (wo in ['ovs', 'v-initial','vos']) and cs[CLAUSE_POS_EXTRA]:
         if not cs[CLAUSE_POS_SAME]:
             mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ <  > ].', merge=True)
     if wo in ['v-initial','vos'] and cs[CLAUSE_POS_EXTRA]:
@@ -303,7 +301,9 @@ def handle_special_cases(additional, ch, cs, general, mylang, rules, wo):
             else:
                 gen_head = 'noun'
                 add_head = 'verb' #TODO write method to put features here like FORM? Or is this already working?
-        mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + gen_head + ' ].')
+        mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
+        mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
+        #mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + gen_head + ' ].')
         mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + add_head + ' ].')
         if cs[CLAUSE_POS_SAME] and cs[COMP]:
             mylang.add('comp-head-phrase := basic-head-1st-comp-phrase & head-final '
@@ -322,7 +322,6 @@ def find_clausalverb_typename(ch,cs):
     for v in ch.get(constants.VERB):
         if v.get(constants.VALENCE) == cs.full_key:
             return get_name(v) + '-' + cs.full_key + '-verb-lex'
-
 
 '''
 This function assumes that the INIT feature is needed.
@@ -356,7 +355,6 @@ def constrain_lex_items(head,ch,cs,comptype, init_value, default_init_value,myla
 def constrain_lexitem_for_feature(typename, feature_path, feature_name, feature_value,mylang):
     mylang.add( typename + ' := [ ' + feature_path + '.' + feature_name.upper() + ' ' + feature_value + ' ]. ',
                             merge=True)
-
 
 '''
 Determine whether the head of the additional head-comp rule
@@ -433,7 +431,14 @@ def init_needed(wo, cs,mylang):
         mylang.add('head :+ [ INIT bool ].', section='addenda')
     return res
 
-
+def extra_needed(ch,mylang):
+    res = ch.get(constants.WORD_ORDER) in ['v-initial','vos'] \
+           and len([cs for cs in ch[COMPS] if cs[CLAUSE_POS_EXTRA]]) > 0
+    if res:
+        mylang.add('head :+ [ EXTRA bool ].', section='addenda')
+        mylang.add('transitive-verb-lex := [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA - ] > ].'
+                       ,merge=True)
+    return res
 
 '''
 Add clausal verb supertype to the grammar.
@@ -479,6 +484,10 @@ def customize_clausal_verb(clausalverb,mylang,ch,cs):
     if not supertype:
         supertype = 'clausal-second-arg-trans-lex-item'
     mylang.add(clausalverb +' := ' + supertype + '.',merge=True)
+    if extra_needed(ch,mylang):
+        extra = '+' if cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME] else '-'
+        mylang.add(clausalverb + ' := [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA ' + extra + ' ] > ].'
+                       , merge=True)
 
 
 # This is currently called by lexical_items.py
