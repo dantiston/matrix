@@ -168,18 +168,21 @@ def customize_order(ch, cs, mylang, rules, typename, init, general, additional):
         constrain_head_subj_rules(wo,cs,mylang,rules)
 
 def need_customize_hc(wo,cs):
-    if cs[COMP]:
-        if wo in OV_ORDERS and cs[COMP_POS_AFTER] == 'on' and cs[CLAUSE_POS_SAME] == 'on' \
-                and not cs[COMP_POS_BEFORE] == 'on' and not cs[CLAUSE_POS_EXTRA] == 'on':
-            return False
-        if wo in VO_ORDERS and cs[COMP_POS_BEFORE] == 'on'and not cs[COMP_POS_AFTER] == 'on':
-            if wo in ['svo','vso']:
-                return False
-            if wo in ['v-initial','vos'] and cs[CLAUSE_POS_SAME] and not cs[CLAUSE_POS_EXTRA]:
-                return False
-        return True
-    else:
-        return not (wo in ['vso','svo'] or not cs[CLAUSE_POS_EXTRA])
+    return (wo in ['vos', 'v-initial', 'sov', 'v-final', 'osv'] and cs[CLAUSE_POS_EXTRA]) \
+           or (wo in OV_ORDERS and cs[COMP_POS_BEFORE]) \
+           or (wo in VO_ORDERS and cs[COMP_POS_AFTER])
+    # if cs[COMP]:
+    #     if wo in OV_ORDERS and cs[COMP_POS_AFTER] == 'on' and cs[CLAUSE_POS_SAME] == 'on' \
+    #             and not cs[COMP_POS_BEFORE] == 'on' and not cs[CLAUSE_POS_EXTRA] == 'on':
+    #         return False
+    #     if wo in VO_ORDERS and cs[COMP_POS_BEFORE] == 'on'and not cs[COMP_POS_AFTER] == 'on':
+    #         if wo in ['svo','vso']:
+    #             return False
+    #         if wo in ['v-initial','vos'] and cs[CLAUSE_POS_SAME] and not cs[CLAUSE_POS_EXTRA]:
+    #             return False
+    #     return True
+    # else:
+    #     return not (wo in ['vso','svo'] or not cs[CLAUSE_POS_EXTRA])
 
 def need_customize_hs(wo,cs):
     return wo in ['vos'] and cs[CLAUSE_POS_EXTRA]
