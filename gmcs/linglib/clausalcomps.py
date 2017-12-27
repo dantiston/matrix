@@ -105,7 +105,7 @@ def add_types_to_grammar(mylang,ch,rules,have_complementizer):
 
 
 def use_init(ch, mylang, wo):
-    init = False 
+    init = False
     if wo in OV_ORDERS or wo in VO_ORDERS:
         for cs in ch.get(COMPS):
             init = init_needed(ch.get(constants.WORD_ORDER), cs, mylang)
@@ -264,10 +264,10 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
 
 #TODO: I haven't still grasped the general logic here, hopefully one day it'll generalize.
 def handle_special_cases(additional, cs, general, mylang, rules, wo):
-    if (wo in ['ovs', 'v-initial','vos']) and cs[CLAUSE_POS_EXTRA]:
+    if (wo in ['ovs', 'v-initial','vos','v-final']) and cs[CLAUSE_POS_EXTRA]:
         if not cs[CLAUSE_POS_SAME]:
             mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ <  > ].', merge=True)
-    if wo in ['v-initial','vos'] and cs[CLAUSE_POS_EXTRA]:
+    if wo in ['v-initial','vos','v-final'] and cs[CLAUSE_POS_EXTRA]:
         if cs[COMP] == 'oblig':
             add_head = 'comp'
         elif cs[COMP] == 'opt':
@@ -282,20 +282,20 @@ def handle_special_cases(additional, cs, general, mylang, rules, wo):
         if not cs[CLAUSE_POS_SAME]:
             mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
             mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
-        if not wo in ['v-initial', 'vos']:
+        if not wo in ['v-initial', 'vos','v-final']:
             mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + add_head + ' ].')
         if cs[CLAUSE_POS_SAME] and cs[COMP]:
             mylang.add('comp-head-phrase := basic-head-1st-comp-phrase & head-final '
                        '& [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].',section='phrases')
             rules.add('comp-head := comp-head-phrase.')
-    elif wo == 'v-final' and cs[CLAUSE_POS_EXTRA]:
-        if cs[COMP] == 'opt' or not cs[COMP]:
-            mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < [ ] > ].', merge=True)
-            if cs[COMP] == 'opt':
-                mylang.add('head-comp-complementizer-phrase := basic-head-1st-comp-phrase '
-                           '& head-initial & [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp & [ INIT + ] ].',
-                           section='phrases')
-                rules.add('head-comp-cmpl := head-comp-complementizer-phrase.')
+    #elif wo == 'v-final' and cs[CLAUSE_POS_EXTRA]:
+    #    if cs[COMP] == 'opt' or not cs[COMP]:
+    #        mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < [ ] > ].', merge=True)
+            #if cs[COMP] == 'opt':
+            #    mylang.add('head-comp-complementizer-phrase := basic-head-1st-comp-phrase '
+            #               '& head-initial & [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp & [ INIT + ] ].',
+            #               section='phrases')
+            #    rules.add('head-comp-cmpl := head-comp-complementizer-phrase.')
 
 def find_clausalverb_typename(ch,cs):
     for v in ch.get(constants.VERB):
@@ -414,7 +414,7 @@ def init_needed(wo, cs,mylang):
     return res
 
 def extra_needed(ch,mylang):
-    res = ch.get(constants.WORD_ORDER) in ['v-initial','vos'] \
+    res = ch.get(constants.WORD_ORDER) in ['v-initial','vos','v-final'] \
            and len([cs for cs in ch[COMPS] if cs[CLAUSE_POS_EXTRA]]) > 0
     if res:
         mylang.add('head :+ [ EXTRA bool ].', section='addenda')
