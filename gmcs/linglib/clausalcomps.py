@@ -271,7 +271,8 @@ def constrain_phrase_for_head_features(phrasename, cs, mylang):
 def handle_special_cases(additional, cs, general, mylang, rules, wo):
     if (wo in ['ovs', 'v-initial','vos']) and cs[CLAUSE_POS_EXTRA]:
         if not cs[CLAUSE_POS_SAME]:
-            mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ <  > ].', merge=True)
+            mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ <  > ].',
+                       section='phrases',merge=True)
     if wo in ['v-initial','vos','v-final'] and cs[CLAUSE_POS_EXTRA]:
         if cs[COMP] == 'oblig':
             add_head = 'comp'
@@ -293,14 +294,15 @@ def handle_special_cases(additional, cs, general, mylang, rules, wo):
             mylang.add('comp-head-phrase := basic-head-1st-comp-phrase & head-final '
                        '& [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].',section='phrases')
             rules.add('comp-head := comp-head-phrase.')
-    elif wo == 'v-final' and cs[CLAUSE_POS_EXTRA]:
-        if cs[COMP] == 'opt' or not cs[COMP]:
-            mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < [ ] > ].', merge=True)
-            if cs[COMP] == 'opt':
-                mylang.add('head-comp-complementizer-phrase := basic-head-1st-comp-phrase '
-                           '& head-initial & [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp & [ INIT + ] ].',
-                           section='phrases')
-                rules.add('head-comp-cmpl := head-comp-complementizer-phrase.')
+
+        if wo == 'v-final' and cs[CLAUSE_POS_EXTRA]:
+            if cs[COMP] == 'opt' or not cs[COMP]:
+                mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < [ ] > ].', merge=True)
+                if cs[COMP] == 'opt':
+                    mylang.add('head-comp-complementizer-phrase := basic-head-1st-comp-phrase '
+                               '& head-initial & [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp & [ INIT + ] ].',
+                               section='phrases')
+                    rules.add('head-comp-cmpl := head-comp-complementizer-phrase.')
 
 def find_clausalverb_typename(ch,cs):
     for v in ch.get(constants.VERB):
