@@ -163,7 +163,8 @@ def customize_order(ch, cs, mylang, rules, typename, init, general, additional):
     # Constrain added and general rule wrt head and INIT
     if need_customize_hc(wo,cs):
         #TODO: this should probably be split somehow; the number of args is unhealthy.
-        constrain_head_comp_rules(mylang,rules,init,init_value,default_init_value,head,general,additional,cs,wo,ch)
+        handle_special_cases(additional, cs, general, mylang, rules, wo)
+        constrain_head_comp_rules(mylang,rules,init,init_value,default_init_value,head,general,additional,cs,wo)
     if need_customize_hs(wo,cs):
         constrain_head_subj_rules(wo,cs,mylang,rules)
 
@@ -171,22 +172,13 @@ def need_customize_hc(wo,cs):
     return (wo in ['vos', 'v-initial', 'sov', 'v-final', 'osv', 'ovs'] and cs[CLAUSE_POS_EXTRA]) \
            or (wo in OV_ORDERS and cs[COMP_POS_BEFORE]) \
            or (wo in VO_ORDERS and cs[COMP_POS_AFTER])
-    # if cs[COMP]:
-    #     if wo in OV_ORDERS and cs[COMP_POS_AFTER] == 'on' and cs[CLAUSE_POS_SAME] == 'on' \
-    #             and not cs[COMP_POS_BEFORE] == 'on' and not cs[CLAUSE_POS_EXTRA] == 'on':
-    #         return False
-    #     if wo in VO_ORDERS and cs[COMP_POS_BEFORE] == 'on'and not cs[COMP_POS_AFTER] == 'on':
-    #         if wo in ['svo','vso']:
-    #             return False
-    #         if wo in ['v-initial','vos'] and cs[CLAUSE_POS_SAME] and not cs[CLAUSE_POS_EXTRA]:
-    #             return False
-    #     return True
-    # else:
-    #     return not (wo in ['vso','svo'] or not cs[CLAUSE_POS_EXTRA])
 
 def need_customize_hs(wo,cs):
     return wo in ['vos'] and cs[CLAUSE_POS_EXTRA]
 
+# Assume OV order and complemetizer can attach before clause
+# or
+# VO order and complementizer can attach after.
 def customize_complementizer_order():
     pass
 
@@ -194,7 +186,6 @@ def customize_cverb_ccomp_order():
     pass
 
 def constrain_head_subj_rules(wo,cs,mylang,rules):
-    #if wo == 'vos' and cs[CLAUSE_POS_EXTRA]:
     if cs[COMP]:
         head = 'comp' if cs[COMP] == 'oblig' else '+vc'
     elif is_nominalized_complement(cs):
@@ -228,8 +219,7 @@ with respect to its head or the INIT feature. The default rule will
 also need to be constrained with respect to INIT, if INIT is used in
 the additional rule.
 '''
-def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,head,general,additional,cs,wo,ch):
-    handle_special_cases(additional, cs, general, mylang, rules, wo)
+def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,head,general,additional,cs,wo):
     if additional_needed(cs,wo):
         supertype = 'head-initial' if additional.startswith(constants.HEAD_COMP) else 'head-final'
         mylang.add(additional + '-phrase := basic-head-1st-comp-phrase & ' + supertype + '.'
