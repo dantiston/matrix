@@ -488,8 +488,8 @@ def customize_clausal_verb(clausalverb,mylang,ch,cs):
         supertype = 'clausal-second-arg-trans-lex-item'
     mylang.add(clausalverb +' := ' + supertype + '.',merge=True)
     if extra_needed(ch,mylang):
-        extra = '+' #if cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME] else '-'
-        mylang.add(clausalverb + ' := [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA ' + extra + ' ] > ].'
+        if cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME]:
+            mylang.add(clausalverb + ' := [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA + ] > ].'
                        , merge=True)
 
 
