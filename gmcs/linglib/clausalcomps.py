@@ -178,7 +178,8 @@ def need_customize_hc(wo,cs):
                 return False
         return True
     else:
-        return wo in OV_ORDERS and cs[CLAUSE_POS_EXTRA]
+        #return wo in OV_ORDERS and cs[CLAUSE_POS_EXTRA]
+        return not (wo in ['vso','svo'] or not cs[CLAUSE_POS_EXTRA])
 
 
 
