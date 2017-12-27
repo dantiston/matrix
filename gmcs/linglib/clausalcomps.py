@@ -165,8 +165,7 @@ def customize_order(ch, cs, mylang, rules, typename, init, general, additional):
         #TODO: this should probably be split somehow; the number of args is unhealthy.
         constrain_head_comp_rules(mylang,rules,init,init_value,default_init_value,head,general,additional,cs,wo,ch)
     if need_customize_hs(wo,cs):
-        constrain_head_subj_rules(wo,cs,ch,mylang,rules)
-
+        constrain_head_subj_rules(wo,cs,mylang,rules)
 
 def need_customize_hc(wo,cs):
     if cs[COMP]:
@@ -191,7 +190,7 @@ def customize_complementizer_order():
 def customize_cverb_ccomp_order():
     pass
 
-def constrain_head_subj_rules(wo,cs,ch,mylang,rules):
+def constrain_head_subj_rules(wo,cs,mylang,rules):
     if wo == 'vos' and cs[CLAUSE_POS_EXTRA]:
         if cs[COMP]:
              head = 'comp' if cs[COMP] == 'oblig' else '+vc'
@@ -209,7 +208,8 @@ def constrain_head_subj_rules(wo,cs,ch,mylang,rules):
         mylang.add('head-subj-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].',merge=True)
 
 def additional_needed(cs,wo):
-    return not (wo in ['v-initial', 'vos'] and cs[CLAUSE_POS_SAME] and cs[COMP_POS_AFTER] and cs[COMP_POS_BEFORE])
+    return not (wo in ['v-initial', 'vos'] and cs[CLAUSE_POS_SAME]
+                and not cs[COMP] or (cs[COMP_POS_AFTER] and cs[COMP_POS_BEFORE]))
 
 '''
 If an additional head-comp rule is needed, it may also need constraints
