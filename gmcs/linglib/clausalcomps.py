@@ -168,7 +168,7 @@ def customize_order(ch, cs, mylang, rules, typename, init, general, additional):
         constrain_head_subj_rules(wo,cs,mylang,rules)
 
 def need_customize_hc(wo,cs):
-    return (wo in ['vos', 'v-initial', 'sov', 'v-final', 'osv'] and cs[CLAUSE_POS_EXTRA]) \
+    return (wo in ['vos', 'v-initial', 'sov', 'v-final', 'osv', 'ovs'] and cs[CLAUSE_POS_EXTRA]) \
            or (wo in OV_ORDERS and cs[COMP_POS_BEFORE]) \
            or (wo in VO_ORDERS and cs[COMP_POS_AFTER])
     # if cs[COMP]:
