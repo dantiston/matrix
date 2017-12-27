@@ -93,18 +93,8 @@ def add_types_to_grammar(mylang,ch,rules,have_complementizer):
     if have_complementizer:
         mylang.set_section(COMPLEX)
         add_complementizer_supertype(mylang)
-    init = False # Has the INIT feature been used?
-    # Note: iterating over ch.get(COMPS) (the complementation strategies)
-    # twice on purpose here, to avoid convoluted logic
-    # involving whether we are using the INIT feature. If we use it for any clausal complement
-    # strategy, we must constrain all of them properly with respect to INIT. But if we don't need
-    # it at all, best not to put an unnecessary feature into the grammar.
     wo = ch.get(constants.WORD_ORDER)
-    if wo in OV_ORDERS or wo in VO_ORDERS:
-        for cs in ch.get(COMPS):
-            init = init_needed(ch.get(constants.WORD_ORDER),cs,mylang)
-            if init:
-                break
+    init = use_init(ch, mylang, wo)
     for cs in ch.get(COMPS):
         clausalverb = find_clausalverb_typename(ch,cs)
         customize_clausal_verb(clausalverb,mylang,ch,cs)
@@ -112,6 +102,17 @@ def add_types_to_grammar(mylang,ch,rules,have_complementizer):
         if wo in OV_ORDERS or wo in VO_ORDERS:
             general, additional = determine_head_comp_rule_type(ch.get(constants.WORD_ORDER),cs)
             customize_order(ch, cs, mylang, rules, typename, init,general,additional)
+
+
+def use_init(ch, mylang, wo):
+    init = False 
+    if wo in OV_ORDERS or wo in VO_ORDERS:
+        for cs in ch.get(COMPS):
+            init = init_needed(ch.get(constants.WORD_ORDER), cs, mylang)
+            if init:
+                break
+    return init
+
 
 def add_complementizer_supertype(mylang):
     mylang.add(COMP_LEX_ITEM_DEF, section=COMPLEX)
