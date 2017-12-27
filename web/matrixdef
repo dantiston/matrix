@@ -1779,8 +1779,8 @@ BeginIter comps{i} "a Clausal Complement Type" 1
 
          EndIter complementizer
 
-  Label "<p> The embedded verb has the following features 
-  e.g. finite, nonfinite (define in Other Features), nominalization:</p>"
+  Label "<p> The embedded verb has the following features
+  e.g. finite, nonfinite form (define in Other Features), nominalization (define in Nominalized Clauses):</p>"
   
     BeginIter feat{k} "a Feature"
 

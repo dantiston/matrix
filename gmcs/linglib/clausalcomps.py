@@ -276,9 +276,9 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
                    merge=True)
 
     for f in cs['feat']:
-        if f['name'] == 'form':
-            mylang.add(additional + '-phrase := '
-                                    '[ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.FORM '
+        #if f['name'] == 'form':
+        mylang.add(additional + '-phrase := '
+                                    '[ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.' + f['name'] +'. '
                        + f['value'] + ' ].',merge=True)
 
 #TODO: I haven't still grasped the general logic here, hopefully one day it'll generalize.
@@ -331,21 +331,21 @@ It will constrain verbs and/or complementizers with respect to the INIT feature.
 '''
 def constrain_lex_items(head,ch,cs,comptype, init_value, default_init_value,mylang):
     clausalverb = find_clausalverb_typename(ch,cs)
-    init_path = 'SYNSEM.LOCAL.CAT.HEAD.INIT'
+    init_path = 'SYNSEM.LOCAL.CAT.HEAD'
     if head == '+vc':
         if cs[CLAUSE_POS_EXTRA]:
             if not cs[CLAUSE_POS_SAME]:
-                constrain_lexitem_for_feature(clausalverb,init_path, init_value,mylang)
+                constrain_lexitem_for_feature(clausalverb,init_path, 'INIT',init_value,mylang)
                 mylang.add('transitive-verb-lex := [ ' + init_path + ' ' + default_init_value + ' ].'
                    , merge=True)
             elif cs[COMP] == 'opt':
                 mylang.add('transitive-verb-lex := [ ' + init_path + ' ' + default_init_value + ' ].'
                    , merge=True)
         if cs[COMP_POS_BEFORE] and not cs[COMP_POS_AFTER] and ch.get(constants.WORD_ORDER) in OV_ORDERS:
-            constrain_lexitem_for_feature(comptype,init_path,init_value,mylang)
+            constrain_lexitem_for_feature(comptype,init_path,'INIT',init_value,mylang)
     elif head == constants.VERB:
         if cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME]:
-            constrain_lexitem_for_feature(clausalverb,init_path,init_value,mylang)
+            constrain_lexitem_for_feature(clausalverb,init_path, 'INIT', init_value,mylang)
         mylang.add('transitive-verb-lex := [ ' + init_path + ' ' + default_init_value + ' ].'
                    , merge=True)
     elif head == 'comp':
@@ -354,8 +354,8 @@ def constrain_lex_items(head,ch,cs,comptype, init_value, default_init_value,myla
             mylang.add(comptype + ':= [ ' + init_path + ' ' + init_value + ' ].',merge=True)
 
 
-def constrain_lexitem_for_feature(typename, feature_path, feature_value,mylang):
-    mylang.add( typename + ' := [ ' + feature_path + ' ' + feature_value + ' ]. ',
+def constrain_lexitem_for_feature(typename, feature_path, feature_name, feature_value,mylang):
+    mylang.add( typename + ' := [ ' + feature_path + '.' + feature_name + ' ' + feature_value + ' ]. ',
                             merge=True)
 
 
@@ -468,15 +468,15 @@ def customize_clausal_verb(clausalverb,mylang,ch,cs):
     supertype = None
     for f in cs['feat']:
         if f['name'] == 'nominalization':
-            path = 'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT.HEAD'
-            constrain_lexitem_for_feature(clausalverb, path, ' [ NMZ + ] ',mylang)
+            path = 'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT'
+            constrain_lexitem_for_feature(clausalverb, path, 'HEAD', '[ NMZ + ] ',mylang)
             for ns in ch['ns']:
                 if ns['name'] == f['value']:
                     if ns['nmzRel'] == 'yes':
                         supertype = 'transitive-lex-item'
-        elif f['name'] == 'form':
-            path = 'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT.HEAD.FORM'
-            constrain_lexitem_for_feature(clausalverb, path, f['value'],mylang)
+        else:
+            path = 'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT.HEAD'
+            constrain_lexitem_for_feature(clausalverb, path, f['name'],f['value'],mylang)
     if not supertype:
         supertype = 'clausal-second-arg-trans-lex-item'
     mylang.add(clausalverb +' := ' + supertype + '.',merge=True)
