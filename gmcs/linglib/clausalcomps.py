@@ -182,7 +182,7 @@ def need_customize_hc(wo,cs):
         return not (wo in ['vso','svo'] or not cs[CLAUSE_POS_EXTRA])
 
 def need_customize_hs(wo,cs):
-    return wo in ['vos'] and cs[CLAUSE_POS_EXTRA]
+    return wo in ['vos', 'osv'] and cs[CLAUSE_POS_EXTRA]
 
 def customize_complementizer_order():
     pass
