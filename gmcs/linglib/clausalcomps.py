@@ -292,7 +292,7 @@ def handle_special_cases(additional, ch, cs, general, mylang, rules, wo):
                 add_head = '[ NMZ + ]'
             else:
                 gen_head = 'noun'
-                add_head = 'verb' #TODO write method to put features here like FORM
+                add_head = 'verb' #TODO write method to put features here like FORM? Or is this already working?
         mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + gen_head + ' ].')
         mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + add_head + ' ].')
         if cs[CLAUSE_POS_SAME] and cs[COMP]:
