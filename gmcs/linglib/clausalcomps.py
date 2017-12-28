@@ -301,13 +301,12 @@ def constrain_lex_items(head,ch,cs,comptype, init_value, default_init_value,myla
             constrain_lexitem_for_feature(clausalverb,init_path, 'INIT', init_value,mylang)
         mylang.add('transitive-verb-lex := [ ' + init_path + '.INIT ' + default_init_value + ' ].'
                    , merge=True)
-    #elif head == 'comp':
     else:
         if (cs[COMP_POS_BEFORE] and not cs[COMP_POS_AFTER] and wo in OV_ORDERS) \
                 or (cs[COMP_POS_AFTER] and not cs[COMP_POS_BEFORE] and wo in VO_ORDERS):
             mylang.add(comptype + ':= [ ' + init_path + '.INIT ' + init_value + ' ].',merge=True)
-        #else:
-        #    mylang.add(comptype + ':= [ ' + init_path + '.INIT ' + default_init_value + ' ].',merge=True)
+        elif not cs[COMP_POS_AFTER] and cs[COMP_POS_BEFORE]:
+            mylang.add(comptype + ':= [ ' + init_path + '.INIT ' + default_init_value + ' ].',merge=True)
 
 
 def constrain_lexitem_for_feature(typename, feature_path, feature_name, feature_value,mylang):
