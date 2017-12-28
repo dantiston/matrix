@@ -1,5 +1,5 @@
 ;;; -*- Mode: TDL; Coding: utf-8 -*-
-high-nominalized-clause := high-nominalized-clause-phrase.
+high-no-rel-nominalized-clause := high-no-rel-nominalized-clause-phrase.
 
 comp-head := comp-head-phrase.
 
