@@ -1,9 +1,9 @@
 ;;; -*- Mode: TDL; Coding: utf-8 -*-
 ;;; Inflecting Lexical Rule Instances
 
-mid-suffix :=
+high-suffix :=
 %suffix (* -NMZ)
-mid-lex-rule.
+high-lex-rule.
 
 fin-suffix :=
 %suffix (* -FIN)

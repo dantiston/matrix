@@ -2,7 +2,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Grammar of ccomp-pseudo46-2-nmz-and-comp-same-and-extra
 ;;; created at:
-;;;     Thu Dec 28 21:11:34 UTC 2017
+;;;     Thu Dec 28 21:19:38 UTC 2017
 ;;; based on Matrix customization system version of:
 ;;;     Thu Dec 28 19:13:37 UTC 2017
 ;;;
@@ -22,9 +22,11 @@ head :+ [ NMZ bool,
     FORM form,
     INIT bool ].
 
-inflected :+ [ FRM-FLAG luk ].
+inflected :+ [ NONFIN-FLAG luk,
+    FRM-FLAG luk ].
 
-infl-satisfied :+ [ FRM-FLAG na-or-+ ].
+infl-satisfied :+ [ NONFIN-FLAG na-or-+,
+    FRM-FLAG na-or-+ ].
 
 basic-head-comp-phrase :+ [ SYNSEM.LOCAL.CAT.MC #mc,
     HEAD-DTR.SYNSEM.LOCAL.CAT.MC #mc ].
@@ -72,7 +74,8 @@ verb-lex := basic-verb-lex & non-mod-lex-item & NMZ-rule-dtr &
                                SPEC < >,
                                SUBJ < #subj > ],
                          HEAD.NMZ - ] ],
-    INFLECTED.FRM-FLAG - ].
+    INFLECTED [ NONFIN-FLAG na-or--,
+                FRM-FLAG - ] ].
 
 intransitive-verb-lex := verb-lex & intransitive-lex-item &
   [ SYNSEM.LOCAL.CAT.VAL.COMPS < >,
@@ -163,19 +166,23 @@ NMZ-rule-dtr := word-or-lexrule.
 NMZ-lex-rule-super := high-or-mid-nominalization-lex-rule & infl-lex-rule &
   [ INFLECTED #infl,
     DTR NMZ-rule-dtr &
-        [ INFLECTED #infl ] ].
+        [ INFLECTED #infl &
+                    [ NONFIN-FLAG + ] ] ].
 
-mid-lex-rule := NMZ-lex-rule-super.
+high-lex-rule := NMZ-lex-rule-super.
 
 FRM-lex-rule-super := NMZ-rule-dtr & add-only-no-ccont-rule & infl-lex-rule &
   [ INFLECTED.FRM-FLAG +,
     DTR verb-lex ].
 
-fin-lex-rule := FRM-lex-rule-super &
-  [ SYNSEM.LOCAL.CAT.HEAD.FORM finite ].
-
 nonfin-lex-rule := FRM-lex-rule-super &
-  [ SYNSEM.LOCAL.CAT.HEAD.FORM nonfinite ].
+  [ INFLECTED.NONFIN-FLAG +,
+    SYNSEM.LOCAL.CAT.HEAD.FORM nonfinite ].
+
+fin-lex-rule := FRM-lex-rule-super &
+  [ INFLECTED.NONFIN-FLAG #nonfin,
+    DTR.INFLECTED.NONFIN-FLAG #nonfin,
+    SYNSEM.LOCAL.CAT.HEAD.FORM finite ].
 
 ;;;;;;;;;;;;;;;;;;;
 ;;; Phrasal Types
