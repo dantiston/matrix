@@ -294,7 +294,7 @@ def constrain_lex_items(head,ch,cs,comptype, init_value, default_init_value,myla
             constrain_lexitem_for_feature(comptype,init_path,'INIT',init_value,mylang)
     elif head == 'verb' and cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME]:
         constrain_lexitem_for_feature(clausalverb,init_path, 'INIT', init_value,mylang)
-    else:
+    elif comptype:
         if (cs[COMP_POS_BEFORE] and not cs[COMP_POS_AFTER] and wo in OV_ORDERS) \
                 or (cs[COMP_POS_AFTER] and not cs[COMP_POS_BEFORE] and wo in VO_ORDERS):
             mylang.add(comptype + ':= [ ' + init_path + '.INIT ' + init_value + ' ].',merge=True)
