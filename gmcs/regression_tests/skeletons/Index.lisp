@@ -22,6 +22,7 @@
 (
 ((:path . "tiniest") (:content . "tiniest: A very basic grammar just to get the regression tests started.  SOV word order, no frills."))
  ;;; new-regression-test-here
+((:path . "ccomp-pseudo46-2-nmz-and-comp-same-and-extra") (:content . "ccomp-pseudo46-2-nmz-and-comp-same-and-extra: Clausal comps: 2 stratugies, one nominalized, another with flexible complementizer and optional extraposition."))
 ((:path . "ccomp-pseudo25-ovs-low-nonempty-feat-extra") (:content . "ccomp-pseudo25-ovs-low-nonempty-feat-extra: Clausal comps: OVS with extraposed complement marked by low nominalization."))
 ((:path . "ccomp-pseudo45-2-nmz-and-comp") (:content . "ccomp-pseudo45-2-nmz-and-comp: Clausal comps: 2 strategies for SOV, one with nominalization, another with complementizer before the clause and extraposition."))
 ((:path . "ccomp-pseudo44-2-2complementizers") (:content . "ccomp-pseudo44-2-2complementizers: Clausal comps: 2 strategies, with different complementizer attachment and extraposition (SOV)."))
