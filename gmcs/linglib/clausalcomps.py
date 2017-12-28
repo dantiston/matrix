@@ -376,7 +376,7 @@ def determine_head(wo,cs):
                 head = 'comp'
         elif cs[COMP_POS_BEFORE]:
             if cs[CLAUSE_POS_EXTRA]:
-                head = 'verb'
+                head = '+vc' #'verb' #TODO: When should this be +vc? When v-initial, for instance
     return head
 
 '''
