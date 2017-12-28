@@ -1746,10 +1746,10 @@ EndIter cms
 Section clausal-comp "Clausal Complements"
 
 Define strategies for <b>sentential,
-or clausal, complements</b> here.<br><br> 
+or clausal, complements</b> here.<br><br>
 
+Label "<p><b>New section! Report bugs to Olga Zamaraeva.</b></p>"
 
- 
 Label "<p>You may define several types of object clausal complements below.
 You may also leave this section blank, in which case the starter
 grammar produced will not support clausal complements.</p>"
@@ -1804,9 +1804,15 @@ clauses on the Word Order page. If your language employs different orders
 in different clausal complement types, please let us know.</p>"
 
 Label "<p>
-NOTE: You will need to specify the position classes for non-finite verbal morphology 
-(including nominalized, which can have a special paradigm) in the Morphology section. 
+NOTE: You will need to specify the position classes for the verbal morphology
+in the Morphology section.
 You will need to specify which verbs can take which type of complement in the Lexicon section.
+</p>"
+
+Label "<p>
+NOTE: The number of various combinations of choices becomes really large
+when more than one complementation strategy is defined. You can specify multiple strategies,
+but one-strategy scenario was tested better.
 </p>"
 
 Section lexicon "Lexicon"
