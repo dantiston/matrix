@@ -202,12 +202,12 @@ def constrain_head_subj_rules(cs,mylang,rules):
 
 '''
 An additional HCR will *not* be needed if:
-The matrix order is VO and clausal complements can take the nouny complement position,
+The matrix order is VO and clausal complements are not extraposed,
 and there is not a complementizer or
-there is a complementizer but it can use the normal HCR.
+there is a complementizer but it can only use the normal HCR.
 '''
 def additional_needed(cs,wo):
-    return not (wo in ['v-initial', 'vos'] and cs[CLAUSE_POS_SAME]
+     return not (wo in ['v-initial', 'vos'] and cs[CLAUSE_POS_SAME]
                 and (not cs[COMP] or (cs[COMP_POS_AFTER] and cs[COMP_POS_BEFORE])))
 
 '''
@@ -236,7 +236,6 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
                        merge=True)
         constrain_phrase_for_head_features(additional, cs, mylang)
 
-
 def constrain_phrase_for_head_features(phrasename, cs, mylang):
     for f in cs['feat']:
         if f['name'] != 'nominalization':
@@ -244,12 +243,11 @@ def constrain_phrase_for_head_features(phrasename, cs, mylang):
                                     '[ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.' + f['name'].upper() + ' '
                        + f['value'] + ' ].', merge=True)
 
-
 #TODO: I haven't still grasped the general logic here, hopefully one day it'll generalize.
 def handle_special_cases(additional, cs, general, mylang, rules, wo):
     if (wo in ['ovs', 'osv', 'v-initial','vos','v-final']) and cs[CLAUSE_POS_EXTRA]:
-        #if not cs[CLAUSE_POS_SAME]:
-        mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ <  > ].',
+        if additional_needed(cs,wo):
+            mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ <  > ].',
                        section='phrases',merge=True)
     if wo in ['v-initial','vos','v-final'] and cs[CLAUSE_POS_EXTRA]:
         if cs[COMP] == 'oblig':
