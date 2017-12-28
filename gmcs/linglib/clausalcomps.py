@@ -462,22 +462,23 @@ def is_nominalized_complement(cs):
 
 def customize_clausal_verb(clausalverb,mylang,ch,cs):
     supertype = None
+    path = 'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT'
     for f in cs['feat']:
         if nominalized_comps(ch):
-            if f['name'] == 'nominalization':
-                path = 'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT'
-                constrain_lexitem_for_feature(clausalverb, path, 'HEAD', '[ NMZ + ] ',mylang)
-                for ns in ch['ns']:
-                    if ns['name'] == f['value']:
-                        if ns['nmzRel'] == 'yes':
-                            supertype = 'transitive-lex-item'
+            if is_nominalized_complement(cs):
+                if f['name'] == 'nominalization':
+                    constrain_lexitem_for_feature(clausalverb, path, 'HEAD', '[ NMZ + ] ',mylang)
+                    for ns in ch['ns']:
+                        if ns['name'] == f['value']:
+                            if ns['nmzRel'] == 'yes':
+                                supertype = 'transitive-lex-item'
+                else:
+                    constrain_lexitem_for_feature(clausalverb, path + '.HEAD', f['name'],f['value'],mylang)
             else:
-                path = 'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT.HEAD'
                 constrain_lexitem_for_feature(clausalverb, path, 'HEAD', '[ NMZ - ] ',mylang)
-                constrain_lexitem_for_feature(clausalverb, path, f['name'],f['value'],mylang)
+                constrain_lexitem_for_feature(clausalverb, path + '.HEAD', f['name'],f['value'],mylang)
         else:
-            path = 'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT.HEAD'
-            constrain_lexitem_for_feature(clausalverb, path, f['name'],f['value'],mylang)
+            constrain_lexitem_for_feature(clausalverb, path + '.HEAD', f['name'],f['value'],mylang)
     if not supertype:
         supertype = 'clausal-second-arg-trans-lex-item'
     mylang.add(clausalverb +' := ' + supertype + '.',merge=True)
