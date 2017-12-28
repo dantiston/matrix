@@ -33,3 +33,6 @@ cverb2 := cverb-extra-comps2-verb-lex &
 
 comps1_complementizer1 := comps1-comp-lex-item &
   [ STEM < "comp1" > ].
+
+comps2_complementizer1 := comps2-comp-lex-item &
+  [ STEM < "comp2" > ].

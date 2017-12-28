@@ -48,6 +48,7 @@ section=clausal-comp
   comps2_clause-pos-extra=on
   comps2_comp-pos-before=on
   comps2_comp=opt
+    comps2_complementizer1_orth=comp2
 
 section=lexicon
   noun1_name=noun
