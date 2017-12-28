@@ -155,9 +155,9 @@ def customize_order(ch, cs, mylang, rules, typename, init, general, additional):
     # Constrain added and general rule wrt head and INIT
     if need_customize_hc(wo,cs):
         #TODO: this should probably be split somehow; the number of args is unhealthy.
-        handle_special_cases(additional, cs, general, mylang, rules, wo)
         if additional_needed(cs,wo):
             constrain_head_comp_rules(mylang,rules,init,init_value,default_init_value,head,general,additional,cs,wo)
+        handle_special_cases(additional, cs, general, mylang, rules, wo)
     if need_customize_hs(wo,cs):
         constrain_head_subj_rules(cs,mylang,rules)
 
