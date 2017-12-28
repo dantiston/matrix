@@ -353,3 +353,4 @@ ccomp-pseudo42-vos-extra-feat=Clausal comps: VOS with extraposed complement mark
 ccomp-pseudo43-vos-same-extra-feat=Clausal comps: VOS order, extraposed or nouny-positioned complement marked by FORM.
 ccomp-pseudo44-2-2complementizers=Clausal comps: 2 strategies, with different complementizer attachment and extraposition (SOV).
 ccomp-pseudo45-2-nmz-and-comp=Clausal comps: 2 strategies for SOV, one with nominalization, another with complementizer before the clause and extraposition.
+ccomp-pseudo25-ovs-low-nonempty-feat-extra=Clausal comps: OVS with extraposed complement marked by low nominalization.
