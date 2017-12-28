@@ -268,10 +268,10 @@ def handle_special_cases(additional, cs, general, mylang, rules, wo):
         if not wo in ['v-initial', 'vos','v-final']:
             mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + add_head + ' ].')
         #if (not wo == 'v-final' and cs[CLAUSE_POS_SAME] and cs[COMP]):
-        if cs[CLAUSE_POS_SAME] and cs[COMP]:
-            mylang.add('comp-head-phrase := basic-head-1st-comp-phrase & head-final '
+        if cs[CLAUSE_POS_EXTRA] and cs[COMP_POS_AFTER]:
+            mylang.add('comp-head-complementizer-phrase := basic-head-1st-comp-phrase & head-final '
                        '& [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].',section='phrases')
-            rules.add('comp-head := comp-head-phrase.')
+            rules.add('comp-head-compl := comp-head-complementizer-phrase.')
 
 def find_clausalverb_typename(ch,cs):
     for v in ch.get(constants.VERB):
