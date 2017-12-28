@@ -222,32 +222,7 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
         mylang.add(additional + '-phrase := basic-head-1st-comp-phrase & ' + supertype + '.'
                ,section = 'phrases',merge=True)
         rules.add(additional + ' := ' + additional + '-phrase.')
-        #if not head:
-        #    rules.add(additional + ' := ' + additional + '-phrase.')
-        #else:
-            # For some combinations of choices, we may need separate rules for complementizers
-            # and clausal verbs, to avoid spurious parses.
-        #    if head == '+vc':
-                #TODO: Different rules for complementizer and noun head-comp rule are also
-                # needed for v-initial extraposed with optional complementizer
-                #if not wo == 'v-final':
-                #    if cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME] \
-                #            and cs[COMP_POS_AFTER] and cs[COMP_POS_BEFORE]:
-                #        rules.add(additional + '-verb := ' + additional + '-verb-phrase.')
-                #        rules.add(additional + '-comp := ' + additional + '-comp-phrase.')
-                #        mylang.add(additional + '-verb-phrase := '
-                #                   + additional + '-phrase & [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD verb ].',section='phrases')
-                    #if wo in VFINAL:
-                    #    mylang.add(additional + '-verb-phrase := '
-                    #           + additional + '-phrase & [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < [ ] > ].',merge=True)
-                    #mylang.add(additional + '-comp-phrase := '
-                    #           + additional + '-phrase & [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].',section='phrases')
-                #else:
-                    #rules.add(additional + ' := ' + additional + '-phrase.', merge=True)
-            # Here, head must be either comp or verb, but not both
-            #else:
         if head:
-            #rules.add(additional + ' := ' + additional + '-phrase.', merge=True)
             mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + head +' ].'
                    ,merge=True)
         if is_nominalized_complement(cs):
@@ -272,7 +247,7 @@ def constrain_phrase_for_head_features(phrasename, cs, mylang):
 
 #TODO: I haven't still grasped the general logic here, hopefully one day it'll generalize.
 def handle_special_cases(additional, cs, general, mylang, rules, wo):
-    if (wo in ['ovs', 'v-initial','vos','v-final']) and cs[CLAUSE_POS_EXTRA]:
+    if (wo in ['ovs', 'osv', 'v-initial','vos','v-final']) and cs[CLAUSE_POS_EXTRA]:
         #if not cs[CLAUSE_POS_SAME]:
         mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ <  > ].',
                        section='phrases',merge=True)
@@ -297,15 +272,6 @@ def handle_special_cases(additional, cs, general, mylang, rules, wo):
             mylang.add('comp-head-phrase := basic-head-1st-comp-phrase & head-final '
                        '& [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].',section='phrases')
             rules.add('comp-head := comp-head-phrase.')
-
-        # if wo == 'v-final' and cs[CLAUSE_POS_EXTRA]:
-        #     if cs[COMP] == 'opt' or not cs[COMP]:
-        #         mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < [ ] > ].', merge=True)
-        #         if cs[COMP] == 'opt':
-        #             mylang.add('head-comp-complementizer-phrase := basic-head-1st-comp-phrase '
-        #                        '& head-initial & [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp & [ INIT + ] ].',
-        #                        section='phrases')
-        #             rules.add('head-comp-cmpl := head-comp-complementizer-phrase.')
 
 def find_clausalverb_typename(ch,cs):
     for v in ch.get(constants.VERB):
