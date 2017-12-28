@@ -285,25 +285,23 @@ def constrain_lex_items(head,ch,cs,comptype, init_value, default_init_value,myla
     wo = ch.get(constants.WORD_ORDER)
     clausalverb = find_clausalverb_typename(ch,cs)
     init_path = 'SYNSEM.LOCAL.CAT.HEAD'
+    if head in ['+vc', 'verb'] and cs[CLAUSE_POS_EXTRA] and (not cs[CLAUSE_POS_SAME] or cs[COMP] == 'opt'):
+        mylang.add('transitive-verb-lex := [ '  + init_path + '.INIT ' + default_init_value + ' ].'
+                   , merge=True)
     if head == '+vc':
         if cs[CLAUSE_POS_EXTRA]:
-            if not cs[CLAUSE_POS_SAME] or cs[COMP] == 'opt':
-                mylang.add('transitive-verb-lex := [ '  + init_path + '.INIT ' + default_init_value + ' ].'
-                   , merge=True)
+            #if not cs[CLAUSE_POS_SAME] or cs[COMP] == 'opt':
+            #    mylang.add('transitive-verb-lex := [ '  + init_path + '.INIT ' + default_init_value + ' ].'
+            #       , merge=True)
             if not cs[CLAUSE_POS_SAME]:
                 constrain_lexitem_for_feature(clausalverb,init_path, 'INIT',init_value,mylang)
-                #mylang.add('transitive-verb-lex := [ '  + init_path + '.INIT ' + default_init_value + ' ].'
-                #   , merge=True)
-            #elif cs[COMP] == 'opt':
-            #    mylang.add('transitive-verb-lex := [ ' + init_path + '.INIT ' + default_init_value + ' ].'
-            #       , merge=True)
         if cs[COMP_POS_BEFORE] and not cs[COMP_POS_AFTER] and wo in OV_ORDERS:
             constrain_lexitem_for_feature(comptype,init_path,'INIT',init_value,mylang)
     elif head == constants.VERB:
         if cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME]:
             constrain_lexitem_for_feature(clausalverb,init_path, 'INIT', init_value,mylang)
-        mylang.add('transitive-verb-lex := [ ' + init_path + '.INIT ' + default_init_value + ' ].'
-                   , merge=True)
+        #mylang.add('transitive-verb-lex := [ ' + init_path + '.INIT ' + default_init_value + ' ].'
+        #           , merge=True)
     else:
         if (cs[COMP_POS_BEFORE] and not cs[COMP_POS_AFTER] and wo in OV_ORDERS) \
                 or (cs[COMP_POS_AFTER] and not cs[COMP_POS_BEFORE] and wo in VO_ORDERS):
