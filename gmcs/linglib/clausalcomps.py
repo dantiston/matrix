@@ -94,13 +94,14 @@ def add_types_to_grammar(mylang,ch,rules,have_complementizer):
         add_complementizer_supertype(mylang)
     wo = ch.get(constants.WORD_ORDER)
     init = use_init(ch, mylang, wo)
+    extra = extra_needed(ch,mylang)
     for cs in ch.get(COMPS):
         clausalverb = find_clausalverb_typename(ch,cs)
-        customize_clausal_verb(clausalverb,mylang,ch,cs)
+        customize_clausal_verb(clausalverb,mylang,ch,cs,extra)
         typename = add_complementizer_subtype(cs, mylang) if cs[COMP] else None
         if wo in OV_ORDERS or wo in VO_ORDERS:
             general, additional = determine_head_comp_rule_type(ch.get(constants.WORD_ORDER),cs)
-            customize_order(ch, cs, mylang, rules, typename, init,general,additional)
+            customize_order(ch, cs, mylang, rules, typename, init,general,additional,extra)
 
 
 def use_init(ch, mylang, wo):
@@ -142,16 +143,13 @@ init tells if the INIT feature is needed or not. The value must
 be true if INIT feature will be used in at least one of
 the complementation strategies in this grammar.
 '''
-def customize_order(ch, cs, mylang, rules, typename, init, general, additional):
+def customize_order(ch, cs, mylang, rules, typename, init, general, additional,extra):
     wo = ch.get(constants.WORD_ORDER)
     init_value = '+' if additional == constants.HEAD_COMP else '-'
     default_init_value = '-' if init_value == '+' else '+'
     # What is the head of the added rule's head daughter?
     head = determine_head(wo,cs)
-    if init:
-        # If INIT feature was used before or is needed now:
-        # Which lexical types need to be constrained wrt INIT?
-        constrain_lex_items(head,ch,cs,typename,init_value,default_init_value,mylang)
+    constrain_lex_items(head,ch,cs,typename,init_value,default_init_value,mylang,init,extra)
     # Constrain added and general rule wrt head and INIT
     if need_customize_hc(wo,cs):
         #TODO: this should probably be split somehow; the number of args is unhealthy.
@@ -282,32 +280,33 @@ def find_clausalverb_typename(ch,cs):
 This function assumes that the INIT feature is needed.
 It will constrain verbs and/or complementizers with respect to the INIT feature.
 '''
-def constrain_lex_items(head,ch,cs,comptype, init_value, default_init_value,mylang):
+def constrain_lex_items(head,ch,cs,comptype, init_value, default_init_value,mylang,init,extra):
     wo = ch.get(constants.WORD_ORDER)
     clausalverb = find_clausalverb_typename(ch,cs)
     path = 'SYNSEM.LOCAL.CAT.HEAD'
-    if constrain_transitive_verb(head,cs):
-        mylang.add('transitive-verb-lex := [ ' + path + '.INIT ' + default_init_value + ' ].'
-                   , merge=True)
-    if head == '+vc' and cs[CLAUSE_POS_EXTRA]and not cs[CLAUSE_POS_SAME]:
-        constrain_lexitem_for_feature(clausalverb,path, 'INIT',init_value,mylang)
-        if cs[COMP_POS_BEFORE] and not cs[COMP_POS_AFTER] and wo in OV_ORDERS:
-            constrain_lexitem_for_feature(comptype,path,'INIT',init_value,mylang)
-    elif head == 'verb' and cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME]:
-        constrain_lexitem_for_feature(clausalverb,path, 'INIT', init_value,mylang)
-    elif comptype:
-        if (cs[COMP_POS_BEFORE] and not cs[COMP_POS_AFTER] and wo in OV_ORDERS) \
-                or (cs[COMP_POS_AFTER] and not cs[COMP_POS_BEFORE] and wo in VO_ORDERS):
-            mylang.add(comptype + ':= [ ' + path + '.INIT ' + init_value + ' ].',merge=True)
-        elif not (cs[COMP_POS_AFTER] and cs[COMP_POS_BEFORE]):
-            mylang.add(comptype + ':= [ ' + path + '.INIT ' + default_init_value + ' ].',merge=True)
+    if init:
+        if constrain_transitive_verb(head,cs):
+            mylang.add('transitive-verb-lex := [ ' + path + '.INIT ' + default_init_value + ' ].'
+                       , merge=True)
+        if head == '+vc' and cs[CLAUSE_POS_EXTRA]and not cs[CLAUSE_POS_SAME]:
+            constrain_lexitem_for_feature(clausalverb,path, 'INIT',init_value,mylang)
+            if cs[COMP_POS_BEFORE] and not cs[COMP_POS_AFTER] and wo in OV_ORDERS:
+                constrain_lexitem_for_feature(comptype,path,'INIT',init_value,mylang)
+        elif head == 'verb' and cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME]:
+            constrain_lexitem_for_feature(clausalverb,path, 'INIT', init_value,mylang)
+        elif comptype:
+            if (cs[COMP_POS_BEFORE] and not cs[COMP_POS_AFTER] and wo in OV_ORDERS) \
+                    or (cs[COMP_POS_AFTER] and not cs[COMP_POS_BEFORE] and wo in VO_ORDERS):
+                mylang.add(comptype + ':= [ ' + path + '.INIT ' + init_value + ' ].',merge=True)
+            elif not (cs[COMP_POS_AFTER] and cs[COMP_POS_BEFORE]):
+                mylang.add(comptype + ':= [ ' + path + '.INIT ' + default_init_value + ' ].',merge=True)
     if comptype and nominalized_comps(ch) and not is_nominalized_complement(cs):
         mylang.add(comptype + ':= [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.NMZ - ] > ].',merge=True)
-    if comptype and extra_needed(ch,mylang):
-        if cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME]:
-            mylang.add(comptype + ':= [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA + ] > ].',merge=True)
-        elif cs[CLAUSE_POS_SAME] and not cs[CLAUSE_POS_EXTRA]:
-            mylang.add(comptype + ':= [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA - ] > ].',merge=True)
+    if extra and comptype:
+            if cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME]:
+                mylang.add(comptype + ':= [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA + ] > ].',merge=True)
+            elif cs[CLAUSE_POS_SAME] and not cs[CLAUSE_POS_EXTRA]:
+                mylang.add(comptype + ':= [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA - ] > ].',merge=True)
 
 
 def constrain_transitive_verb(head,cs):
@@ -467,7 +466,7 @@ def determine_clausal_verb_head(cs):
 def is_nominalized_complement(cs):
     return 'nominalization' in [ f['name'] for f in cs['feat'] ]
 
-def customize_clausal_verb(clausalverb,mylang,ch,cs):
+def customize_clausal_verb(clausalverb,mylang,ch,cs,extra):
     supertype = None
     path = 'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT'
     if nominalized_comps(ch) and not is_nominalized_complement(cs):
@@ -484,7 +483,7 @@ def customize_clausal_verb(clausalverb,mylang,ch,cs):
     if not supertype:
         supertype = 'clausal-second-arg-trans-lex-item'
     mylang.add(clausalverb +' := ' + supertype + '.',merge=True)
-    if extra_needed(ch,mylang):
+    if extra:
         if cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME]:
             mylang.add(clausalverb + ' := [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA + ] > ].'
                        , merge=True)
