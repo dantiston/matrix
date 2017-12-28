@@ -526,8 +526,10 @@ def extraposed_comps(ch):
     return len([css for css in ch.get('comps') if css['clause-pos-extra']]) > 0
 
 def nominalized_comps(ch):
-    return len([css for css in ch.get('comps') if css['feat'] and css['feat']['name'] == 'nominalization']) > 0
-
+    for ccs in ch.get(COMPS):
+        for f in ccs['feat']:
+            if f['name'] == 'nominalization':
+                return True
 
 def validate(ch,vr):
     if not ch.get(COMPS):
