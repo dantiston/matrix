@@ -148,7 +148,7 @@ def customize_order(ch, cs, mylang, rules, typename, init, general, additional):
     default_init_value = '-' if init_value == '+' else '+'
     # What is the head of the added rule's head daughter?
     head = determine_head(wo,cs)
-    if init: #and head:
+    if init:
         # If INIT feature was used before or is needed now:
         # Which lexical types need to be constrained wrt INIT?
         constrain_lex_items(head,ch,cs,typename,init_value,default_init_value,mylang)
@@ -287,13 +287,16 @@ def constrain_lex_items(head,ch,cs,comptype, init_value, default_init_value,myla
     init_path = 'SYNSEM.LOCAL.CAT.HEAD'
     if head == '+vc':
         if cs[CLAUSE_POS_EXTRA]:
-            if not cs[CLAUSE_POS_SAME]:
-                constrain_lexitem_for_feature(clausalverb,init_path, 'INIT',init_value,mylang)
+            if not cs[CLAUSE_POS_SAME] or cs[COMP] == 'opt':
                 mylang.add('transitive-verb-lex := [ '  + init_path + '.INIT ' + default_init_value + ' ].'
                    , merge=True)
-            elif cs[COMP] == 'opt':
-                mylang.add('transitive-verb-lex := [ ' + init_path + '.INIT ' + default_init_value + ' ].'
-                   , merge=True)
+            if not cs[CLAUSE_POS_SAME]:
+                constrain_lexitem_for_feature(clausalverb,init_path, 'INIT',init_value,mylang)
+                #mylang.add('transitive-verb-lex := [ '  + init_path + '.INIT ' + default_init_value + ' ].'
+                #   , merge=True)
+            #elif cs[COMP] == 'opt':
+            #    mylang.add('transitive-verb-lex := [ ' + init_path + '.INIT ' + default_init_value + ' ].'
+            #       , merge=True)
         if cs[COMP_POS_BEFORE] and not cs[COMP_POS_AFTER] and wo in OV_ORDERS:
             constrain_lexitem_for_feature(comptype,init_path,'INIT',init_value,mylang)
     elif head == constants.VERB:
