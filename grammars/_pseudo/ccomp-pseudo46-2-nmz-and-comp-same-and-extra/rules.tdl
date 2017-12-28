@@ -1,7 +1,5 @@
 ;;; -*- Mode: TDL; Coding: utf-8 -*-
-non-event-head-subj := non-event-head-subj-phrase.
-
-mid-nominalized-clause := mid-nominalized-clause-phrase.
+high-nominalized-clause := high-nominalized-clause-phrase.
 
 comp-head := comp-head-phrase.
 

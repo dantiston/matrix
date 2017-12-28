@@ -2,20 +2,20 @@
 2 *noun1 tverb-NFIN noun2 0 14
 3 cverb1-FIN noun1 comp1 noun2 tverb-FIN noun3 1 38
 4 cverb1-FIN noun1 noun2 tverb-FIN noun3 comp1 1 38
-5 comp1 noun1 tverb-FIN noun2 cverb1-FIN noun3 1 38
+5 comp1 noun1 tverb-FIN noun2 cverb-FIN noun3 0 23
 6 noun2 tverb-FIN noun3 comp1  cverb1-FIN noun1 1 38
 7 *noun2 tverb-NFIN noun3 comp1 cverb1-FIN noun1 0 26
 8 *comp1 noun2 tverb-NFIN noun3 cverb1-FIN noun1 0 26
 9 *cverb1-FIN noun1 noun2 tverb-NFIN noun3 comp1 0 26
-10 noun1 tverb-NFIN-NMZ noun2 cverb2-FIN noun3 0 24
-11 *noun1 tverb-NFIN-NMZ noun2 cverb2-FIN-NMZ noun3 0 25
-12 *noun1 tverb-FIN-NMZ noun2 cverb2-FIN noun3 0 24
+10 noun1 tverb-NFIN-NMZ noun2 cverb2-FIN noun3 1 39
+11 *noun1 tverb-NFIN-NMZ noun2 cverb2-FIN-NMZ noun3 1 43
+12 *noun1 tverb-FIN-NMZ noun2 cverb2-FIN noun3 1 39
 13 *noun1 tverb-FIN noun2 cverb2-FIN noun3 0 23
 14 *noun1 tverb-NFIN noun2 cverb2-FIN noun3 0 23
-15 *cverb2-FIN noun1 tverb-FIN-NMZ noun2 noun3 0 25
-16 *cverb2-FIN comp1 noun1 tverb-FIN-NMZ noun2 noun3 0 28
+15 *cverb2-FIN noun1 tverb-FIN-NMZ noun2 noun3 0 30
+16 *cverb2-FIN comp1 noun1 tverb-FIN-NMZ noun2 noun3 0 32
 17 *cverb2-FIN comp1 noun1 tverb-FIN noun2 noun3 0 27
 
-;;; Total CPU time: 64 msecs
-;;; Mean edges: 27.18
-;;; Mean parses: 0.29
+;;; Total CPU time: 28 msecs
+;;; Mean edges: 29.65
+;;; Mean parses: 0.41

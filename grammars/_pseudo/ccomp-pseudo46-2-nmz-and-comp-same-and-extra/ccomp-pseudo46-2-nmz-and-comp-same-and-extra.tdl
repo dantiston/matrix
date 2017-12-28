@@ -2,7 +2,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Grammar of ccomp-pseudo46-2-nmz-and-comp-same-and-extra
 ;;; created at:
-;;;     Thu Dec 28 20:26:07 UTC 2017
+;;;     Thu Dec 28 21:11:34 UTC 2017
 ;;; based on Matrix customization system version of:
 ;;;     Thu Dec 28 19:13:37 UTC 2017
 ;;;
@@ -101,7 +101,7 @@ cverb-nonextra-comps1-verb-lex := clausalcomp-verb-lex & clausal-second-arg-tran
   [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD comp &
                                                   [ FORM finite ] ] > ].
 
-cverb-extra-comps2-verb-lex := clausalcomp-verb-lex & transitive-lex-item &
+cverb-extra-comps2-verb-lex := clausalcomp-verb-lex & clausal-second-arg-trans-lex-item &
   [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD noun &
                                                   [ NMZ +,
                                                     FORM nonfinite ] ] > ].
@@ -181,18 +181,12 @@ nonfin-lex-rule := FRM-lex-rule-super &
 ;;; Phrasal Types
 ;;;;;;;;;;;;;;;;;;;
 
-non-event-head-subj-phrase := basic-head-subj-phrase & head-initial &
-  [ HEAD-DTR.SYNSEM [ LOCAL.CONT.HOOK.INDEX ref-ind,
-                      NON-LOCAL [ QUE 0-dlist,
-                                  REL 0-dlist ] ],
-    NON-HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SPR < > ].
-
-mid-nominalized-clause-phrase := basic-unary-phrase &
+high-nominalized-clause-phrase := basic-unary-phrase &
   [ SYNSEM.LOCAL.CAT [ HEAD noun,
                        VAL [ SPR < [ OPT + ] >,
-                             SPEC < >,
                              COMPS < >,
-                             SUBJ < #subj > ] ],
+                             SUBJ < >,
+                             SPEC < > ] ],
     C-CONT [ RELS <! [ PRED "nominalized_rel",
                        LBL #ltop,
                        ARG0 ref-ind & #arg0,
@@ -205,7 +199,7 @@ mid-nominalized-clause-phrase := basic-unary-phrase &
     ARGS < [ SYNSEM.LOCAL [ CAT [ HEAD verb &
                                        [ NMZ + ],
                                   VAL [ COMPS < >,
-                                        SUBJ < #subj >,
+                                        SUBJ < >,
                                         SPR < >,
                                         SPEC < > ] ],
                             CONT.HOOK.LTOP #larg ] ] > ].
