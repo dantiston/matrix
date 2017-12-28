@@ -157,7 +157,8 @@ def customize_order(ch, cs, mylang, rules, typename, init, general, additional):
     if need_customize_hc(wo,cs):
         #TODO: this should probably be split somehow; the number of args is unhealthy.
         handle_special_cases(additional, cs, general, mylang, rules, wo)
-        constrain_head_comp_rules(mylang,rules,init,init_value,default_init_value,head,general,additional,cs,wo)
+        if additional_needed(cs,wo):
+            constrain_head_comp_rules(mylang,rules,init,init_value,default_init_value,head,general,additional,cs,wo)
     if need_customize_hs(wo,cs):
         constrain_head_subj_rules(cs,mylang,rules)
 
@@ -217,24 +218,23 @@ also need to be constrained with respect to INIT, if INIT is used in
 the additional rule.
 '''
 def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,head,general,additional,cs,wo):
-    if additional_needed(cs,wo):
-        supertype = 'head-initial' if additional.startswith(constants.HEAD_COMP) else 'head-final'
-        mylang.add(additional + '-phrase := basic-head-1st-comp-phrase & ' + supertype + '.'
-               ,section = 'phrases',merge=True)
-        rules.add(additional + ' := ' + additional + '-phrase.')
-        if head:
-            mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + head +' ].'
-                   ,merge=True)
-        if is_nominalized_complement(cs):
-            mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD [ NMZ + ] ].'
-                   ,merge=True)
-        if init:
-            mylang.add(additional +
-                       '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + init_value + ' ].',
-                       merge=True)
-            mylang.add(general + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + default_init_value + ' ].',
-                       merge=True)
-        constrain_phrase_for_head_features(additional, cs, mylang)
+    supertype = 'head-initial' if additional.startswith(constants.HEAD_COMP) else 'head-final'
+    mylang.add(additional + '-phrase := basic-head-1st-comp-phrase & ' + supertype + '.'
+           ,section = 'phrases',merge=True)
+    rules.add(additional + ' := ' + additional + '-phrase.')
+    if head:
+        mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + head +' ].'
+               ,merge=True)
+    if is_nominalized_complement(cs):
+        mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD [ NMZ + ] ].'
+               ,merge=True)
+    if init:
+        mylang.add(additional +
+                   '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + init_value + ' ].',
+                   merge=True)
+        mylang.add(general + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + default_init_value + ' ].',
+                   merge=True)
+    constrain_phrase_for_head_features(additional, cs, mylang)
 
 def constrain_phrase_for_head_features(phrasename, cs, mylang):
     for f in cs['feat']:
