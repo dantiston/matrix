@@ -458,8 +458,10 @@ def update_verb_lextype(ch,verb, vtype):
             suffix = val
             head = determine_clausal_verb_head(ccs)
     if suffix:
-        name = vtype.split('-',1)[0]
-        rest = vtype.split('-',1)[1]
+        name = vtype[0:vtype.find('verb-lex')-1]
+        rest = 'verb-lex'
+        #name = vtype.split('-',1)[0]
+        #rest = vtype.split('-',1)[1]
         vtype = name + '-' + val + '-' + rest
     return vtype,head
 
