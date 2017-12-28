@@ -1,0 +1,12 @@
+;;; -*- Mode: TDL; Coding: utf-8 -*-
+non-event-head-subj := non-event-head-subj-phrase.
+
+mid-nominalized-clause := mid-nominalized-clause-phrase.
+
+comp-head := comp-head-phrase.
+
+head-subj := head-subj-phrase.
+
+bare-np := bare-np-phrase.
+
+head-comp := head-comp-phrase.

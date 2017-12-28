@@ -1,0 +1,14 @@
+;;; -*- Mode: TDL; Coding: utf-8 -*-
+;;; Inflecting Lexical Rule Instances
+
+mid-suffix :=
+%suffix (* -NMZ)
+mid-lex-rule.
+
+fin-suffix :=
+%suffix (* -FIN)
+fin-lex-rule.
+
+nonfin-suffix :=
+%suffix (* -NFIN)
+nonfin-lex-rule.
