@@ -22,6 +22,7 @@
 (
 ((:path . "tiniest") (:content . "tiniest: A very basic grammar just to get the regression tests started.  SOV word order, no frills."))
  ;;; new-regression-test-here
+((:path . "ccomp-pseudo44-2-2complementizers") (:content . "ccomp-pseudo44-2-2complementizers: Clausal comps: 2 strategies, with different complementizer attachment and extraposition (SOV)."))
 ((:path . "ccomp-pseudo43-vos-same-extra-feat") (:content . "ccomp-pseudo43-vos-same-extra-feat: Clausal comps: VOS order, extraposed or nouny-positioned complement marked by FORM."))
 ((:path . "ccomp-pseudo42-vos-extra-feat") (:content . "ccomp-pseudo42-vos-extra-feat: Clausal comps: VOS with extraposed complement marked with FORM."))
 ((:path . "ccomp-pseudo41-vin-extra-feat") (:content . "ccomp-pseudo41-vin-extra-feat: Clausal comps: VOS matrix with extraposed complement marked with FORM."))
