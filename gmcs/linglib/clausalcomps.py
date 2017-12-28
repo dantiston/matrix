@@ -302,6 +302,8 @@ def constrain_lex_items(head,ch,cs,comptype, init_value, default_init_value,myla
             mylang.add(comptype + ':= [ ' + path + '.INIT ' + default_init_value + ' ].',merge=True)
     if comptype and nominalized_comps(ch) and not is_nominalized_complement(cs):
         mylang.add(comptype + ':= [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.NMZ - ] > ].',merge=True)
+    if comptype and extra_needed(ch,mylang):
+        pass
 
 
 def constrain_transitive_verb(head,cs):
@@ -429,8 +431,8 @@ def extra_needed(ch,mylang):
            and len([cs for cs in ch[COMPS] if cs[CLAUSE_POS_EXTRA]]) > 0
     if res:
         mylang.add('head :+ [ EXTRA bool ].', section='addenda')
-        if len([cs for cs in ch[COMPS] if cs[CLAUSE_POS_SAME]]) == 0:
-            mylang.add('transitive-verb-lex := [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA - ] > ].'
+        #if len([cs for cs in ch[COMPS] if cs[CLAUSE_POS_SAME]]) == 0:
+        mylang.add('transitive-verb-lex := [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA - ] > ].'
                        ,merge=True)
     return res
 
