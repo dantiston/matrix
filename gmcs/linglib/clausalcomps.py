@@ -39,7 +39,6 @@ FORM_PATH = 'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT.HEAD' # FORM feature pat
 
 # Note: the below lists do not include V2 or free.
 OV_ORDERS = ['sov', 'ovs', 'osv', 'v-final']
-#EXTRA_ORDERS = ['sov', 'v-final', 'osv'] # orders allowed with extraposed clausal complements
 VFINAL = ['sov','osv','v-final']
 VO_ORDERS = ['svo', 'vos', 'vso', 'v-initial']
 
@@ -244,16 +243,18 @@ def constrain_phrase_for_head_features(phrasename, cs, mylang):
                        + f['value'] + ' ].', merge=True)
 
 #TODO: I haven't still grasped the general logic here, hopefully one day it'll generalize.
+#TODO: This isn't really special cases. This is the logic that has to do with extraposition,
+# plus one special case with complementizer.
 def handle_special_cases(additional, cs, general, mylang, rules, wo):
     if (wo in ['ovs', 'osv', 'v-initial','vos','v-final']) and cs[CLAUSE_POS_EXTRA]:
         if additional_needed(cs,wo):
-            mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ <  > ].',
+            mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < > ].',
                        section='phrases',merge=True)
     if wo in ['v-initial','vos','v-final'] and cs[CLAUSE_POS_EXTRA]:
         if cs[COMP] == 'oblig':
             add_head = 'comp'
         elif cs[COMP] == 'opt':
-            add_head = '+vc' if cs[COMP] == 'opt' else 'verb'
+            add_head = '+vc'
         elif not cs[COMP]:
             if is_nominalized_complement(cs):
                 gen_head = '[ NMZ - ]'
@@ -479,6 +480,9 @@ def determine_ccomp_mark_type(cs):
             if f['name'] == 'nominalization':
                 return 'NMZ'
         return 'FEAT'
+
+def extraposed_comps(ch):
+    return len([css for css in ch.get('comps') if css['clause-pos-extra']]) > 0
 
 def validate(ch,vr):
     if not ch.get(COMPS):

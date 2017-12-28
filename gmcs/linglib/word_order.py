@@ -1,7 +1,7 @@
 # from sets import Set
 from gmcs.linglib.parameters import determine_vcluster
 from gmcs.linglib.lexical_items import update_lex_items_vcluster
-from gmcs import utils
+from gmcs.linglib.clausalcomps import extraposed_comps
 
 ######################################################################
 # customize_word_order()
@@ -287,11 +287,6 @@ def customize_major_constituent_order(wo, mylang, ch, rules):
 
     return {'hs': hs, 'hc': hc}
 
-def extraposed_comps(ch):
-    for css in ch.get('comps'):
-        if css['clause-pos-extra']:
-            return True
-    return False
 
 
 # ERB 2006-09-15 Subroutine for emitting additional information about
