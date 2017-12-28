@@ -376,7 +376,7 @@ def determine_head(wo,cs):
                 head = 'comp'
         elif cs[COMP_POS_BEFORE]:
             if cs[CLAUSE_POS_EXTRA]:
-                head = '+vc' #'verb' #TODO: When should this be +vc? When v-initial, for instance
+                head = '+vc'
     return head
 
 '''
@@ -486,6 +486,9 @@ def customize_clausal_verb(clausalverb,mylang,ch,cs,extra):
     if extra:
         if cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME]:
             mylang.add(clausalverb + ' := [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA + ] > ].'
+                       , merge=True)
+        elif cs[CLAUSE_POS_SAME] and not cs[CLAUSE_POS_EXTRA]:
+            mylang.add(clausalverb + ' := [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA - ] > ].'
                        , merge=True)
 
 
