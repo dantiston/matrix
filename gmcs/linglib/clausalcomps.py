@@ -284,22 +284,24 @@ It will constrain verbs and/or complementizers with respect to the INIT feature.
 def constrain_lex_items(head,ch,cs,comptype, init_value, default_init_value,mylang):
     wo = ch.get(constants.WORD_ORDER)
     clausalverb = find_clausalverb_typename(ch,cs)
-    init_path = 'SYNSEM.LOCAL.CAT.HEAD'
+    path = 'SYNSEM.LOCAL.CAT.HEAD'
     if constrain_transitive_verb(head,cs):
-        mylang.add('transitive-verb-lex := [ '  + init_path + '.INIT ' + default_init_value + ' ].'
+        mylang.add('transitive-verb-lex := [ ' + path + '.INIT ' + default_init_value + ' ].'
                    , merge=True)
     if head == '+vc' and cs[CLAUSE_POS_EXTRA]and not cs[CLAUSE_POS_SAME]:
-        constrain_lexitem_for_feature(clausalverb,init_path, 'INIT',init_value,mylang)
+        constrain_lexitem_for_feature(clausalverb,path, 'INIT',init_value,mylang)
         if cs[COMP_POS_BEFORE] and not cs[COMP_POS_AFTER] and wo in OV_ORDERS:
-            constrain_lexitem_for_feature(comptype,init_path,'INIT',init_value,mylang)
+            constrain_lexitem_for_feature(comptype,path,'INIT',init_value,mylang)
     elif head == 'verb' and cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME]:
-        constrain_lexitem_for_feature(clausalverb,init_path, 'INIT', init_value,mylang)
+        constrain_lexitem_for_feature(clausalverb,path, 'INIT', init_value,mylang)
     elif comptype:
         if (cs[COMP_POS_BEFORE] and not cs[COMP_POS_AFTER] and wo in OV_ORDERS) \
                 or (cs[COMP_POS_AFTER] and not cs[COMP_POS_BEFORE] and wo in VO_ORDERS):
-            mylang.add(comptype + ':= [ ' + init_path + '.INIT ' + init_value + ' ].',merge=True)
+            mylang.add(comptype + ':= [ ' + path + '.INIT ' + init_value + ' ].',merge=True)
         elif not (cs[COMP_POS_AFTER] and cs[COMP_POS_BEFORE]):
-            mylang.add(comptype + ':= [ ' + init_path + '.INIT ' + default_init_value + ' ].',merge=True)
+            mylang.add(comptype + ':= [ ' + path + '.INIT ' + default_init_value + ' ].',merge=True)
+    if comptype and nominalized_comps(ch) and not is_nominalized_complement(cs):
+        mylang.add(comptype + ':= [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.NMZ - ] > ].',merge=True)
 
 
 def constrain_transitive_verb(head,cs):
