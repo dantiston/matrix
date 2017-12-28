@@ -463,13 +463,18 @@ def is_nominalized_complement(cs):
 def customize_clausal_verb(clausalverb,mylang,ch,cs):
     supertype = None
     for f in cs['feat']:
-        if f['name'] == 'nominalization':
-            path = 'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT'
-            constrain_lexitem_for_feature(clausalverb, path, 'HEAD', '[ NMZ + ] ',mylang)
-            for ns in ch['ns']:
-                if ns['name'] == f['value']:
-                    if ns['nmzRel'] == 'yes':
-                        supertype = 'transitive-lex-item'
+        if nominalized_comps(ch):
+            if f['name'] == 'nominalization':
+                path = 'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT'
+                constrain_lexitem_for_feature(clausalverb, path, 'HEAD', '[ NMZ + ] ',mylang)
+                for ns in ch['ns']:
+                    if ns['name'] == f['value']:
+                        if ns['nmzRel'] == 'yes':
+                            supertype = 'transitive-lex-item'
+            else:
+                path = 'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT.HEAD'
+                constrain_lexitem_for_feature(clausalverb, path, 'HEAD', '[ NMZ - ] ',mylang)
+                constrain_lexitem_for_feature(clausalverb, path, f['name'],f['value'],mylang)
         else:
             path = 'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT.HEAD'
             constrain_lexitem_for_feature(clausalverb, path, f['name'],f['value'],mylang)
@@ -519,6 +524,10 @@ def determine_ccomp_mark_type(cs):
 
 def extraposed_comps(ch):
     return len([css for css in ch.get('comps') if css['clause-pos-extra']]) > 0
+
+def nominalized_comps(ch):
+    return len([css for css in ch.get('comps') if css['feat'] and css['feat']['name'] == 'nominalization']) > 0
+
 
 def validate(ch,vr):
     if not ch.get(COMPS):
