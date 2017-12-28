@@ -285,7 +285,8 @@ def constrain_lex_items(head,ch,cs,comptype, init_value, default_init_value,myla
     wo = ch.get(constants.WORD_ORDER)
     clausalverb = find_clausalverb_typename(ch,cs)
     init_path = 'SYNSEM.LOCAL.CAT.HEAD'
-    if head in ['+vc', 'verb'] and cs[CLAUSE_POS_EXTRA] and (not cs[CLAUSE_POS_SAME] or cs[COMP] == 'opt'):
+    if head == 'verb' \
+            or (head == '+vc' and cs[CLAUSE_POS_EXTRA] and (not cs[CLAUSE_POS_SAME] or cs[COMP] == 'opt')):
         mylang.add('transitive-verb-lex := [ '  + init_path + '.INIT ' + default_init_value + ' ].'
                    , merge=True)
     if head == '+vc':
