@@ -2,9 +2,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Grammar of ccomp-pseudo25-ovs-low-nonempty-feat-extra
 ;;; created at:
-;;;     Sat Dec 23 21:23:13 UTC 2017
+;;;     Thu Dec 28 20:43:07 UTC 2017
 ;;; based on Matrix customization system version of:
-;;;     Sat Dec 23 21:20:27 UTC 2017
+;;;     unknown time
 ;;;
 ;;; 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -88,7 +88,8 @@ clausalcomp-verb-lex := verb-lex &
     ARG-ST < [ LOCAL.CAT.HEAD noun ],
              #comps &
              [ LOCAL.CAT.VAL [ SPR < >,
-                               COMPS < > ] ] > ].
+                               COMPS < >,
+                               SUBJ < > ] ] > ].
 
 tran-verb-lex := transitive-verb-lex.
 
@@ -170,5 +171,8 @@ bare-np-phrase := basic-bare-np-phrase &
   [ C-CONT.RELS <! [ PRED "exist_q_rel" ] !> ].
 
 head-comp-phrase := basic-head-1st-comp-phrase & head-initial &
-  [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD verb &
-                                   [ INIT + ] ].
+  [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD [ NMZ +,
+                                         FORM nonfinite ],
+    HEAD-DTR.SYNSEM.LOCAL.CAT [ HEAD verb &
+                                     [ INIT + ],
+                                VAL.SUBJ < > ] ].
