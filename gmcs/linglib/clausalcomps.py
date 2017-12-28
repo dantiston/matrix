@@ -267,8 +267,8 @@ def handle_special_cases(additional, cs, general, mylang, rules, wo):
             mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
         if not wo in ['v-initial', 'vos','v-final']:
             mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + add_head + ' ].')
-        #if (not wo == 'v-final' and cs[CLAUSE_POS_SAME] and cs[COMP]):
-        if cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME] and cs[COMP_POS_AFTER]:
+        if (not wo == 'v-final' and cs[CLAUSE_POS_SAME] and cs[COMP]) or \
+                (wo == 'v-final' and cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME] and cs[COMP_POS_AFTER]):
             mylang.add('comp-head-complementizer-phrase := basic-head-1st-comp-phrase & head-final '
                        '& [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].',section='phrases')
             rules.add('comp-head-compl := comp-head-complementizer-phrase.')
