@@ -232,7 +232,7 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
                    merge=True)
         mylang.add(general + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + default_init_value + ' ].',
                    merge=True)
-    constrain_for_features(additional + '-phrase', cs, mylang, 'NON-HEAD-DTR.')
+    constrain_for_features(additional + '-phrase', cs, mylang, 'NON-HEAD-DTR.SYNSEM.')
 
 def constrain_for_features(typename,cs,mylang,path_prefix):
     for f in cs['feat']:
