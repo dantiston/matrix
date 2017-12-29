@@ -479,22 +479,8 @@ def is_nominalized_complement(cs):
     return 'nominalization' in [ f['name'] for f in cs['feat'] ]
 
 def customize_clausal_verb(clausalverb,mylang,ch,cs,extra):
-    supertype = None
-    path = 'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT'
     constrain_for_features(clausalverb,cs,mylang,'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.',ch)
-    #if nominalized_comps(ch) and not is_nominalized_complement(cs):
-    #    constrain_lexitem_for_feature(clausalverb, path, 'HEAD', '[ NMZ - ] ',mylang)
-    for f in cs['feat']:
-        if f['name'] == 'nominalization':
-            #constrain_lexitem_for_feature(clausalverb, path, 'HEAD', '[ NMZ + ] ',mylang)
-            for ns in ch['ns']:
-                if ns['name'] == f['value']:
-                    if ns['nmzRel'] == 'yes':
-                        supertype = 'transitive-lex-item'
-        #else:
-        #    constrain_lexitem_for_feature(clausalverb, path + '.HEAD', f['name'],f['value'],mylang)
-    if not supertype:
-        supertype = 'clausal-second-arg-trans-lex-item'
+    supertype = clausalverb_supertype(ch, cs)
     mylang.add(clausalverb +' := ' + supertype + '.',merge=True)
     if extra:
         if cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME]:
@@ -503,6 +489,18 @@ def customize_clausal_verb(clausalverb,mylang,ch,cs,extra):
         elif cs[CLAUSE_POS_SAME] and not cs[CLAUSE_POS_EXTRA]:
             mylang.add(clausalverb + ' := [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA - ] > ].'
                        , merge=True)
+
+def clausalverb_supertype(ch, cs):
+    supertype = None
+    for f in cs['feat']:
+        if f['name'] == 'nominalization':
+            for ns in ch['ns']:
+                if ns['name'] == f['value']:
+                    if ns['nmzRel'] == 'yes':
+                        supertype = 'transitive-lex-item'
+    if not supertype:
+        supertype = 'clausal-second-arg-trans-lex-item'
+    return supertype
 
 
 # This is currently called by lexical_items.py
