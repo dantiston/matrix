@@ -122,10 +122,6 @@ def add_complementizer_subtype(cs, mylang,ch):
     typename = id + '-' + COMP_LEX_ITEM
     mylang.add(typename + ' := ' + COMP_LEX_ITEM + '.', section=COMPLEX)
     constrain_for_features(typename,cs,mylang,'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.',ch)
-    # merge feature information in
-    #path = FORM_PATH + '.' + FORM
-    #merge_constraints(choicedict=cs, mylang=mylang, typename=typename,
-    #                  path=path, key1='feat', key2='name', val='form')
     return typename
 
 '''
@@ -238,7 +234,7 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
 def constrain_for_features(typename,cs,mylang,path_prefix,ch):
     for f in cs['feat']:
         if f['name'] != 'nominalization':
-            if f['name'] == 'MOOD':
+            if f['name'] == 'mood':
                 path = 'LOCAL.CONT.HOOK.INDEX.E.'
             else:
                 path = 'LOCAL.CAT.HEAD.'
@@ -557,3 +553,14 @@ def validate(ch,vr):
             if ch.get(constants.WORD_ORDER) in ['free','v2','svo','vso']:
                 vr.err(ccs.full_key + '_' + CLAUSE_POS_EXTRA,EXTRA_VO)
         #TODO: MOOD and nominalized clauses? What's gonna happen to INDEX.E?
+        for f in ccs['feat']:
+            feat = find_in_other_features(f['name'],ch)
+            if feat:
+                if feat['type'] and feat['type'] == 'index':
+                    vr.err(f.full_key + '_name','Custom semantic features are not supported here.')
+
+def find_in_other_features(name,ch):
+    for f in ch.get('feature'):
+        if f['name'] == name:
+            return f
+    return None
