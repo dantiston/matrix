@@ -191,7 +191,7 @@ def constrain_head_subj_rules(cs,mylang,rules):
         head = 'verb'
     mylang.add('head-subj-ccomp-phrase := decl-head-subj-phrase & head-initial & '
                '[ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD ' + head + ' ] > ].',section='phrases')
-    constrain_for_features('head-subj-ccomp-phrase',cs,mylang,'HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST')
+    constrain_for_features('head-subj-ccomp-phrase',cs,mylang,'HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.')
     #for f in cs['feat']:
     #    if f['name'] == 'form':
     #        mylang.add('head-subj-ccomp-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS '
