@@ -231,13 +231,29 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
                    merge=True)
         mylang.add(general + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + default_init_value + ' ].',
                    merge=True)
-    constrain_phrase_for_head_features(additional, cs, mylang)
+    constrain_for_features(additional + '-phrase', cs, mylang, 'NON-HEAD-DTR.')
+
+def constrain_for_features(typename,cs,mylang,path_prefix):
+    for f in cs['feat']:
+        if f['name'] != 'nominalization':
+            if f['name'] == 'MOOD':
+                path = 'SYNSEM.LOCAL.CONT.HOOK.INDEX.E.'
+            else:
+                path = 'SYNSEM.LOCAL.CAT.HEAD.'
+            mylang.add(typename + ' := '
+                                    '[ ' + path_prefix + path + f['name'].upper() + ' '
+                       + f['value'] + ' ].', merge=True)
+
 
 def constrain_phrase_for_head_features(phrasename, cs, mylang):
     for f in cs['feat']:
         if f['name'] != 'nominalization':
+            if f['name'] == 'MOOD':
+                path = 'SYNSEM.LOCAL.CONT.HOOK.INDEX.E.'
+            else:
+                path = 'SYNSEM.LOCAL.CAT.HEAD.'
             mylang.add(phrasename + '-phrase := '
-                                    '[ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.' + f['name'].upper() + ' '
+                                    '[ NON-HEAD-DTR.' + path + f['name'].upper() + ' '
                        + f['value'] + ' ].', merge=True)
 
 #TODO: I haven't still grasped the general logic here, hopefully one day it'll generalize.
@@ -270,6 +286,18 @@ def handle_special_cases(additional, cs, general, mylang, rules, wo):
             mylang.add('comp-head-complementizer-phrase := basic-head-1st-comp-phrase & head-final '
                        '& [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].',section='phrases')
             rules.add('comp-head-compl := comp-head-complementizer-phrase.')
+
+def determine_clausal_verb_head(cs):
+    head = ''
+    if cs[COMP]:
+        if cs[COMP] == 'oblig':
+            head = 'comp'
+        elif cs[COMP] == 'opt':
+            head = '+vc'
+    else:
+        head = 'noun' if is_nominalized_complement(cs) else 'verb'
+    return head
+
 
 def find_clausalverb_typename(ch,cs):
     for v in ch.get(constants.VERB):
@@ -452,16 +480,6 @@ def add_clausalcomp_verb_supertype(ch, mainorverbtype,mylang):
                  [ LOCAL.CAT.VAL [ SPR < >, COMPS < >, SUBJ < > ] ] > ].'
     mylang.add(typedef,section='verblex')
 
-def determine_clausal_verb_head(cs):
-    head = ''
-    if cs[COMP]:
-        if cs[COMP] == 'oblig':
-            head = 'comp'
-        elif cs[COMP] == 'opt':
-            head = '+vc'
-    else:
-        head = 'noun' if is_nominalized_complement(cs) else 'verb'
-    return head
 
 def is_nominalized_complement(cs):
     return 'nominalization' in [ f['name'] for f in cs['feat'] ]
@@ -545,3 +563,4 @@ def validate(ch,vr):
         if ccs[CLAUSE_POS_EXTRA]:
             if ch.get(constants.WORD_ORDER) in ['free','v2','svo','vso']:
                 vr.err(ccs.full_key + '_' + CLAUSE_POS_EXTRA,EXTRA_VO)
+        #TODO: MOOD and nominalized clauses? What's gonna happen to INDEX.E?
