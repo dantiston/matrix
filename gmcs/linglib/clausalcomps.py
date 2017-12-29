@@ -191,10 +191,11 @@ def constrain_head_subj_rules(cs,mylang,rules):
         head = 'verb'
     mylang.add('head-subj-ccomp-phrase := decl-head-subj-phrase & head-initial & '
                '[ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD ' + head + ' ] > ].',section='phrases')
-    for f in cs['feat']:
-        if f['name'] == 'form':
-            mylang.add('head-subj-ccomp-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS '
-                       '< [ LOCAL.CAT.HEAD.FORM ' + f['value'] + ' ] > ].')
+    constrain_for_features('head-subj-ccomp-phrase',cs,mylang,'HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST')
+    #for f in cs['feat']:
+    #    if f['name'] == 'form':
+    #        mylang.add('head-subj-ccomp-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS '
+    #                   '< [ LOCAL.CAT.HEAD.FORM ' + f['value'] + ' ] > ].')
     rules.add('head-subj-ccomp := head-subj-ccomp-phrase.')
     mylang.add('head-subj-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].',merge=True)
 
@@ -242,18 +243,6 @@ def constrain_for_features(typename,cs,mylang,path_prefix):
                 path = 'SYNSEM.LOCAL.CAT.HEAD.'
             mylang.add(typename + ' := '
                                     '[ ' + path_prefix + path + f['name'].upper() + ' '
-                       + f['value'] + ' ].', merge=True)
-
-
-def constrain_phrase_for_head_features(phrasename, cs, mylang):
-    for f in cs['feat']:
-        if f['name'] != 'nominalization':
-            if f['name'] == 'MOOD':
-                path = 'SYNSEM.LOCAL.CONT.HOOK.INDEX.E.'
-            else:
-                path = 'SYNSEM.LOCAL.CAT.HEAD.'
-            mylang.add(phrasename + '-phrase := '
-                                    '[ NON-HEAD-DTR.' + path + f['name'].upper() + ' '
                        + f['value'] + ' ].', merge=True)
 
 #TODO: I haven't still grasped the general logic here, hopefully one day it'll generalize.
