@@ -22,6 +22,11 @@
 (
 ((:path . "tiniest") (:content . "tiniest: A very basic grammar just to get the regression tests started.  SOV word order, no frills."))
  ;;; new-regression-test-here
+((:path . "evidentials-infl-aux-wic") (:content . "evidentials-infl-aux-wic: Held-out test of Wichita for the evidentials library"))
+((:path . "evidentials-infl-mon") (:content . "evidentials-infl-mon: Held-out test of (Khalkha) Mongolian for the evidentials library"))
+((:path . "evidentials-infl-lbj") (:content . "evidentials-infl-lbj: Held-out test of Ladakhi for the evidentials library"))
+((:path . "evidentials-aux-afb") (:content . "evidentials-aux-afb: Held-out test of Gulf Arabic for the evidentials library"))
+((:path . "evidentials-aux-eus") (:content . "evidentials-aux-eus: Adding held-out Basque tests for evidentiality library"))
 ((:path . "ccomp-pseudo48-vso-subj") (:content . "ccomp-pseudo48-vso-subj: Clausal comps: 1) Subjunctive mood with optional complementizer; 2) Indicative mood with obligatory complementizer."))
 ((:path . "ccomp-pseudo47-2-vin") (:content . "ccomp-pseudo47-2-vin: Clausal comps: V-initial; 1) Obligatory complementizer before the clause; 2) Optional complementizer before extraposed clause."))
 ((:path . "ccomp-pseudo47-2-vin") (:content . "ccomp-pseudo47-2-vin: Clausal comps: V-initial with 2 sttrategies. 1) Obligatory complementizer before the clause; 2) Optional complementizer before strictly extraposed clause."))
