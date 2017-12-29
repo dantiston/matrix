@@ -98,7 +98,7 @@ def add_types_to_grammar(mylang,ch,rules,have_complementizer):
     for cs in ch.get(COMPS):
         clausalverb = find_clausalverb_typename(ch,cs)
         customize_clausal_verb(clausalverb,mylang,ch,cs,extra)
-        typename = add_complementizer_subtype(cs, mylang) if cs[COMP] else None
+        typename = add_complementizer_subtype(cs, mylang,ch) if cs[COMP] else None
         if wo in OV_ORDERS or wo in VO_ORDERS:
             general, additional = determine_head_comp_rule_type(ch.get(constants.WORD_ORDER),cs)
             customize_order(ch, cs, mylang, rules, typename, init,general,additional,extra)
@@ -117,14 +117,15 @@ def use_init(ch, mylang, wo):
 def add_complementizer_supertype(mylang):
     mylang.add(COMP_LEX_ITEM_DEF, section=COMPLEX)
 
-def add_complementizer_subtype(cs, mylang):
+def add_complementizer_subtype(cs, mylang,ch):
     id = cs.full_key
     typename = id + '-' + COMP_LEX_ITEM
     mylang.add(typename + ' := ' + COMP_LEX_ITEM + '.', section=COMPLEX)
+    constrain_for_features(typename,cs,mylang,'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.',ch)
     # merge feature information in
-    path = FORM_PATH + '.' + FORM
-    merge_constraints(choicedict=cs, mylang=mylang, typename=typename,
-                      path=path, key1='feat', key2='name', val='form')
+    #path = FORM_PATH + '.' + FORM
+    #merge_constraints(choicedict=cs, mylang=mylang, typename=typename,
+    #                  path=path, key1='feat', key2='name', val='form')
     return typename
 
 '''
@@ -483,11 +484,13 @@ def customize_clausal_verb(clausalverb,mylang,ch,cs,extra):
     supertype = clausalverb_supertype(ch, cs)
     mylang.add(clausalverb +' := ' + supertype + '.',merge=True)
     if extra:
+        val = None
         if cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME]:
             val = '+'
         elif cs[CLAUSE_POS_SAME] and not cs[CLAUSE_POS_EXTRA]:
             val = '-'
-        mylang.add(clausalverb + ' := [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA '+ val + ' ] > ].'
+        if val:
+            mylang.add(clausalverb + ' := [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA '+ val + ' ] > ].'
                        , merge=True)
 
 '''
@@ -534,15 +537,6 @@ def nonempty_nmz(cs,ch):
                     if ns['nmzRel'] == 'yes':
                         return True
     return False
-
-def determine_ccomp_mark_type(cs):
-    if cs[COMP]:
-        return 'COMP'
-    else:
-        for f in cs['feat']:
-            if f['name'] == 'nominalization':
-                return 'NMZ'
-        return 'FEAT'
 
 def extraposed_comps(ch):
     return len([css for css in ch.get('comps') if css['clause-pos-extra']]) > 0
