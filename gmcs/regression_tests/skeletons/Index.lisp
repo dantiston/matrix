@@ -22,6 +22,7 @@
 (
 ((:path . "tiniest") (:content . "tiniest: A very basic grammar just to get the regression tests started.  SOV word order, no frills."))
  ;;; new-regression-test-here
+((:path . "ccomp-pseudo48-vso-subj") (:content . "ccomp-pseudo48-vso-subj: Clausal comps: 1) Subjunctive mood with optional complementizer; 2) Indicative mood with obligatory complementizer."))
 ((:path . "ccomp-pseudo47-2-vin") (:content . "ccomp-pseudo47-2-vin: Clausal comps: V-initial; 1) Obligatory complementizer before the clause; 2) Optional complementizer before extraposed clause."))
 ((:path . "ccomp-pseudo47-2-vin") (:content . "ccomp-pseudo47-2-vin: Clausal comps: V-initial with 2 sttrategies. 1) Obligatory complementizer before the clause; 2) Optional complementizer before strictly extraposed clause."))
 ((:path . "ccomp-pseudo46-2-nmz-and-comp-same-and-extra") (:content . "ccomp-pseudo46-2-nmz-and-comp-same-and-extra: Clausal comps: OVS, 1) optionally extraposed with obligatory flexible complementizer; 2) nominalized (high)."))
