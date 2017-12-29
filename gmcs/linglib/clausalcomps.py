@@ -154,10 +154,10 @@ def customize_order(ch, cs, mylang, rules, typename, init, general, additional,e
     if need_customize_hc(wo,cs):
         #TODO: this should probably be split somehow; the number of args is unhealthy.
         if additional_needed(cs,wo):
-            constrain_head_comp_rules(mylang,rules,init,init_value,default_init_value,head,general,additional,cs,wo)
+            constrain_head_comp_rules(mylang,rules,init,init_value,default_init_value,head,general,additional,cs,ch)
         handle_special_cases(additional, cs, general, mylang, rules, wo)
     if need_customize_hs(wo,cs):
-        constrain_head_subj_rules(cs,mylang,rules)
+        constrain_head_subj_rules(cs,mylang,rules,ch)
 
 def need_customize_hc(wo,cs):
     return (wo in ['vos', 'v-initial', 'sov', 'v-final', 'osv', 'ovs'] and cs[CLAUSE_POS_EXTRA]) \
@@ -182,7 +182,7 @@ def customize_complementizer_order(wo,cs,mylang,rules):
 def customize_cverb_ccomp_order():
     pass
 
-def constrain_head_subj_rules(cs,mylang,rules):
+def constrain_head_subj_rules(cs,mylang,rules,ch):
     if cs[COMP]:
         head = 'comp' if cs[COMP] == 'oblig' else '+vc'
     elif is_nominalized_complement(cs):
@@ -191,7 +191,7 @@ def constrain_head_subj_rules(cs,mylang,rules):
         head = 'verb'
     mylang.add('head-subj-ccomp-phrase := decl-head-subj-phrase & head-initial & '
                '[ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD ' + head + ' ] > ].',section='phrases')
-    constrain_for_features('head-subj-ccomp-phrase',cs,mylang,'HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.')
+    constrain_for_features('head-subj-ccomp-phrase',cs,mylang,'HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.',ch)
     #for f in cs['feat']:
     #    if f['name'] == 'form':
     #        mylang.add('head-subj-ccomp-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS '
@@ -215,7 +215,7 @@ with respect to its head or the INIT feature. The default rule will
 also need to be constrained with respect to INIT, if INIT is used in
 the additional rule.
 '''
-def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,head,general,additional,cs,wo):
+def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,head,general,additional,cs,ch):
     supertype = 'head-initial' if additional.startswith(constants.HEAD_COMP) else 'head-final'
     mylang.add(additional + '-phrase := basic-head-1st-comp-phrase & ' + supertype + '.'
            ,section = 'phrases',merge=True)
@@ -232,9 +232,9 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
                    merge=True)
         mylang.add(general + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + default_init_value + ' ].',
                    merge=True)
-    constrain_for_features(additional + '-phrase', cs, mylang, 'NON-HEAD-DTR.SYNSEM.')
+    constrain_for_features(additional + '-phrase', cs, mylang, 'NON-HEAD-DTR.SYNSEM.',ch)
 
-def constrain_for_features(typename,cs,mylang,path_prefix):
+def constrain_for_features(typename,cs,mylang,path_prefix,ch):
     for f in cs['feat']:
         if f['name'] != 'nominalization':
             if f['name'] == 'MOOD':
@@ -244,6 +244,11 @@ def constrain_for_features(typename,cs,mylang,path_prefix):
             mylang.add(typename + ' := '
                                     '[ ' + path_prefix + path + f['name'].upper() + ' '
                        + f['value'] + ' ].', merge=True)
+        else:
+            path = 'LOCAL.CAT.HEAD.'
+            if nominalized_comps(ch) and not is_nominalized_complement(cs):
+                mylang.add(typename + ' := [ ' + path_prefix + path + 'NMZ - ].',merge=True)
+            mylang.add(typename + ' := [ ' + path_prefix + path + 'NMZ + ].',merge=True)
 
 #TODO: I haven't still grasped the general logic here, hopefully one day it'll generalize.
 #TODO: This isn't really special cases. This is the logic that has to do with extraposition,
