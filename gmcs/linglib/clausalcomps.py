@@ -238,9 +238,9 @@ def constrain_for_features(typename,cs,mylang,path_prefix):
     for f in cs['feat']:
         if f['name'] != 'nominalization':
             if f['name'] == 'MOOD':
-                path = 'SYNSEM.LOCAL.CONT.HOOK.INDEX.E.'
+                path = 'LOCAL.CONT.HOOK.INDEX.E.'
             else:
-                path = 'SYNSEM.LOCAL.CAT.HEAD.'
+                path = 'LOCAL.CAT.HEAD.'
             mylang.add(typename + ' := '
                                     '[ ' + path_prefix + path + f['name'].upper() + ' '
                        + f['value'] + ' ].', merge=True)
