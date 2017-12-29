@@ -484,12 +484,18 @@ def customize_clausal_verb(clausalverb,mylang,ch,cs,extra):
     mylang.add(clausalverb +' := ' + supertype + '.',merge=True)
     if extra:
         if cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME]:
-            mylang.add(clausalverb + ' := [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA + ] > ].'
-                       , merge=True)
+            val = '+'
         elif cs[CLAUSE_POS_SAME] and not cs[CLAUSE_POS_EXTRA]:
-            mylang.add(clausalverb + ' := [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA - ] > ].'
+            val = '-'
+        mylang.add(clausalverb + ' := [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA '+ val + ' ] > ].'
                        , merge=True)
 
+'''
+Semantically non-empty nominalization requires that
+the clausal verb takes nominalization_rel's ARG0
+directly as its ARG2. In other cases, it wants
+the embedded verb's handle.
+'''
 def clausalverb_supertype(ch, cs):
     supertype = None
     for f in cs['feat']:
