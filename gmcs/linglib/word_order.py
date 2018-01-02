@@ -145,7 +145,7 @@ def customize_major_constituent_order(wo, mylang, ch, rules):
 
     # Module for free word order, i.e., all possible orders of head, subj,
     # comps (thinking initially about V, S, and O).  Use this with
-    # free-order-rules.tdl, which is partially redunant to
+    # free-order-rules.tdl, which is partially redundant to
     # V-initial-rules.tdl and V-final-rules.tdl.  The difference is that
     # those currently don't have the head-2nd-comp rules.
 

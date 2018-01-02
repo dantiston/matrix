@@ -233,8 +233,11 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
 
 def constrain_for_features(typename,cs,mylang,path_prefix,ch):
     for f in cs['feat']:
+        path = 'LOCAL.CAT.HEAD.'
+        if nominalized_comps(ch) and not is_nominalized_complement(cs):
+            mylang.add(typename + ' := [ ' + path_prefix + path + 'NMZ - ].',merge=True)
         if f['name'] != 'nominalization':
-            if f['name'] == 'mood':
+            if f['name'] == 'mood' or f['name'] == 'aspect':
                 path = 'LOCAL.CONT.HOOK.INDEX.E.'
             else:
                 path = 'LOCAL.CAT.HEAD.'
@@ -243,8 +246,6 @@ def constrain_for_features(typename,cs,mylang,path_prefix,ch):
                        + f['value'] + ' ].', merge=True)
         else:
             path = 'LOCAL.CAT.HEAD.'
-            if nominalized_comps(ch) and not is_nominalized_complement(cs):
-                mylang.add(typename + ' := [ ' + path_prefix + path + 'NMZ - ].',merge=True)
             mylang.add(typename + ' := [ ' + path_prefix + path + 'NMZ + ].',merge=True)
 
 #TODO: I haven't still grasped the general logic here, hopefully one day it'll generalize.
@@ -546,13 +547,22 @@ def nominalized_comps(ch):
 def validate(ch,vr):
     if not ch.get(COMPS):
         pass
+    matches = {}
     for ccs in ch.get(COMPS):
+        matches[ccs.full_key] = None
+        for vb in ch.get('verb'):
+            val = vb['valence']
+            if val == ccs.full_key:
+                matches[ccs.full_key] = vb.full_key
+        for m in matches:
+            if not matches[m]:
+                vr.err(ccs.full_key + '_',
+                       'You did not enter any verbs in the Lexicon to go with this complementation strategy.')
         if not (ccs[CLAUSE_POS_EXTRA] or ccs[CLAUSE_POS_SAME]):
             vr.err(ccs.full_key + '_' + CLAUSE_POS_SAME, SAME_OR_EXTRA)
         if ccs[CLAUSE_POS_EXTRA]:
             if ch.get(constants.WORD_ORDER) in ['free','v2','svo','vso']:
                 vr.err(ccs.full_key + '_' + CLAUSE_POS_EXTRA,EXTRA_VO)
-        #TODO: MOOD and nominalized clauses? What's gonna happen to INDEX.E?
         for f in ccs['feat']:
             feat = find_in_other_features(f['name'],ch)
             if feat:
