@@ -1795,25 +1795,41 @@ BeginIter comps{i} "a Clausal Complement Type" 1
 
 EndIter comps
 
+Separator
+
 Label "<p>
-NOTE: The current version
+NOTES:
+</p>"
+
+Label "<p>
+1. The current version
 of the questionnaire only covers objectival clausal complements.
 </p>"
 
-Label "<p>NOTE: You will need to specify the word order in the complement
-clauses on the Word Order page. If your language employs different orders
-in different clausal complement types, please let us know.</p>"
+Label "<p>2. You will need to specify the word order in the complement
+clauses on the Word Order page. Currently, only one experimental
+case is supported:
+V2 order in the matrix and V-final in the subordinate clause, across all
+types of subordinate clauses.</p>"
 
 Label "<p>
-NOTE: You will need to specify the position classes for the verbal morphology
+3. You will need to specify the position classes for the verbal morphology
 in the Morphology section.
 You will need to specify which verbs can take which type of complement in the Lexicon section.
 </p>"
 
 Label "<p>
-NOTE: The number of various combinations of choices becomes really large
+4. The number of various combinations of choices becomes really large
 when more than one complementation strategy is defined. You can specify multiple strategies,
 but one-strategy scenario was tested better.
+</p>"
+
+Label "<p>
+5. You can use different nominalization strategies in different complementation strategies,
+but the distinction will have no effect unless there are other things that distinguish
+the complementation strategies from each other. Using only nominalization type
+to create different complementation strategies is currently not supported. Let us
+know if your language does this!
 </p>"
 
 Section lexicon "Lexicon"
