@@ -335,13 +335,16 @@ def construct_supertype_names(cases, ch, stype_names, verb):
         i = val.find(',')
         dir_inv = ''
         tivity = ''
-        clausalcomp = ''
+        clausal = ''
 
         if i != -1:
+            type = val.split(',')[1]
+            if type == 'dirinv':
+                dir_inv = 'dir-inv-'
+            elif type.startswith('comps'):
+                clausal = 'clausal-'
             val = val[:i]
-            dir_inv = 'dir-inv-'
-
-        if val == 'trans':
+        if val == 'trans' and not clausal:
             tivity = 'trans'
         elif val == 'intrans':
             tivity = 'intrans'
@@ -349,16 +352,22 @@ def construct_supertype_names(cases, ch, stype_names, verb):
             c = val.split('-')
             a_case = case.canon_to_abbr(c[0], cases)
             o_case = case.canon_to_abbr(c[1], cases)
-            tivity = a_case + '-' + o_case + '-trans'
-        else:
-            ccs_names = [ccs_name.full_key for ccs_name in list(ch.get(clausalcomps.COMPS))]
-            if val in ccs_names:
-                clausalcomp = clausalcomps.CLAUSALCOMP
+            tivity = a_case + '-' + o_case
+            if not clausal:
+                tivity = tivity + '-trans'
             else:
-                s_case = case.canon_to_abbr(val, cases)
-                tivity = s_case + '-intrans'
-        if clausalcomp:
-            stype_names.append(clausalcomp + tivity + '-verb-lex')
+                tivity = tivity + '-'
+        #else:
+        #    ccs_names = [ccs_name.full_key for ccs_name in list(ch.get(clausalcomps.COMPS))]
+        #    for ccs in ccs_names:
+        #        if val.endswith(ccs):
+        #            clausal = 'clausal'
+        #            break
+        elif not clausal:
+            s_case = case.canon_to_abbr(val, cases)
+            tivity = s_case + '-intrans'
+        if clausal:
+            stype_names.append(clausal + tivity + 'verb-lex')
         elif (not dir_inv == '' or not tivity == ''):
             stype_names.append(dir_inv + tivity + 'itive-verb-lex')
 

@@ -144,35 +144,35 @@ def customize_nmcs(mylang, ch, rules):
             mylang.set_section('phrases')
             wo = ch.get('word-order')
             #OZ: special case for free word order, but I don't think it is working yet (too many trees).
-            #if wo == 'free':
-            #    typename1 = 'non-event-subj-head'
-            #    typename2 = 'non-event-head-subj'
-            #    rules.add(typename1 + ' := ' + typename1 + '-phrase.')
-            #    rules.add(typename2 + ' := ' + typename2 + '-phrase.')
-            #    mylang.add(typename1 + '-phrase := head-final-head-nexus &' + NHS_DEF)
-            #    mylang.add(typename2 + '-phrase := head-initial-head-nexus &' + NHS_DEF)
-            #else:
-            if wo == 'osv' or wo == 'sov' or wo == 'svo' or wo == 'v-final':
-                typename = 'non-event-subj-head'
-                rules.add(typename + ' := ' + typename + '-phrase.')
-                super = 'head-final'
-            elif wo == 'ovs' or wo == 'vos' or wo == 'vso' or wo == 'v-initial':
-                typename = 'non-event-head-subj'
-                rules.add(typename + ' := ' + typename + '-phrase.')
-                super = 'head-initial'
-            if not typename:
-                raise Exception('Invalid combination of word order and nominalization choices.')
-            mylang.add(typename + '-phrase := ' + NHS_SUPERTYPE + '&' + super + '&' + NHS_DEF)
-            #if wo in [ 'sov', 'svo', 'ovs', 'vos']: #OZ: ovs can turn into vso with extraposed complements
-            #TODO: Need to handle OVS still! It seems to be a special case,
-            # if extraposition is involved (see also word_order.py)
-            if wo in ['svo', 'vos', 'sov'] or (wo == 'ovs' \
-                    and len([ cs for cs in ch.get('comps') if cs['clause-pos-extra'] ])==0):
-                   # The above just checks if any complementation strategy involves extraposition;
-                   # but what if there are several different ones? Am I sure that it
-                   # will be taken care of by INIT
-                   # on the clausal verb?
-                mylang.add(typename + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].',merge=True)
+            if wo == 'free' or wo == 'v2':
+               typename1 = 'non-event-subj-head'
+               typename2 = 'non-event-head-subj'
+               rules.add(typename1 + ' := ' + typename1 + '-phrase.')
+               rules.add(typename2 + ' := ' + typename2 + '-phrase.')
+               mylang.add(typename1 + '-phrase := head-final-head-nexus &' + NHS_SUPERTYPE + '&' + NHS_DEF)
+               mylang.add(typename2 + '-phrase := head-initial-head-nexus &' + NHS_SUPERTYPE + '&' +NHS_DEF)
+            else:
+                if wo == 'osv' or wo == 'sov' or wo == 'svo' or wo == 'v-final':
+                    typename = 'non-event-subj-head'
+                    rules.add(typename + ' := ' + typename + '-phrase.')
+                    super = 'head-final'
+                elif wo == 'ovs' or wo == 'vos' or wo == 'vso' or wo == 'v-initial':
+                    typename = 'non-event-head-subj'
+                    rules.add(typename + ' := ' + typename + '-phrase.')
+                    super = 'head-initial'
+                if not typename:
+                    raise Exception('Invalid combination of word order and nominalization choices.')
+                mylang.add(typename + '-phrase := ' + NHS_SUPERTYPE + '&' + super + '&' + NHS_DEF)
+                #if wo in [ 'sov', 'svo', 'ovs', 'vos']: #OZ: ovs can turn into vso with extraposed complements
+                #TODO: Need to handle OVS still! It seems to be a special case,
+                # if extraposition is involved (see also word_order.py)
+                if wo in ['svo', 'vos', 'sov'] or (wo == 'ovs' \
+                        and len([ cs for cs in ch.get('comps') if cs['clause-pos-extra'] ])==0):
+                       # The above just checks if any complementation strategy involves extraposition;
+                       # but what if there are several different ones? Am I sure that it
+                       # will be taken care of by INIT
+                       # on the clausal verb?
+                    mylang.add(typename + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].',merge=True)
         if level == 'mid' or level == 'high':
             mylang.set_section('lexrules')
             mylang.add(HIGH_OR_MID_LEXRULE)

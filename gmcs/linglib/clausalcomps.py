@@ -42,7 +42,7 @@ OV_ORDERS = ['sov', 'ovs', 'osv', 'v-final']
 VFINAL = ['sov','osv','v-final']
 VO_ORDERS = ['svo', 'vos', 'vso', 'v-initial']
 
-CLAUSALCOMP = 'clausalcomp'
+CLAUSALCOMP = 'clausal'
 COMPLEMENTIZER = 'complementizer' # Choices key for choices pertaining
                                   # to the complementizer defined for
                                   # a particular complementation strategy.
@@ -293,8 +293,8 @@ def determine_clausal_verb_head(cs):
 
 def find_clausalverb_typename(ch,cs):
     for v in ch.get(constants.VERB):
-        if v.get(constants.VALENCE) == cs.full_key:
-            return get_name(v) + '-' + cs.full_key + '-verb-lex'
+        if v.get(constants.VALENCE).endswith(cs.full_key):
+            return get_name(v) + '-clausal-verb-lex'
 
 '''
 This function assumes that the INIT feature is needed.
@@ -515,15 +515,13 @@ def update_verb_lextype(ch,verb, vtype):
     head = ''
     val = verb.get(constants.VALENCE)
     for ccs in ch.get(COMPS):
-        if val == ccs.full_key:
+        if val.endswith(ccs.full_key):
             suffix = val
             head = determine_clausal_verb_head(ccs)
     if suffix:
         name = vtype[0:vtype.find('verb-lex')-1]
-        rest = 'verb-lex'
-        #name = vtype.split('-',1)[0]
-        #rest = vtype.split('-',1)[1]
-        vtype = name + '-' + val + '-' + rest
+        rest = 'clausal-verb-lex'
+        vtype = name + '-' + rest
     return vtype,head
 
 def nonempty_nmz(cs,ch):
@@ -552,11 +550,11 @@ def validate(ch,vr):
         matches[ccs.full_key] = None
         for vb in ch.get('verb'):
             val = vb['valence']
-            if val == ccs.full_key:
+            if val.endswith(ccs.full_key):
                 matches[ccs.full_key] = vb.full_key
         for m in matches:
             if not matches[m]:
-                vr.err(ccs.full_key + '_',
+                vr.err(ccs.full_key + '_' + CLAUSE_POS_SAME,
                        'You did not enter any verbs in the Lexicon to go with this complementation strategy.')
         if not (ccs[CLAUSE_POS_EXTRA] or ccs[CLAUSE_POS_SAME]):
             vr.err(ccs.full_key + '_' + CLAUSE_POS_SAME, SAME_OR_EXTRA)

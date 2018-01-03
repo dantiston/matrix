@@ -1764,7 +1764,7 @@ BeginIter comps{i} "a Clausal Complement Type" 1
   Check clause-pos-extra "Clause Extraposed" "" "in the extraposed position at the end of sentence.<br>"
   
   Label "<p>The complement clauses are marked by
-  a complementizer that comes "
+  a (semantically empty) complementizer that comes "
 
   Check comp-pos-before "Complementizer Position Before" "" "before"
   Check comp-pos-after "Complementizer Position After" "" "or after the complement clause"<br>
