@@ -801,6 +801,7 @@ class ChoicesFile:
         patterns += [ ['trans', '', False] ]
 
         # Fill in the friendly names based on the canonical names
+        w = None
         for i in range(0, len(patterns)):
             if patterns[i][0] in ['trans', 'intrans']:
                 patterns[i][1] = patterns[i][0] + 'itive'
