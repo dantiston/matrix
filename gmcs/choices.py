@@ -571,6 +571,9 @@ class ChoicesFile:
             self.convert_27_to_28()
         if self.version < 29:
             self.convert_28_to_29()
+        if self.version < 30:
+            self.convert_29_to_30()
+
 
         # As we get more versions, add more version-conversion methods, and:
         # if self.version < N:
@@ -1261,7 +1264,7 @@ class ChoicesFile:
     # convert_value(), followed by a sequence of calls to convert_key().
     # That way the calls always contain an old name and a new name.
     def current_version(self):
-        return 29
+        return 30
 
     def convert_value(self, key, old, new, partial=False):
         if key in self:
@@ -2200,6 +2203,14 @@ class ChoicesFile:
         elif 'fin-subform' in self:
             self.convert_key('fin-subform', 'form-subtype')
 
+    def convert_29_to_30(self):
+        '''
+        Updates clausal valency: inserts 'trans,' before valency starting with 'comps'.
+
+        '''
+        for v in self.get('verb'):
+            if v['valence'].startswith('comps'):
+                v['valence'] = 'trans,' + v['valence']
 
 ########################################################################
 # FormData Class
