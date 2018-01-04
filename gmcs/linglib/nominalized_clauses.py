@@ -13,7 +13,7 @@ HIGH_OR_MID_LEXRULE = 'high-or-mid-nominalization-lex-rule := cat-change-with-cc
 		   CAT [ HEAD verb &\
 			      [ NMZ +,\
                      MOD #mod ],\
-                         VAL [ SUBJ < [ LOCAL [ CAT [ HEAD #head,\
+                         VAL [ SUBJ < [ LOCAL [ CAT [ HEAD noun,\
                                                       VAL.SPR < > ],\
                                                 CONT.HOOK.INDEX #subj ] ] >,\
                                COMPS #comps,\
@@ -24,7 +24,7 @@ HIGH_OR_MID_LEXRULE = 'high-or-mid-nominalization-lex-rule := cat-change-with-cc
                          HC-LIGHT #hc-light,\
                          POSTHEAD #posthead ] ],\
     DTR.SYNSEM.LOCAL [ CAT [ HEAD [ MOD #mod ],\
-                           VAL [ SUBJ < [ LOCAL [ CAT.HEAD #head, ' \
+                           VAL [ SUBJ < [ LOCAL [ CAT.HEAD noun, ' \
                       '                           CONT.HOOK.INDEX #subj ] ] >,\
                                  COMPS #comps,\
                                  SPR #spr,\
@@ -38,7 +38,7 @@ HIGH_OR_MID_LEXRULE = 'high-or-mid-nominalization-lex-rule := cat-change-with-cc
 LOW_LEXRULE = 'low-nominalization-lex-rule := cat-change-with-ccont-lex-rule &\
                 [ SYNSEM.LOCAL.CAT [ HEAD noun & \
 			    [ MOD #mod ],\
-		        VAL [ SUBJ < [ LOCAL [ CAT [ HEAD #head,\
+		        VAL [ SUBJ < [ LOCAL [ CAT [ HEAD noun,\
 		                            VAL.SPR < > ],\
 				      	      CONT.HOOK.INDEX #subj ] ] >,\
 			     COMPS < [ LOCAL [ CAT [ HEAD #head,\
@@ -62,7 +62,7 @@ LOW_LEXRULE = 'low-nominalization-lex-rule := cat-change-with-ccont-lex-rule &\
                 DTR.SYNSEM.LOCAL [ CAT [ HEAD [ MOD #mod ],\
 			     VAL [ SUBJ < [ LOCAL [ CAT.HEAD #head, ' \
               '                         CONT.HOOK.INDEX #subj ] ] >,\
-				   COMPS < [ LOCAL [ CAT [ HEAD #head,\
+				   COMPS < [ LOCAL [ CAT [ HEAD noun,\
 		                            VAL.SPR < > ],\
 				      	      CONT.HOOK.INDEX #obj ] ] >,\
 				   SPEC #spec  ],\
