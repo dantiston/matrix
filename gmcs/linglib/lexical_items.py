@@ -336,7 +336,6 @@ def construct_supertype_names(cases, ch, stype_names, verb):
         dir_inv = ''
         tivity = ''
         clausal = ''
-
         if i != -1:
             type = val.split(',')[1]
             if type == 'dirinv':
@@ -357,15 +356,13 @@ def construct_supertype_names(cases, ch, stype_names, verb):
                 tivity = tivity + '-trans'
             else:
                 tivity = tivity + '-'
-        #else:
-        #    ccs_names = [ccs_name.full_key for ccs_name in list(ch.get(clausalcomps.COMPS))]
-        #    for ccs in ccs_names:
-        #        if val.endswith(ccs):
-        #            clausal = 'clausal'
-        #            break
-        elif not clausal:
+        else:
             s_case = case.canon_to_abbr(val, cases)
-            tivity = s_case + '-intrans'
+            tivity += s_case
+            if not clausal:
+                tivity += '-intrans'
+            else:
+                tivity += '-'
         if clausal:
             stype_names.append(clausal + tivity + 'verb-lex')
         elif (not dir_inv == '' or not tivity == ''):

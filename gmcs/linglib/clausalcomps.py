@@ -55,6 +55,8 @@ EXTRA_VO = 'The only supporded word orders for extraposed complements are: SOV, 
 SAME_OR_EXTRA = 'Please choose whether the clausal complement takes the same position as noun ' \
                         'complements or is extraposed to the end of the clause ' \
                         '(the latter valid only for strict OV orders).'
+WO_WARNING = 'You chose a flexible word order; note that the order will indeed be flexible, ' \
+             'even with respect to complementizers.'
 
 #### Methods ###
 
@@ -102,11 +104,35 @@ def add_types_to_grammar(mylang,ch,rules,have_complementizer):
         if wo in OV_ORDERS or wo in VO_ORDERS:
             general, additional = determine_head_comp_rule_type(ch.get(constants.WORD_ORDER),cs)
             customize_order(ch, cs, mylang, rules, typename, init,general,additional,extra)
+        elif wo == 'free':
+            constrain_complementizer(wo,cs,mylang,typename)
+
+def constrain_complementizer(wo,cs,mylang,typename):
+    if not wo == 'free':
+        raise Exception("This function is for free word order only.")
+    if cs[COMP]:
+        path = 'SYNSEM.LOCAL.CAT.HEAD'
+        if cs[COMP_POS_BEFORE] and not cs[COMP_POS_AFTER]:
+            init_val = '+'
+            default_init_val = '-'
+            my_phrase = 'head-comp'
+            other_phrase = 'comp-head'
+        elif cs[COMP_POS_AFTER] and not cs[COMP_POS_BEFORE]:
+            init_val = '-'
+            default_init_val = '+'
+            my_phrase = 'comp-head'
+            other_phrase = 'head-comp'
+        constrain_lexitem_for_feature(typename,path,'INIT',init_val,mylang)
+        mylang.add(my_phrase + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + init_val + ' ].',
+                   merge=True)
+        mylang.add(other_phrase + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + default_init_val + ' ].',
+                   merge=True)
+
 
 
 def use_init(ch, mylang, wo):
     init = False
-    if wo in OV_ORDERS or wo in VO_ORDERS:
+    if wo in OV_ORDERS or wo in VO_ORDERS or wo == 'free':
         for cs in ch.get(COMPS):
             init = init_needed(ch.get(constants.WORD_ORDER), cs, mylang)
             if init:
@@ -175,9 +201,6 @@ def customize_complementizer_order(wo,cs,mylang,rules):
             mylang.add('comp-head-phrase := basic-head-1st-comp-phrase & head-final '
                        '& [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].',section='phrases')
             rules.add('comp-head := comp-head-phrase.')
-
-def customize_cverb_ccomp_order():
-    pass
 
 def constrain_head_subj_rules(cs,mylang,rules,ch):
     if cs[COMP]:
@@ -443,6 +466,8 @@ def init_needed(wo, cs,mylang):
                 res = cs[CLAUSE_POS_EXTRA] == constants.ON
         elif wo in VO_ORDERS:
             res = (cs[COMP_POS_AFTER] == constants.ON and not cs[COMP_POS_BEFORE] == constants.ON)
+        elif wo == 'free':
+            res = (cs[COMP_POS_AFTER] and not cs[COMP_POS_BEFORE]) or (cs[COMP_POS_BEFORE] and not cs[COMP_POS_AFTER])
     else:
          res = (wo in OV_ORDERS or wo == 'vos') and cs[CLAUSE_POS_EXTRA] == 'on'
     if res:
@@ -547,6 +572,8 @@ def validate(ch,vr):
         pass
     matches = {}
     for ccs in ch.get(COMPS):
+        if ch.get(constants.WORD_ORDER) in ['free','v2']:
+            vr.warn(ccs.full_key + '_'+ CLAUSE_POS_SAME,WO_WARNING)
         matches[ccs.full_key] = None
         for vb in ch.get('verb'):
             val = vb['valence']

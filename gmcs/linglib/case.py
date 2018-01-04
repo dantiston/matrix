@@ -445,7 +445,10 @@ def customize_verb_case(mylang, ch):
                         i_type = clausal + 'verb-lex'
 
                 if i_type != 'intransitive-verb-lex' and i_type !='clausal-verb-lex':
-                    mylang.add(i_type + ' := intransitive-verb-lex.')
+                    if not clausal:
+                        mylang.add(i_type + ' := intransitive-verb-lex.')
+                    else:
+                        mylang.add(i_type + ' := clausal-verb-lex.')
 
                 # constrain the head of the subject
                 typedef = \
