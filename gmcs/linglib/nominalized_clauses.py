@@ -35,15 +35,13 @@ HIGH_OR_MID_LEXRULE = 'high-or-mid-nominalization-lex-rule := cat-change-with-cc
                            POSTHEAD #posthead ]],\
    C-CONT [ RELS <! !>, HCONS <! !> ] ].'
 
-LOW_LEXRULE = 'low-nominalization-lex-rule := cat-change-with-ccont-lex-rule &\
+# A rule that says nothing about the object.
+LOW_NMZ = 'low-nominalization-lex-rule := cat-change-with-ccont-lex-rule &\
                 [ SYNSEM.LOCAL.CAT [ HEAD noun & \
 			    [ MOD #mod ],\
 		        VAL [ SUBJ < [ LOCAL [ CAT [ HEAD noun,\
 		                            VAL.SPR < > ],\
 				      	      CONT.HOOK.INDEX #subj ] ] >,\
-			     COMPS < [ LOCAL [ CAT [ HEAD noun,\
-		                            VAL.SPR < > ],\
-				      	      CONT.HOOK.INDEX #obj ] ] >,\
 			     SPEC #spec,\
 			     SPR < [ OPT + ]> ],\
 		       MC #mc,\
@@ -62,15 +60,27 @@ LOW_LEXRULE = 'low-nominalization-lex-rule := cat-change-with-ccont-lex-rule &\
                 DTR.SYNSEM.LOCAL [ CAT [ HEAD [ MOD #mod ],\
 			     VAL [ SUBJ < [ LOCAL [ CAT.HEAD noun, ' \
               '                         CONT.HOOK.INDEX #subj ] ] >,\
-				   COMPS < [ LOCAL [ CAT [ HEAD noun,\
-		                            VAL.SPR < > ],\
-				      	      CONT.HOOK.INDEX #obj ] ] >,\
 				   SPEC #spec  ],\
 			     MC #mc,\
 			     MKG #mkg,\
 			     HC-LIGHT #hc-light,\
 			     POSTHEAD #posthead ],\
 		       CONT.HOOK [ LTOP #larg ]]].'
+
+#Rule that allows case change on both subject and object and requires that there is an object.
+LOW_LEXRULE_NO_COMPS_ID = 'low-nmz-trans-lex-rule := low-nominalization-lex-rule &\
+                [ SYNSEM.LOCAL.CAT.VAL [ COMPS < [ LOCAL [ CAT [ HEAD noun,\
+		                                                         VAL.SPR < > ],\
+				      	                                   CONT.HOOK.INDEX #obj ] ] > ],\
+                DTR.SYNSEM.LOCAL.CAT.VAL [ COMPS < [ LOCAL [ CAT.HEAD noun, ' \
+              '                         CONT.HOOK.INDEX #obj ] ] > ] ].'
+
+# A rule that identifies the object of mother and daughter and works for intransitive verbs, too.
+# Still allows case change on the subject.
+LOW_LEXRULE_COMPS_ID = 'low-nmz-compsid-lex-rule := low-nominalization-lex-rule &\
+                [ SYNSEM.LOCAL.CAT.VAL.COMPS #comps,\
+                  DTR.SYNSEM.LOCAL.CAT.VAL.COMPS #comps ].'
+
 
 NMZ_CLAUSE = '-nominalized-clause-phrase := basic-unary-phrase &\
                                     [ SYNSEM.LOCAL.CAT [ HEAD noun,\
@@ -184,7 +194,10 @@ def customize_nmcs(mylang, ch, rules):
             mylang.add(HIGH_OR_MID_LEXRULE)
         if level == 'low':
             mylang.set_section('lexrules')
-            mylang.add(LOW_LEXRULE)
+            mylang.add(LOW_NMZ)
+            if case_change(ch):
+                mylang.add(LOW_LEXRULE_NO_COMPS_ID)
+            mylang.add(LOW_LEXRULE_COMPS_ID)
         elif level == 'mid':
             mylang.set_section('phrases')
             mylang.add(level + NMZ_CLAUSE)
@@ -198,6 +211,30 @@ def customize_nmcs(mylang, ch, rules):
                 mylang.add(level + SUBJ_NMZ_CLAUSE)
                 rules.add(level + '-nominalized-clause := ' + level + '-nominalized-clause-phrase.')
 
+def case_change(ch):
+    for vpc in ch.get('verb-pc'):
+        for lrt in vpc['lrt']:
+            has_nmz = False
+            case_change = False
+            for f in lrt['feat']:
+                if f['name'] == 'nominalization':
+                    has_nmz = True
+                    if has_nmz and case_change:
+                        return True
+                if f['name'] == 'case' and f['head'] == 'obj':
+                    case_change = True
+                    if has_nmz and case_change:
+                        return True
+    return has_nmz and case_change
+
+'''
+This assumes that the lrt is associated with nominalization.
+'''
+def case_change_lrt(lrt):
+    for f in lrt['feat']:
+        if f['name'] == 'case' and f['head'] == 'obj':
+            return True
+    return False
 
 def update_lexical_rules(ch):
     for vpc in ch['verb-pc']:
@@ -211,8 +248,12 @@ def update_lexical_rules(ch):
                                 lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
                                                               ['high-or-mid-nominalization-lex-rule'])
                             if level == 'low':
-                                lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
-                                                              ['low-nominalization-lex-rule'])
+                                if case_change_lrt(lrt):
+                                    lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
+                                                              ['low-nmz-trans-lex-rule'])
+                                else:
+                                    lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
+                                                              ['low-nmz-compsid-lex-rule'])
 
 
 def add_features(mylang):
