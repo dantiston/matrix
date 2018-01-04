@@ -362,6 +362,9 @@ def construct_supertype_names(cases, ch, stype_names, verb):
                 tivity += s_case
                 tivity += '-intrans'
             else:
+                #OZ 2018-01-03: This is awkward, has to do with the current format of the choices file...
+                #We should not ideally end up here at all if we are not an intransitive verb...
+                #The reason we end up here is some clausal verbs will only have subject case specified.
                 if not s_case == 'trans':
                     tivity += s_case
                     tivity += '-'

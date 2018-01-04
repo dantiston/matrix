@@ -13,7 +13,7 @@ HIGH_OR_MID_LEXRULE = 'high-or-mid-nominalization-lex-rule := cat-change-with-cc
 		   CAT [ HEAD verb &\
 			      [ NMZ +,\
                      MOD #mod ],\
-                         VAL [ SUBJ < [ LOCAL [ CAT [ HEAD noun,\
+                         VAL [ SUBJ < [ LOCAL [ CAT [ HEAD #head,\
                                                       VAL.SPR < > ],\
                                                 CONT.HOOK.INDEX #subj ] ] >,\
                                COMPS #comps,\
@@ -24,7 +24,8 @@ HIGH_OR_MID_LEXRULE = 'high-or-mid-nominalization-lex-rule := cat-change-with-cc
                          HC-LIGHT #hc-light,\
                          POSTHEAD #posthead ] ],\
     DTR.SYNSEM.LOCAL [ CAT [ HEAD [ MOD #mod ],\
-                           VAL [ SUBJ < [ LOCAL.CONT.HOOK.INDEX #subj ] >,\
+                           VAL [ SUBJ < [ LOCAL [ CAT.HEAD #head, ' \
+                      '                           CONT.HOOK.INDEX #subj ] ] >,\
                                  COMPS #comps,\
                                  SPR #spr,\
                                  SPEC #spec ],\
@@ -37,10 +38,12 @@ HIGH_OR_MID_LEXRULE = 'high-or-mid-nominalization-lex-rule := cat-change-with-cc
 LOW_LEXRULE = 'low-nominalization-lex-rule := cat-change-with-ccont-lex-rule &\
                 [ SYNSEM.LOCAL.CAT [ HEAD noun & \
 			    [ MOD #mod ],\
-		        VAL [ SUBJ < [ LOCAL [ CAT [ HEAD noun,\
+		        VAL [ SUBJ < [ LOCAL [ CAT [ HEAD #head,\
 		                            VAL.SPR < > ],\
-				      	      CONT.HOOK.INDEX #subj ]] >,\
-			     COMPS #comps,\
+				      	      CONT.HOOK.INDEX #subj ] ] >,\
+			     COMPS < [ LOCAL [ CAT [ HEAD #head,\
+		                            VAL.SPR < > ],\
+				      	      CONT.HOOK.INDEX #obj ] ] >,\
 			     SPEC #spec,\
 			     SPR < [ OPT + ]> ],\
 		       MC #mc,\
@@ -57,8 +60,11 @@ LOW_LEXRULE = 'low-nominalization-lex-rule := cat-change-with-ccont-lex-rule &\
 	            HOOK [ INDEX #arg0,\
 		        LTOP #ltop ]],\
                 DTR.SYNSEM.LOCAL [ CAT [ HEAD [ MOD #mod ],\
-			     VAL [ SUBJ < [ LOCAL.CONT.HOOK.INDEX #subj ] >,\
-				   COMPS #comps,\
+			     VAL [ SUBJ < [ LOCAL [ CAT.HEAD #head, ' \
+              '                         CONT.HOOK.INDEX #subj ] ] >,\
+				   COMPS < [ LOCAL [ CAT [ HEAD #head,\
+		                            VAL.SPR < > ],\
+				      	      CONT.HOOK.INDEX #obj ] ] >,\
 				   SPEC #spec  ],\
 			     MC #mc,\
 			     MKG #mkg,\
