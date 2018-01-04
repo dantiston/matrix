@@ -425,7 +425,7 @@ def customize_verb_case(mylang, ch):
                         t_type + ' := \
             [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.CASE-MARKED + ] > ].'
                     mylang.add(typedef)
-            else:     # intransitive
+            else:     # intransitive or clausal with constrained subject
                 if c[0] == 'intrans':
                     s_case = ''
                     s_head = ch.case_head()
@@ -434,11 +434,17 @@ def customize_verb_case(mylang, ch):
                     s_head = ch.case_head(c[0])
 
                 if s_case:
-                    i_type = dir_inv + s_case + '-intransitive-verb-lex'
+                    if not clausal:
+                        i_type = dir_inv + s_case + '-intransitive-verb-lex'
+                    else:
+                        i_type = clausal + s_case + '-verb-lex'
                 else:
-                    i_type = dir_inv + 'intransitive-verb-lex'
+                    if not clausal:
+                        i_type = dir_inv + 'intransitive-verb-lex'
+                    else:
+                        i_type = clausal + 'verb-lex'
 
-                if i_type != 'intransitive-verb-lex':
+                if i_type != 'intransitive-verb-lex' and i_type !='clausal-verb-lex':
                     mylang.add(i_type + ' := intransitive-verb-lex.')
 
                 # constrain the head of the subject

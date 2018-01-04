@@ -828,8 +828,10 @@ class ChoicesFile:
         # Extend the patterns to include clausal complement strategies
         for ccs in self['comps']:
             patterns += [ [ 'trans,%s'%(ccs.full_key), 'transitive-clausal-%s (case unspecified)' % (ccs.full_key), False] ]
-            patterns += [ [ '%s-%s,%s'% (w[0],w[1],ccs.full_key), 'transitive-clausal-%s (%s-%s)' % (ccs.full_key,w[0],w[1]), False] ]
-            patterns += [ [ '%s,%s'%(w[0],ccs.full_key), 'transitive-clausal-%s (%s-unspecified)' % (ccs.full_key,w[0]), False] ]
+            if w and w[0] and w[1]:
+                patterns += [ [ '%s-%s,%s'% (w[0],w[1],ccs.full_key), 'transitive-clausal-%s (%s-%s)' % (ccs.full_key,w[0],w[1]), False] ]
+            if w and w[0]:
+                patterns += [ [ '%s,%s'%(w[0],ccs.full_key), 'transitive-clausal-%s (%s-unspecified)' % (ccs.full_key,w[0]), False] ]
         return patterns
 
 
