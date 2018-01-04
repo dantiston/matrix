@@ -41,7 +41,7 @@ LOW_LEXRULE = 'low-nominalization-lex-rule := cat-change-with-ccont-lex-rule &\
 		        VAL [ SUBJ < [ LOCAL [ CAT [ HEAD noun,\
 		                            VAL.SPR < > ],\
 				      	      CONT.HOOK.INDEX #subj ] ] >,\
-			     COMPS < [ LOCAL [ CAT [ HEAD #head,\
+			     COMPS < [ LOCAL [ CAT [ HEAD noun,\
 		                            VAL.SPR < > ],\
 				      	      CONT.HOOK.INDEX #obj ] ] >,\
 			     SPEC #spec,\
@@ -60,7 +60,7 @@ LOW_LEXRULE = 'low-nominalization-lex-rule := cat-change-with-ccont-lex-rule &\
 	            HOOK [ INDEX #arg0,\
 		        LTOP #ltop ]],\
                 DTR.SYNSEM.LOCAL [ CAT [ HEAD [ MOD #mod ],\
-			     VAL [ SUBJ < [ LOCAL [ CAT.HEAD #head, ' \
+			     VAL [ SUBJ < [ LOCAL [ CAT.HEAD noun, ' \
               '                         CONT.HOOK.INDEX #subj ] ] >,\
 				   COMPS < [ LOCAL [ CAT [ HEAD noun,\
 		                            VAL.SPR < > ],\
