@@ -358,10 +358,12 @@ def construct_supertype_names(cases, ch, stype_names, verb):
                 tivity = tivity + '-'
         else:
             s_case = case.canon_to_abbr(val, cases)
-            tivity += s_case
             if not clausal:
+                tivity += s_case
                 tivity += '-intrans'
             else:
+                if not s_case == 'trans':
+                    tivity += s_case
                 tivity += '-'
         if clausal:
             stype_names.append(clausal + tivity + 'verb-lex')
