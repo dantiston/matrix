@@ -364,7 +364,7 @@ def construct_supertype_names(cases, ch, stype_names, verb):
             else:
                 if not s_case == 'trans':
                     tivity += s_case
-                tivity += '-'
+                    tivity += '-'
         if clausal:
             stype_names.append(clausal + tivity + 'verb-lex')
         elif (not dir_inv == '' or not tivity == ''):
