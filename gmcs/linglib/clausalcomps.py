@@ -148,8 +148,8 @@ def add_complementizer_subtype(cs, mylang,ch):
     typename = id + '-' + COMP_LEX_ITEM
     mylang.add(typename + ' := ' + COMP_LEX_ITEM + '.', section=COMPLEX)
     constrain_for_features(typename,cs,mylang,'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.',ch,is_nominalized_complement(cs))
-
-    #constrain_lexitem_for_feature(typename,'SYNSEM.LOCAL.CAT.HEAD',f['name'],f['value'],mylang)
+    if cs['cformvalue']:
+        constrain_lexitem_for_feature(typename,'SYNSEM.LOCAL.CAT.HEAD','FORM',cs['cformvalue'],mylang)
     return typename
 
 '''
@@ -473,7 +473,13 @@ def is_nominalized_complement(cs):
     return 'nominalization' in [ f['name'] for f in cs['feat'] ]
 
 def customize_clausal_verb(clausalverb,mylang,ch,cs,extra):
-    constrain_for_features(clausalverb,cs,mylang,'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.',ch,is_nominalized_complement(cs))
+    if not cs['cformvalue']:
+        constrain_for_features(clausalverb,cs,mylang,
+                               'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.',ch,is_nominalized_complement(cs))
+    else:
+        mylang.add(clausalverb + ' := [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.FORM '
+                   + cs['cformvalue'] + ' ] > ].'
+                    , merge=True)
     supertype = clausalverb_supertype(ch, cs)
     mylang.add(clausalverb +' := ' + supertype + '.',merge=True)
     if extra:
@@ -485,6 +491,7 @@ def customize_clausal_verb(clausalverb,mylang,ch,cs,extra):
         if val:
             mylang.add(clausalverb + ' := [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA '+ val + ' ] > ].'
                        , merge=True)
+
 
 '''
 Semantically non-empty nominalization requires that
@@ -564,6 +571,9 @@ def validate(ch,vr):
             if feat:
                 if feat['type'] and feat['type'] == 'index':
                     vr.err(f.full_key + '_name','Custom semantic features are not supported here.')
+        if ccs['cformvalue'] and not ccs[COMP] == 'oblig':
+            vr.err(ccs.full_key + '_' + COMP,
+                   'FORM on complementizers is only supported with obligatory complementizers.')
 
 def find_in_other_features(name,ch):
     for f in ch.get('feature'):

@@ -1779,15 +1779,17 @@ BeginIter comps{i} "a Clausal Complement Type" 1
 
         EndIter complementizer
 
-        BeginIter cfeat{k} "a Feature"
+        Label "<p> You can put a FORM feature on the complementizer if you want to constrain clausal
+        verbs in terms of which complementizer each can go with. (Note that all complementizers here
+        are still assumed to be semantically empty and that you will need to manually constrain the verb
+        to pick this form and not another.)</p>"
 
-           Select name "Clausal Complement Type {i} Complementizer Feature {k} Name" "Name: " ""
-           fillnames2 c=verb
+        #BeginIter cform{k} "a Complementizer Form"
 
-           MultiSelect value "Clausal Complement Type {i} Complementizer Feature {k} Value" "Value: " ""
-           fillvalues p=comps{i}_cfeat{k}_name
+           Select cformvalue "Clausal Complement Type {i} Complementizer Form {k} Value" "Form Value: " ""
+           fillvalues p=form l=1
 
-        EndIter cfeat
+        #EndIter cform
 
 
   Label "<p> The embedded verb
