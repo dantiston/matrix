@@ -1779,10 +1779,9 @@ BeginIter comps{i} "a Clausal Complement Type" 1
 
         EndIter complementizer
 
-        Label "<p> You can put a FORM feature on the complementizer if you want to constrain clausal
-        verbs in terms of which complementizer each can go with. (Note that all complementizers here
-        are still assumed to be semantically empty and that you will need to manually constrain the verb
-        to pick this form and not another.)</p>"
+        Label "<p> You can put a FORM feature on the obligatory complementizer if you want to constrain the clausal
+        verb in terms of which complementizers it can go with. (Note that all complementizers here
+        are still assumed to be semantically empty.)</p>"
 
         #BeginIter cform{k} "a Complementizer Form"
 
