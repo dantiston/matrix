@@ -257,8 +257,8 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
     constrain_for_features(additional + '-phrase', cs, mylang,
                            'NON-HEAD-DTR.SYNSEM.',ch,is_nominalized_complement(cs))
 
-def constrain_for_features(typename,dict,mylang,path_prefix,ch,is_nmz):
-    for f in dict['feat']:
+def constrain_for_features(typename,choice,mylang,path_prefix,ch,is_nmz):
+    for f in choice['feat']:
         path = 'LOCAL.CAT.HEAD.'
         if nominalized_comps(ch) and not is_nmz:
             mylang.add(typename + ' := [ ' + path_prefix + path + 'NMZ - ].',merge=True)
