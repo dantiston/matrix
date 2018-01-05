@@ -148,7 +148,8 @@ def add_complementizer_subtype(cs, mylang,ch):
     typename = id + '-' + COMP_LEX_ITEM
     mylang.add(typename + ' := ' + COMP_LEX_ITEM + '.', section=COMPLEX)
     constrain_for_features(typename,cs,mylang,'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.',ch,is_nominalized_complement(cs))
-    constrain_for_features(typename,cs['complementizer'],mylang,'SYNSEM.LOCAL.CAT.HEAD.',ch,is_nominalized_complement(cs))
+
+    #constrain_lexitem_for_feature(typename,'SYNSEM.LOCAL.CAT.HEAD',f['name'],f['value'],mylang)
     return typename
 
 '''
@@ -214,10 +215,6 @@ def constrain_head_subj_rules(cs,mylang,rules,ch):
                '[ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD ' + head + ' ] > ].',section='phrases')
     constrain_for_features('head-subj-ccomp-phrase',cs,mylang,
                            'HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.',ch,is_nominalized_complement(cs))
-    #for f in cs['feat']:
-    #    if f['name'] == 'form':
-    #        mylang.add('head-subj-ccomp-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS '
-    #                   '< [ LOCAL.CAT.HEAD.FORM ' + f['value'] + ' ] > ].')
     rules.add('head-subj-ccomp := head-subj-ccomp-phrase.')
     mylang.add('head-subj-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].',merge=True)
 
@@ -257,6 +254,8 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
     constrain_for_features(additional + '-phrase', cs, mylang,
                            'NON-HEAD-DTR.SYNSEM.',ch,is_nominalized_complement(cs))
 
+
+
 def constrain_for_features(typename,choice,mylang,path_prefix,ch,is_nmz):
     for f in choice['feat']:
         path = 'LOCAL.CAT.HEAD.'
@@ -273,6 +272,7 @@ def constrain_for_features(typename,choice,mylang,path_prefix,ch,is_nmz):
         else:
             path = 'LOCAL.CAT.HEAD.'
             mylang.add(typename + ' := [ ' + path_prefix + path + 'NMZ + ].',merge=True)
+
 
 #TODO: I haven't still grasped the general logic here, hopefully one day it'll generalize.
 #TODO: This isn't really special cases. This is the logic that has to do with extraposition,
@@ -359,38 +359,6 @@ def constrain_transitive_verb(head,cs):
     return head == 'verb' \
            or (head == '+vc' and cs[CLAUSE_POS_EXTRA]
                and (not cs[CLAUSE_POS_SAME] or cs[COMP] == 'opt'))
-
-'''
-This function assumes that the INIT feature is needed.
-It will constrain verbs and/or complementizers with respect to the INIT feature.
-'''
-def constrain_lex_items2(head,ch,cs,comptype, init_value, default_init_value,mylang):
-    wo = ch.get(constants.WORD_ORDER)
-    clausalverb = find_clausalverb_typename(ch,cs)
-    init_path = 'SYNSEM.LOCAL.CAT.HEAD'
-    #if head in ['+vc', 'verb'] and cs[CLAUSE_POS_EXTRA]
-    if head == '+vc':
-        if cs[CLAUSE_POS_EXTRA]:
-            if not cs[CLAUSE_POS_SAME]:
-                constrain_lexitem_for_feature(clausalverb,init_path, 'INIT',init_value,mylang)
-                mylang.add('transitive-verb-lex := [ '  + init_path + '.INIT ' + default_init_value + ' ].'
-                   , merge=True)
-            elif cs[COMP] == 'opt':
-                mylang.add('transitive-verb-lex := [ ' + init_path + '.INIT ' + default_init_value + ' ].'
-                   , merge=True)
-        if cs[COMP_POS_BEFORE] and not cs[COMP_POS_AFTER] and wo in OV_ORDERS:
-            constrain_lexitem_for_feature(comptype,init_path,'INIT',init_value,mylang)
-    elif head == constants.VERB:
-        if cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME]:
-            constrain_lexitem_for_feature(clausalverb,init_path, 'INIT', init_value,mylang)
-        mylang.add('transitive-verb-lex := [ ' + init_path + '.INIT ' + default_init_value + ' ].'
-                   , merge=True)
-    else:
-        if (cs[COMP_POS_BEFORE] and not cs[COMP_POS_AFTER] and wo in OV_ORDERS) \
-                or (cs[COMP_POS_AFTER] and not cs[COMP_POS_BEFORE] and wo in VO_ORDERS):
-            mylang.add(comptype + ':= [ ' + init_path + '.INIT ' + init_value + ' ].',merge=True)
-        elif not cs[COMP_POS_AFTER] and cs[COMP_POS_BEFORE]:
-            mylang.add(comptype + ':= [ ' + init_path + '.INIT ' + default_init_value + ' ].',merge=True)
 
 
 def constrain_lexitem_for_feature(typename, feature_path, feature_name, feature_value,mylang):

@@ -964,13 +964,14 @@ class ChoicesFile:
     #   This list consists of tuples:
     #     [name, supertype]
     def forms(self):
-        forms = [['finite','form'],['nonfinite','form']]
-        for f in self.get('form-subtype'):
-            name = f['name']
-            stype = f.get('supertype') if f.get('supertype') else 'form'
-            forms += [[name, stype]]
-
-        return forms
+        if 'form-fin-nf' in self and self['form-fin-nf'] == 'on':
+            forms = [['form','form'],['finite','form'],['nonfinite','form']]
+            for f in self.get('form-subtype'):
+                name = f['name']
+                stype = f.get('supertype') if f.get('supertype') else 'form'
+                forms += [[name, stype]]
+            return forms
+        return []
 
     # tenses()
     #   Create and return a list containing information about the values

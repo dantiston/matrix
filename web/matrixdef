@@ -1773,21 +1773,22 @@ BeginIter comps{i} "a Clausal Complement Type" 1
   . opt "Optional Complementizer" "" "optional or"
   . oblig "Obligatory Complementizer" ""  "obligatory."
 
-        BeginIter complementizer{j} "a Complementizer" 0
+        BeginIter complementizer{j} "a Complementizer spelling" 0
 
                 Text orth "comp {i} stem {j} spelling" "Spelling: " "" 30 ""
 
-                    BeginIter cfeat{k} "a Feature"
-
-                      Select name "Clausal Complement Type {i} Complementizer {j} Feature {k} Name" "Name: " ""
-                      fillnames2 c=verb
-
-                      MultiSelect value "Clausal Complement Type {i} Complementizer {j} Feature {k} Value" "Value: " ""
-                      fillvalues p=comps{i}_feat{k}_name
-
-                    EndIter cfeat
-
         EndIter complementizer
+
+        BeginIter cfeat{k} "a Feature"
+
+           Select name "Clausal Complement Type {i} Complementizer Feature {k} Name" "Name: " ""
+           fillnames2 c=verb
+
+           MultiSelect value "Clausal Complement Type {i} Complementizer Feature {k} Value" "Value: " ""
+           fillvalues p=comps{i}_cfeat{k}_name
+
+        EndIter cfeat
+
 
   Label "<p> The embedded verb
   has the following features
