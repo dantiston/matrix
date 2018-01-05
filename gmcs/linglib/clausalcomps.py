@@ -505,7 +505,7 @@ def is_nominalized_complement(cs):
     return 'nominalization' in [ f['name'] for f in cs['feat'] ]
 
 def customize_clausal_verb(clausalverb,mylang,ch,cs,extra):
-    constrain_for_features(clausalverb,cs,mylang,'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.',ch)
+    constrain_for_features(clausalverb,cs,mylang,'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.',ch,is_nominalized_complement(cs))
     supertype = clausalverb_supertype(ch, cs)
     mylang.add(clausalverb +' := ' + supertype + '.',merge=True)
     if extra:
