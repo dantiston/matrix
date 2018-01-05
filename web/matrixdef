@@ -1775,21 +1775,32 @@ BeginIter comps{i} "a Clausal Complement Type" 1
 
         BeginIter complementizer{j} "a Complementizer" 0
 
-                Text orth "subord {i} stem {j} spelling" "Spelling: " "" 30 ""
+                Text orth "comp {i} stem {j} spelling" "Spelling: " "" 30 ""
 
-         EndIter complementizer
+                    BeginIter cfeat{k} "a Feature"
 
-  Label "<p> The embedded verb has the following features
+                      Select name "Clausal Complement Type {i} Complementizer {j} Feature {k} Name" "Name: " ""
+                      fillnames2 c=verb
+
+                      MultiSelect value "Clausal Complement Type {i} Complementizer {j} Feature {k} Value" "Value: " ""
+                      fillvalues p=comps{i}_feat{k}_name
+
+                    EndIter cfeat
+
+        EndIter complementizer
+
+  Label "<p> The embedded verb
+  has the following features
   e.g. finite, nonfinite form (define in Other Features; we assume that mostly FORM and MOOD will be used;
   you can use custom syntactic but not semantic features), nominalization (define in Nominalized Clauses):</p>"
   
-    BeginIter feat{k} "a Feature"
+    BeginIter feat{l} "a Feature"
 
-      Select name "Clausal Complement Type {i} Embedded Verb Feature {k} Name" "Name: " ""
+      Select name "Clausal Complement Type {i} Embedded Verb Feature {l} Name" "Name: " ""
 	  fillnames2 c=verb
  
-      MultiSelect value "Clausal Complement Type {i} Embedded Verb Feature {k} Value" "Value: " ""
-      fillvalues p=comps{i}_feat{k}_name
+      MultiSelect value "Clausal Complement Type {i} Embedded Verb Feature {l} Value" "Value: " ""
+      fillvalues p=comps{i}_feat{l}_name
 
     EndIter feat
 

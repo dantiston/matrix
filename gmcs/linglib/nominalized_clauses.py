@@ -35,7 +35,7 @@ HIGH_OR_MID_LEXRULE = 'high-or-mid-nominalization-lex-rule := cat-change-with-cc
                            POSTHEAD #posthead ]],\
    C-CONT [ RELS <! !>, HCONS <! !> ] ].'
 
-# A rule that says nothing about the object.
+# A rule that says nothing about the object. Should only ever be used as a supertype.
 LOW_NMZ = 'low-nominalization-lex-rule := cat-change-with-ccont-lex-rule &\
                 [ SYNSEM.LOCAL.CAT [ HEAD noun & \
 			    [ MOD #mod ],\
@@ -67,7 +67,8 @@ LOW_NMZ = 'low-nominalization-lex-rule := cat-change-with-ccont-lex-rule &\
 			     POSTHEAD #posthead ],\
 		       CONT.HOOK [ LTOP #larg ]]].'
 
-#Rule that allows case change on both subject and object and requires that there is an object.
+# A rule that allows case change on both subject and object and requires that there is an object.
+# Only good for transitive verbs.
 LOW_LEXRULE_NO_COMPS_ID = 'low-nmz-trans-lex-rule := low-nominalization-lex-rule &\
                 [ SYNSEM.LOCAL.CAT.VAL [ COMPS < [ LOCAL [ CAT [ HEAD noun,\
 		                                                         VAL.SPR < > ],\
@@ -104,6 +105,7 @@ NMZ_CLAUSE = '-nominalized-clause-phrase := basic-unary-phrase &\
             		    			  SPR < >,\
             			    		  SPEC < > ]],\
             			            CONT.HOOK [ LTOP #larg ]]]] > ].'
+
 NO_REL_NLZ_CLAUSE = '-no-rel-nominalized-clause-phrase := basic-unary-phrase &\
   [ SYNSEM [ LOCAL.CAT [ HEAD noun,\
                          VAL [ COMPS < >,\
@@ -154,12 +156,11 @@ def customize_nmcs(mylang, ch, rules):
         nmzrel = ns.get('nmzRel')
         add_features(mylang)
         mylang.add('+nvcdmo :+ [ MOD < > ].')
-        # OZ 2017-12-23: Refactoring the first part of the function
         super = ''
         if level == 'low' or level == 'mid':
             mylang.set_section('phrases')
             wo = ch.get('word-order')
-            #OZ: special case for free word order, but I don't think it is working yet (too many trees).
+            #OZ: special case for free and v2 word order. Haven't yet tested on V2!
             if wo == 'free' or wo == 'v2':
                typename1 = 'non-event-subj-head'
                typename2 = 'non-event-head-subj'
@@ -246,14 +247,14 @@ def update_lexical_rules(ch):
                             level = ns.get('level')
                             if level == 'mid' or level == 'high':
                                 lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
-                                                              ['high-or-mid-nominalization-lex-rule'])
+                                    ['high-or-mid-nominalization-lex-rule'])
                             if level == 'low':
                                 if case_change_lrt(lrt):
                                     lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
-                                                              ['low-nmz-trans-lex-rule'])
+                                     ['low-nmz-trans-lex-rule'])
                                 else:
                                     lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
-                                                              ['low-nmz-compsid-lex-rule'])
+                                        ['low-nmz-compsid-lex-rule'])
 
 
 def add_features(mylang):

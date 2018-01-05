@@ -147,7 +147,8 @@ def add_complementizer_subtype(cs, mylang,ch):
     id = cs.full_key
     typename = id + '-' + COMP_LEX_ITEM
     mylang.add(typename + ' := ' + COMP_LEX_ITEM + '.', section=COMPLEX)
-    constrain_for_features(typename,cs,mylang,'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.',ch)
+    constrain_for_features(typename,cs,mylang,'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.',ch,is_nominalized_complement(cs))
+    constrain_for_features(typename,cs['complementizer'],mylang,'SYNSEM.LOCAL.CAT.HEAD.',ch,is_nominalized_complement(cs))
     return typename
 
 '''
@@ -211,7 +212,8 @@ def constrain_head_subj_rules(cs,mylang,rules,ch):
         head = 'verb'
     mylang.add('head-subj-ccomp-phrase := decl-head-subj-phrase & head-initial & '
                '[ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD ' + head + ' ] > ].',section='phrases')
-    constrain_for_features('head-subj-ccomp-phrase',cs,mylang,'HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.',ch)
+    constrain_for_features('head-subj-ccomp-phrase',cs,mylang,
+                           'HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.',ch,is_nominalized_complement(cs))
     #for f in cs['feat']:
     #    if f['name'] == 'form':
     #        mylang.add('head-subj-ccomp-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS '
@@ -252,12 +254,13 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
                    merge=True)
         mylang.add(general + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + default_init_value + ' ].',
                    merge=True)
-    constrain_for_features(additional + '-phrase', cs, mylang, 'NON-HEAD-DTR.SYNSEM.',ch)
+    constrain_for_features(additional + '-phrase', cs, mylang,
+                           'NON-HEAD-DTR.SYNSEM.',ch,is_nominalized_complement(cs))
 
-def constrain_for_features(typename,cs,mylang,path_prefix,ch):
-    for f in cs['feat']:
+def constrain_for_features(typename,dict,mylang,path_prefix,ch,is_nmz):
+    for f in dict['feat']:
         path = 'LOCAL.CAT.HEAD.'
-        if nominalized_comps(ch) and not is_nominalized_complement(cs):
+        if nominalized_comps(ch) and not is_nmz:
             mylang.add(typename + ' := [ ' + path_prefix + path + 'NMZ - ].',merge=True)
         if f['name'] != 'nominalization':
             if f['name'] == 'mood' or f['name'] == 'aspect':
