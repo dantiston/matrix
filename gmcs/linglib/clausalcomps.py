@@ -346,6 +346,11 @@ def constrain_lex_items(head,ch,cs,comptype, init_value, default_init_value,myla
                 mylang.add(comptype + ':= [ ' + path + '.INIT ' + init_value + ' ].',merge=True)
             elif not (cs[COMP_POS_AFTER] and cs[COMP_POS_BEFORE]):
                 mylang.add(comptype + ':= [ ' + path + '.INIT ' + default_init_value + ' ].',merge=True)
+                if cs[COMP] == 'opt':
+                    constrain_lexitem_for_feature(clausalverb,path, 'INIT',default_init_value,mylang)
+        else:
+            if not head or (head == 'verb' or head == '+vc'):
+                constrain_lexitem_for_feature(clausalverb,path, 'INIT',default_init_value,mylang)
     if comptype and nominalized_comps(ch) and not is_nominalized_complement(cs):
         mylang.add(comptype + ':= [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.NMZ - ] > ].',merge=True)
     if extra and comptype:
@@ -574,6 +579,10 @@ def validate(ch,vr):
         if ccs['cformvalue'] and not ccs[COMP] == 'oblig':
             vr.err(ccs.full_key + '_' + COMP,
                    'FORM on complementizers is only supported with obligatory complementizers.')
+        if ccs['complementizer'] and not (ccs[COMP] == 'oblig' or ccs[COMP] == 'opt'):
+            vr.err(ccs.full_key + '_' + COMP,
+                   'Please choose whether the complementizer is obligatory or optional.')
+
 
 def find_in_other_features(name,ch):
     for f in ch.get('feature'):
