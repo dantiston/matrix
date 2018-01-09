@@ -322,44 +322,6 @@ def find_clausalverb_typename(ch,cs):
         if v.get(constants.VALENCE).endswith(cs.full_key):
             return get_name(v) + '-clausal-verb-lex'
 
-'''
-This function assumes that the INIT feature is needed.
-It will constrain verbs and/or complementizers with respect to the INIT feature.
-'''
-def constrain_lex_items2(head,ch,cs,comptype, init_value, default_init_value,mylang,init,extra):
-    wo = ch.get(constants.WORD_ORDER)
-    clausalverb = find_clausalverb_typename(ch,cs)
-    path = 'SYNSEM.LOCAL.CAT.HEAD'
-    if init:
-        #TODO rewrite this to not use head but use choices directly
-        if constrain_transitive_verb(head,cs):
-            mylang.add('transitive-verb-lex := [ ' + path + '.INIT ' + default_init_value + ' ].'
-                       , merge=True)
-        if head == '+vc' and cs[CLAUSE_POS_EXTRA]and not cs[CLAUSE_POS_SAME]:
-            constrain_lexitem_for_feature(clausalverb,path, 'INIT',init_value,mylang)
-            if cs[COMP_POS_BEFORE] and not cs[COMP_POS_AFTER] and wo in OV_ORDERS:
-                constrain_lexitem_for_feature(comptype,path,'INIT',init_value,mylang)
-        elif head == 'verb' and cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME]:
-            constrain_lexitem_for_feature(clausalverb,path, 'INIT', init_value,mylang)
-        elif comptype:
-            if (cs[COMP_POS_BEFORE] and not cs[COMP_POS_AFTER] and wo in OV_ORDERS) \
-                    or (cs[COMP_POS_AFTER] and not cs[COMP_POS_BEFORE] and wo in VO_ORDERS):
-                mylang.add(comptype + ':= [ ' + path + '.INIT ' + init_value + ' ].',merge=True)
-            elif not (cs[COMP_POS_AFTER] and cs[COMP_POS_BEFORE]):
-                mylang.add(comptype + ':= [ ' + path + '.INIT ' + default_init_value + ' ].',merge=True)
-                if cs[COMP] == 'opt':
-                    constrain_lexitem_for_feature(clausalverb,path, 'INIT',default_init_value,mylang)
-        else:
-            if not head or (head == 'verb' or head == '+vc'):
-                constrain_lexitem_for_feature(clausalverb,path, 'INIT',default_init_value,mylang)
-    if comptype and nominalized_comps(ch) and not is_nominalized_complement(cs):
-        mylang.add(comptype + ':= [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.NMZ - ] > ].',merge=True)
-    if extra and comptype:
-            if cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME]:
-                mylang.add(comptype + ':= [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA + ] > ].',merge=True)
-            elif cs[CLAUSE_POS_SAME] and not cs[CLAUSE_POS_EXTRA]:
-                mylang.add(comptype + ':= [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA - ] > ].',merge=True)
-
 
 def constrain_transitive_verb(head,cs):
     return head == 'verb' \
@@ -372,7 +334,6 @@ def constrain_lex_items(head,ch,cs,comptype, init_value, default_init_value,myla
     clausalverb = find_clausalverb_typename(ch,cs)
     path = 'SYNSEM.LOCAL.CAT.HEAD'
     if init:
-        #TODO rewrite this to not use head but use choices directly
         if cs[COMP]:
             if wo in VO_ORDERS:
                 if cs[COMP_POS_AFTER] and not cs[COMP_POS_BEFORE]:
@@ -384,12 +345,6 @@ def constrain_lex_items(head,ch,cs,comptype, init_value, default_init_value,myla
                     constrain_lexitem_for_feature(comptype,path,'INIT',init_value,mylang)
                 elif cs[COMP_POS_AFTER] and not cs[COMP_POS_BEFORE]:
                     constrain_lexitem_for_feature(comptype,path,'INIT',default_init_value,mylang)
-        #if not cs[COMP] or cs[COMP] == 'opt':
-            #if wo in VO_ORDERS:
-            #    if cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME]:
-            #        constrain_lexitem_for_feature(clausalverb,path,'INIT',init_value,mylang)
-            #    elif cs[CLAUSE_POS_SAME] and not cs[CLAUSE_POS_EXTRA]:
-            #        constrain_lexitem_for_feature(clausalverb,path,'INIT',default_init_value,mylang)
         if wo in OV_ORDERS:
             if cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME]:
                 constrain_lexitem_for_feature(clausalverb,path,'INIT',init_value,mylang)

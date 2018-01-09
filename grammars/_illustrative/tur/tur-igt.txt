@@ -1,0 +1,58 @@
+Language: Turkish
+Language code: tur
+Lines: translit,translit-seg,gloss,translat
+Author: Olga Zamaraeva
+Date: January 8, 2018
+Source: a: Korfilt, J. Turkish. 1997 
+
+#1 Nominalization, genitive subject. 
+Source: a:48
+Vetted: f
+Judgment: g
+Phenomena: clausal complements
+ben-im sinema-ya gel-me-n-i isti-yor-um
+I-GEN cinema-DAT come-NMZ-2SG-ACC want-PRES-1SG
+`I want you to come to the movies.'
+
+#2 Complementizer ki, VO
+Source: a:46
+Vetted: f
+Judgment: g
+Phenomena: clausal complements
+istiyorum ki sen sinemaya gelesin
+isti-yor-um ki sen sinema-ya gel-esin
+want-PRES-1SG COMP I.NOM cinema-DAT come-2SG
+`I want you to come to the movies with me.'
+
+#3 Verbs of belief, SOV order
+Source: a:46
+Vetted: f
+Judgment: g
+Phenomena: clausal complements
+herkes seni sinemaya gitti saniyor
+herkes sen-i sinema-ya git-ti san-iyor
+everybody you-ACC cinema-DAT go-PAST believe-PRES
+`Everybody believes that you have gone to the movies.'
+
+#4 Verbs of belief, SOV order, optional complementizer de
+Source: a:47
+Vetted: f
+Judgment: g
+Phenomena: clausal complements
+herkes sen sinemaya gittin saniyor
+herkes sen sinema-ya git-ti-n san-iyor
+everybody you.NOM cinema.DAT go-PAST-2SG believe-PRES
+`Everybody believes that you went to the movies.'
+
+#5 Verbs of belief, SOV order, optional complementizer de
+Source: a:47
+Vetted: f
+Judgment: g
+Phenomena: clausal complements
+herkes sen sinemaya gittin saniyor
+herkes sen sinema-ya git-ti-n de san-iyor
+everybody you.NOM cinema.DAT go-PAST-2SG COMP believe-PRES
+`Everybody believes that you went to the movies.'
+
+
+
