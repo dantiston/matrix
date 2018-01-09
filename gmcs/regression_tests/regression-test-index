@@ -363,3 +363,4 @@ evidentials-infl-lbj=Held-out test of Ladakhi for the evidentials library
 evidentials-infl-mon=Held-out test of (Khalkha) Mongolian for the evidentials library
 evidentials-infl-aux-wic=Held-out test of Wichita for the evidentials library
 ccomp-illustr1-rus=Clausal comps: illustrative Russian: obligatory complementizer with form; nominalization.
+ccomp-illustr2-tur=Clausal comps: Illustrative Turkish. SOV with 1) extraposed with optional complementizer and finite; 2) nonextra, opt.comp., finite; 3) nominalized; 4) nonfinite form with accusative subject.
