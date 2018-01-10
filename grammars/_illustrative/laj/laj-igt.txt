@@ -1,0 +1,79 @@
+Language: Lango
+Language code: laj
+Lines: translit-seg,gloss,translat
+Author: Olga Zamaraeva
+Date: January 9, 2018
+Source: a: Noonan, Michael. A Grammar of Lango. 1992 
+Source: b: Noonan, Michael. Complementation. In Language Typology and Syntactic Description. 2007
+
+#1 Subordinate clause structure. 
+Source: a:191
+Vetted: t
+Judgment: g
+Phenomena: clausal complements
+aneo ni loc^ dago tic
+1S.know.HAB COMP man 3S.hate.HAB work
+`I know that the man hates work.'
+
+#2 Complementizer is obligatory. 
+Source: a:191
+Vetted: f
+Judgment: u
+Phenomena: clausal complements
+aneo loc^ dago tic
+1S.know.HAB man 3S.hate.HAB work
+`I know that the man hates work.'
+
+#3 Complementizer attaches in front of the clause. 
+Source: a:191
+Vetted: f
+Judgment: u
+Phenomena: clausal complements
+aneo loc^ dago tic ni
+1S.know.HAB man 3S.hate.HAB work COMP
+`I know that the man hates work.'
+
+#4 Subjunctive complement
+Source: b:54
+Vetted: t
+Judgment: g
+atin omito ni aceg doggola
+child 3S.wanted COMP 1SG.close.SJNCT door
+`The child wanted me to close the door.'
+
+#5 Subjunctive form can't head the matrix clause.
+Source: a:132
+Vetted: t
+Judgment: g
+Phenomena: clausal complements
+atin ocego doggola
+child 3S.close.PERF door
+`The child closed the door.'
+
+#6 Subjunctive form can't head the matrix clause.
+Source: a:132
+Vetted: f
+Judgment: u
+Phenomena: clausal complements
+atin oceg doggola
+child 3S.close.SJNCT door
+`The child closed the door.'
+
+#7 Infinitive complements.
+Source: b:69
+Vetted: t
+Judgment: g
+Phenomena: clausal complements
+amitto nenno gwok
+1SG.want see.TRAN.INF dog
+`I want to see the dog.'
+
+#8 Infinitive can't head the matrix clause.
+Source: b:69
+Vetted: f
+Judgment: u
+Phenomena: clausal complements
+amitto nenno
+1SG.want see.TRAN.INF
+`I want to see [something].'
+

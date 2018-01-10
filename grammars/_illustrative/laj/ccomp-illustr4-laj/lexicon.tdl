@@ -1,0 +1,62 @@
+;;; -*- Mode: TDL; Coding: utf-8 -*-
+;;; Nouns
+
+loc%5E := noun1-noun-lex &
+  [ STEM < "loc^" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_man_n_rel" ].
+
+tic := noun1-noun-lex &
+  [ STEM < "tic" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_work_n_rel" ].
+
+atin := noun1-noun-lex &
+  [ STEM < "atin" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_child_n_rel" ].
+
+doggola := noun1-noun-lex &
+  [ STEM < "doggola" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_door_n_rel" ].
+
+gwok := noun1-noun-lex &
+  [ STEM < "gwok" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_dog_n_rel" ].
+
+;;; Adjectives
+
+;;; Verbs
+
+dago := 3sg-hab-verb-lex &
+  [ STEM < "dago" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_hate_v_rel" ].
+
+ocego := 3sg-perf-verb-lex &
+  [ STEM < "ocego" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_close_v_rel" ].
+
+aceg := 1sg-sjnct-verb-lex &
+  [ STEM < "aceg" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_close_v_rel" ].
+
+nenno := 1sg-inf-verb-lex &
+  [ STEM < "nenno" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_see_v_rel" ].
+
+aneo := 1sg-know-clausal-verb-lex &
+  [ STEM < "aneo" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_know_v_rel" ].
+
+omito := 3sg-want-clausal-verb-lex &
+  [ STEM < "omito" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_want_v_rel" ].
+
+amitto := 1sg-want-clausal-verb-lex &
+  [ STEM < "amitto" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_want_v_rel" ].
+
+;;; Complementizers
+
+comps1_complementizer1 := comps1-comp-lex-item &
+  [ STEM < "ni" > ].
+
+comps2_complementizer1 := comps2-comp-lex-item &
+  [ STEM < "ni" > ].
