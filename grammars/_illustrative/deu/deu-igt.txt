@@ -1,0 +1,98 @@
+Language: German
+Language code: deu
+Lines: orth-seg,gloss,translat
+Author: Olga Zamaraeva
+Date: January 9, 2018
+Source: a: Sapp, Christopher D. VERB ORDER IN SUBORDINATE CLAUSES
+FROM EARLY NEW HIGH GERMAN TO MODERN GERMAN. 2006 
+
+#1 Subordinate clause structure with auxiliary. 
+Source: a:125
+Vetted: f
+Judgment: g
+Phenomena: clausal complements
+Ich glaube dass Klaus das Buch lesen will
+I.NOM think.1SG COMP Klaus def book.ACC read.INF want.3SG
+`I think that Klaus wants to read the book.'
+
+#2 Subordinate clause structure. 
+Source: a:125
+Vetted: f
+Judgment: g
+Phenomena: clausal complements
+Ich glaube dass Klaus das Buch liest
+I.NOM think.1SG COMP Klaus def book.ACC read.3SG
+`I think that Klaus reads the book.'
+
+#3 Basic clause structure. 
+Source: a:125
+Vetted: f
+Judgment: g
+Phenomena: clausal complements
+Klaus liest das Buch 
+Klaus read.3SG def book.ACC 
+`Klaus reads the book.'
+
+#4 Basic clause structure. 
+Source: a:125
+Vetted: f
+Judgment: g
+Phenomena: clausal complements
+das Buch liest Klaus
+def book.ACC read.3SG Klaus
+`Klaus reads the book.'
+
+#5 Subordinate clause structure with auxiliary. 
+Source: a:125
+Vetted: f
+Judgment: u
+Phenomena: clausal complements
+Ich glaube dass Klaus will das Buch lesen
+I.NOM think.1SG COMP Klaus want.3SG def book.ACC read.INF
+`I think that Klaus wants to read the book.'
+
+#6 Subordinate clause structure with auxiliary. 
+Source: a:125
+Vetted: f
+Judgment: u
+Phenomena: clausal complements
+Ich glaube dass Klaus das Buch will lesen
+I.NOM think.1SG COMP Klaus def book.ACC want.3SG read.INF
+`I think that Klaus wants to read the book.'
+
+#7 Subordinate clause structure. 
+Source: a:125
+Vetted: f
+Judgment: u
+Phenomena: clausal complements
+Ich glaube dass Klaus liest das Buch 
+I.NOM think.1SG COMP Klaus read.3SG def book.ACC 
+`I think that Klaus reads the book.'
+
+#8 Subordinate clause structure. 
+Source: a:125
+Vetted: f
+Judgment: u
+Phenomena: clausal complements
+Ich glaube dass das Buch liest Klaus 
+I.NOM think.1SG COMP def book.ACC read.3SG Klaus   
+`I think that Klaus reads the book.'
+
+#9 Subordinate clause structure. 
+Source: a:125
+Vetted: f
+Judgment: g
+Phenomena: clausal complements
+Ich glaube dass das Buch Klaus liest
+I.NOM think.1SG COMP def book.ACC Klaus  read.3SG
+`I think that Klaus reads the book.'
+
+#10 Subordinate clause structure with auxiliary. 
+Source: a:125
+Vetted: f
+Judgment: g
+Phenomena: clausal complements
+Ich glaube dass das Buch Klaus  lesen will
+I.NOM think.1SG COMP def book.ACC Klaus read.INF want.3SG
+`I think that Klaus wants to read the book.'
+

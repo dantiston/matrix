@@ -1,0 +1,1 @@
+1. head-spec-phrase goes through VC-comp-head; it shouldn't! Constrain basic-head-spec-phrse to pick up its head-daughter's VC.

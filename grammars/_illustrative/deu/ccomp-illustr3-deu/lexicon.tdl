@@ -1,0 +1,47 @@
+;;; -*- Mode: TDL; Coding: utf-8 -*-
+;;; Nouns
+
+Klaus := proper-noun-lex &
+  [ STEM < "Klaus" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_Klaus_n_rel" ].
+
+Buch := common-noun-lex &
+  [ STEM < "Buch" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_book_n_rel" ].
+
+Ich := pro-1sg-noun-lex &
+  [ STEM < "Ich" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_1sg_n_rel" ].
+
+;;; Adjectives
+
+;;; Verbs
+
+liest := tran3sg-verb-lex &
+  [ STEM < "liest" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_read_v_rel" ].
+
+lesen := tran-inf-verb-lex &
+  [ STEM < "lesen" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_read_v_rel" ].
+
+glaube := thought-1sg-clausal-verb-lex &
+  [ STEM < "glaube" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_glaube_v_rel" ].
+
+;;; Auxiliaries
+
+will := want-aux-lex &
+  [ STEM < "will" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_want_v_rel" ].
+
+;;; Determiners
+
+das := def-determiner-lex &
+  [ STEM < "das" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_the_q_rel" ].
+
+;;; Complementizers
+
+comps1_complementizer1 := comps1-comp-lex-item &
+  [ STEM < "dass" > ].

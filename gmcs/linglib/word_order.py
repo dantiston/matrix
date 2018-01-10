@@ -772,6 +772,9 @@ def customize_subord_word_order(mylang,ch,wo,rules):
             mylang.add('vc-comp-head-phrase := verb-cluster-phrase & basic-head-1st-comp-phrase.',
                        merge=True,section='phrases')
             rules.add('vc-comp-head := vc-comp-head-phrase.')
+            if ch['has-dets'] == 'yes':
+                mylang.add('basic-head-spec-phrase :+ [ SYNSEM.LOCAL.CAT.VC #vc,'
+                           'HEAD-DTR.SYNSEM.LOCAL.CAT.VC #vc ].')
 
 # ERB 2006-09-14 Subroutine for figuring out the relationship of major
 # constituent order to adpositions and auxiliaries.  Returns two values:

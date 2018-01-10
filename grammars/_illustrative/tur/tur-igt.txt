@@ -5,36 +5,125 @@ Author: Olga Zamaraeva
 Date: January 8, 2018
 Source: a: Korfilt, J. Turkish. 1997 
 
-#1 Nominalization, genitive subject. 
+#1 Basic clause structure. 
+Source: a:46
+Vetted: f
+Judgment: g
+Phenomena: clausal complements
+sen sinema-ya git-ti-n
+you.NOM cinema-DAT go-PAST-2SG
+`You went to the movies.'
+
+#2 Basic clause structure requires finite clause. 
+Source: a:46
+Vetted: f
+Judgment: u
+Phenomena: clausal complements
+sen sinema-ya gel-me-n-i
+you.NOM cinema-DAT com-NMZ-2SG-ACC
+`Intended: You went to the movies.'
+
+
+#3 Nominalization, genitive subject. 
 Source: a:48
 Vetted: f
 Judgment: g
 Phenomena: clausal complements
-ben-im sinema-ya gel-me-n-i isti-yor-um
-I-GEN cinema-DAT come-NMZ-2SG-ACC want-PRES-1SG
+sen-im sinema-ya gel-me-n-i isti-yor-um
+you-GEN cinema-DAT come-NMZ-2SG-ACC want-PRES-1SG
 `I want you to come to the movies.'
 
-#2 Complementizer ki, VO
+#4 Nominalization, genitive subject is required. 
+Source: a:48
+Vetted: f
+Judgment: u
+Phenomena: clausal complements
+sen sinema-ya gel-me-n-i isti-yor-um
+you.NOM cinema-DAT come-NMZ-2SG-ACC want-PRES-1SG
+`I want you to come to the movies.'
+
+#5 Nominalization, genitive subject is required. 
+Source: a:48
+Vetted: f
+Judgment: u
+Phenomena: clausal complements
+sen-i sinema-ya gel-me-n-i isti-yor-um
+you-ACC cinema-DAT come-NMZ-2SG-ACC want-PRES-1SG
+`I want you to come to the movies.'
+
+#6 Nominalized constituent is not extraposed. 
+Source: a:48
+Vetted: f
+Judgment: g
+Phenomena: clausal complements
+isti-yor-um sen-im sinema-ya gel-me-n-i 
+want-PRES-1SG you-GEN cinema-DAT come-NMZ-2SG-ACC 
+`I want you to come to the movies.'
+
+
+#7 Complementizer ki, VO
 Source: a:46
 Vetted: f
 Judgment: g
 Phenomena: clausal complements
 istiyorum ki sen sinemaya gelesin
-isti-yor-um ki sen sinema-ya gel-esin
-want-PRES-1SG COMP I.NOM cinema-DAT come-2SG
+isti-yor-um ki sen sinema-ya gel-esi-n
+want-PRES-1SG COMP I.NOM cinema-DAT come-OPT-2SG
 `I want you to come to the movies with me.'
 
-#3 Verbs of belief, SOV order
+#8 Complementizer ki is optional, VO
+Source: a:46
+Vetted: f
+Judgment: g
+Phenomena: clausal complements
+istiyorum sen sinemaya gelesin
+isti-yor-um sen sinema-ya gel-esi-n
+want-PRES-1SG I.NOM cinema-DAT come-OPT-2SG
+`I want you to come to the movies with me.'
+
+#9 Complementizer diye is not possible instead of ki
+Source: a:46
+Vetted: f
+Judgment: u
+Phenomena: clausal complements
+istiyorum diye sen sinemaya gelesin
+isti-yor-um diye sen sinema-ya gel-esi-n
+want-PRES-1SG COMP I.NOM cinema-DAT come-OPT-2SG
+`I want you to come to the movies with me.'
+
+
+#10 Verbs of belief, SOV order, ACC subject, nonfinite form
 Source: a:46
 Vetted: f
 Judgment: g
 Phenomena: clausal complements
 herkes seni sinemaya gitti saniyor
-herkes sen-i sinema-ya git-ti san-iyor
+herkes sen-i sinema-ya git-ti sani-yor
 everybody you-ACC cinema-DAT go-PAST believe-PRES
 `Everybody believes that you have gone to the movies.'
 
-#4 Verbs of belief, SOV order, optional complementizer de
+#11 Verbs of belief, SOV order, ACC subject, cannot have finite form
+Source: a:46
+Vetted: f
+Judgment: u
+Phenomena: clausal complements
+herkes seni sinemaya gittin saniyor
+herkes sen-i sinema-ya git-ti-n sani-yor
+everybody you-ACC cinema-DAT go-PAST-2SG believe-PRES
+`Everybody believes that you have gone to the movies.'
+
+#12 Verbs of belief, SOV order, ACC subject, cannot have nominative subject
+Source: a:46
+Vetted: f
+Judgment: u
+Phenomena: clausal complements
+herkes sen sinemaya gittin saniyor
+herkes sen sinema-ya git-ti sani-yor
+everybody you.NOM cinema-DAT go-PAST believe-PRES
+`Everybody believes that you have gone to the movies.'
+
+
+#13 Verbs of belief, SOV order, optional complementizer diye
 Source: a:47
 Vetted: f
 Judgment: g
@@ -44,15 +133,22 @@ herkes sen sinema-ya git-ti-n san-iyor
 everybody you.NOM cinema.DAT go-PAST-2SG believe-PRES
 `Everybody believes that you went to the movies.'
 
-#5 Verbs of belief, SOV order, optional complementizer de
+#14 Verbs of belief, SOV order, optional complementizer diye
 Source: a:47
 Vetted: f
 Judgment: g
 Phenomena: clausal complements
-herkes sen sinemaya gittin saniyor
-herkes sen sinema-ya git-ti-n de san-iyor
+herkes sen sinemaya gittin diye saniyor
+herkes sen sinema-ya git-ti-n diye san-iyor
 everybody you.NOM cinema.DAT go-PAST-2SG COMP believe-PRES
 `Everybody believes that you went to the movies.'
 
-
-
+#15 Verbs of belief, SOV order, can't have ki instead of diye
+Source: a:47
+Vetted: f
+Judgment: u
+Phenomena: clausal complements
+herkes sen sinemaya gittin ki saniyor
+herkes sen sinema-ya git-ti-n ki san-iyor
+everybody you.NOM cinema.DAT go-PAST-2SG COMP believe-PRES
+`Everybody believes that you went to the movies.'
