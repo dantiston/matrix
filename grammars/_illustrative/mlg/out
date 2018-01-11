@@ -1,0 +1,14 @@
+1 aneo ni loc^ dago tic 1 31
+2 *aneo loc^ dago tic 0 15
+3 *aneo loc^ dago tic ni 0 19
+4 atin omito ni aceg doggola 1 31
+5 *atin omito aceg doggola 0 13
+6 ocego doggola 1 12
+7 *aceg doggola 0 5
+8 atin ocego doggola 1 18
+9 amitto nenno gwok 1 19
+10 *amitto nenno 0 4
+
+;;; Total CPU time: 8 msecs
+;;; Mean edges: 16.70
+;;; Mean parses: 0.50

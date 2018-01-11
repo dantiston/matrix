@@ -1,0 +1,49 @@
+;;; -*- Mode: TDL; Coding: utf-8 -*-
+;;; Nouns
+
+iBao := proper-noun-lex &
+  [ STEM < "iBao" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_Bao_n_rel" ].
+
+ho%2Eany%2EFrantsa := proper-noun-lex &
+  [ STEM < "ho.any.Frantsa" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_to.France_n_rel" ].
+
+akoho := common-noun-lex &
+  [ STEM < "akoho" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_chicken_n_rel" ].
+
+aho := pronoun-noun-lex &
+  [ STEM < "aho" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_1SG_n_rel" ].
+
+;;; Adjectives
+
+;;; Verbs
+
+nividi := tran-active-verb-lex &
+  [ STEM < "nividi" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_bought_v_rel" ].
+
+handeha := tran-active-verb-lex &
+  [ STEM < "handeha" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_will.go_v_rel" ].
+
+novidin := tran-pass-verb-lex &
+  [ STEM < "novidin" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_is.bought_v_rel" ].
+
+manantena := hope-clausal-verb-lex &
+  [ STEM < "manantena" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_hope_v_rel" ].
+
+;;; Determiners
+
+ny := def-determiner-lex &
+  [ STEM < "ny" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_the_q_rel" ].
+
+;;; Complementizers
+
+comps1_complementizer1 := comps1-comp-lex-item &
+  [ STEM < "fa" > ].
