@@ -8,14 +8,14 @@ NHS_DEF = '[ HEAD-DTR.SYNSEM [ LOCAL [ CONT.HOOK.INDEX ref-ind ],\
                                            REL 0-dlist ]]\
             NON-HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SPR < > ].'
 
-HIGH_OR_MID_LEXRULE = 'high-or-mid-nominalization-lex-rule := cat-change-with-ccont-lex-rule & same-cont-lex-rule &\
+# A rule that does not allow case change on subject or object.
+# Only good for high and mid nominalization.
+HIGH_OR_MID_LEXRULE_SUBJ_ID = 'high-or-mid-nominalization-lex-rule := cat-change-with-ccont-lex-rule & same-cont-lex-rule &\
     [ SYNSEM.LOCAL [ CONT [ HOOK [ INDEX event ]],\
 		   CAT [ HEAD verb &\
 			      [ NMZ +,\
                      MOD #mod ],\
-                         VAL [ SUBJ < [ LOCAL [ CAT [ HEAD noun,\
-                                                      VAL.SPR < > ],\
-                                                CONT.HOOK.INDEX #subj ] ] >,\
+                         VAL [ SUBJ #subj,\
                                COMPS #comps,\
                                SPR #spr,\
                                SPEC #spec ],\
@@ -24,8 +24,7 @@ HIGH_OR_MID_LEXRULE = 'high-or-mid-nominalization-lex-rule := cat-change-with-cc
                          HC-LIGHT #hc-light,\
                          POSTHEAD #posthead ] ],\
     DTR.SYNSEM.LOCAL [ CAT [ HEAD [ MOD #mod ],\
-                           VAL [ SUBJ < [ LOCAL [ CAT.HEAD noun, ' \
-                      '                           CONT.HOOK.INDEX #subj ] ] >,\
+                           VAL [ SUBJ #subj,\
                                  COMPS #comps,\
                                  SPR #spr,\
                                  SPEC #spec ],\
@@ -35,12 +34,38 @@ HIGH_OR_MID_LEXRULE = 'high-or-mid-nominalization-lex-rule := cat-change-with-cc
                            POSTHEAD #posthead ]],\
    C-CONT [ RELS <! !>, HCONS <! !> ] ].'
 
-# A rule that says nothing about the object. Should only ever be used as a supertype.
+# A rule that allows case change on the subject but not the object.
+# Only good for mid nominalization.
+MID_LEXRULE_NO_SUBJ_ID = 'mid-nominalization-lex-rule := cat-change-with-ccont-lex-rule & same-cont-lex-rule &\
+    [ SYNSEM.LOCAL [ CONT [ HOOK [ INDEX event ]],\
+		   CAT [ HEAD verb &\
+			      [ NMZ +,\
+                     MOD #mod ],\
+                         VAL [ SUBJ < [ LOCAL [ CAT [ VAL.SPR < > ],\
+                                                CONT.HOOK.INDEX #subj ] ] >,\
+                               COMPS #comps,\
+                               SPR #spr,\
+                               SPEC #spec ],\
+                         MC #mc,\
+                         MKG #mkg,\
+                         HC-LIGHT #hc-light,\
+                         POSTHEAD #posthead ] ],\
+    DTR.SYNSEM.LOCAL [ CAT [ HEAD [ MOD #mod ],\
+                           VAL [ SUBJ < [ LOCAL [ CONT.HOOK.INDEX #subj ] ] >,\
+                                 COMPS #comps,\
+                                 SPR #spr,\
+                                 SPEC #spec ],\
+                           MC #mc,\
+                           MKG #mkg,\
+                           HC-LIGHT #hc-light,\
+                           POSTHEAD #posthead ]],\
+   C-CONT [ RELS <! !>, HCONS <! !> ] ].'
+
+# A rule that says nothing about the subject or object. Should only ever be used as a supertype.
 LOW_NMZ = 'low-nominalization-lex-rule := cat-change-with-ccont-lex-rule &\
                 [ SYNSEM.LOCAL.CAT [ HEAD noun & \
 			    [ MOD #mod ],\
-		        VAL [ SUBJ < [ LOCAL [ CAT [ HEAD noun,\
-		                            VAL.SPR < > ],\
+		        VAL [ SUBJ < [ LOCAL [ CAT [ VAL.SPR < > ],\
 				      	      CONT.HOOK.INDEX #subj ] ] >,\
 			     SPEC #spec,\
 			     SPR < [ OPT + ]> ],\
@@ -58,8 +83,7 @@ LOW_NMZ = 'low-nominalization-lex-rule := cat-change-with-ccont-lex-rule &\
 	            HOOK [ INDEX #arg0,\
 		        LTOP #ltop ]],\
                 DTR.SYNSEM.LOCAL [ CAT [ HEAD [ MOD #mod ],\
-			     VAL [ SUBJ < [ LOCAL [ CAT.HEAD noun, ' \
-              '                         CONT.HOOK.INDEX #subj ] ] >,\
+			     VAL [ SUBJ < [ LOCAL [ CONT.HOOK.INDEX #subj ] ] >,\
 				   SPEC #spec  ],\
 			     MC #mc,\
 			     MKG #mkg,\
@@ -67,20 +91,45 @@ LOW_NMZ = 'low-nominalization-lex-rule := cat-change-with-ccont-lex-rule &\
 			     POSTHEAD #posthead ],\
 		       CONT.HOOK [ LTOP #larg ]]].'
 
+
 # A rule that allows case change on both subject and object and requires that there is an object.
 # Only good for transitive verbs.
-LOW_LEXRULE_NO_COMPS_ID = 'low-nmz-trans-lex-rule := low-nominalization-lex-rule &\
-                [ SYNSEM.LOCAL.CAT.VAL [ COMPS < [ LOCAL [ CAT [ HEAD noun,\
-		                                                         VAL.SPR < > ],\
-				      	                                   CONT.HOOK.INDEX #obj ] ] > ],\
-                DTR.SYNSEM.LOCAL.CAT.VAL [ COMPS < [ LOCAL [ CAT.HEAD noun, ' \
-              '                         CONT.HOOK.INDEX #obj ] ] > ] ].'
+LOW_LEXRULE_NO_SUBJ_ID_NO_COMPS_ID = 'low-nmz-no-subjid-trans-lex-rule := low-nominalization-lex-rule &\
+                [ SYNSEM.LOCAL.CAT.VAL [ COMPS < [ LOCAL [ CAT [ VAL.SPR < > ],\
+				      	                                   CONT.HOOK.INDEX #obj ] ] >,\
+				      	                SUBJ < [ LOCAL [ CAT.VAL.SPR < >,\
+				      	                                 CONT.HOOK.INDEX #subj ] ] > ],\
+                DTR.SYNSEM.LOCAL.CAT.VAL [ COMPS < [ LOCAL [ CONT.HOOK.INDEX #obj ] ] >,\
+                                            SUBJ < [ LOCAL [ CAT.VAL.SPR < >,\
+				      	                                    CONT.HOOK.INDEX #subj ] ] > ] ].'
 
 # A rule that identifies the object of mother and daughter and works for intransitive verbs, too.
 # Still allows case change on the subject.
-LOW_LEXRULE_COMPS_ID = 'low-nmz-compsid-lex-rule := low-nominalization-lex-rule &\
-                [ SYNSEM.LOCAL.CAT.VAL.COMPS #comps,\
-                  DTR.SYNSEM.LOCAL.CAT.VAL.COMPS #comps ].'
+LOW_LEXRULE_NO_SUBJ_ID_COMPS_ID = 'low-nmz-no-subjid-compsid-lex-rule := low-nominalization-lex-rule &\
+                [ SYNSEM.LOCAL.CAT.VAL [ COMPS #comps,\
+                                        SUBJ < [ LOCAL [ CAT.VAL.SPR < >,\
+				      	                                 CONT.HOOK.INDEX #subj ] ] > ],\
+                  DTR.SYNSEM.LOCAL.CAT.VAL [ COMPS #comps,\
+                                                SUBJ < [ LOCAL [ CAT.VAL.SPR < >,\
+				      	                                 CONT.HOOK.INDEX #subj ] ] > ] ].'
+
+# A rule that allows case change on the object and requires that there is an object.
+# Does not allow case change on the subject.
+# Only good for transitive verbs.
+LOW_LEXRULE_SUBJ_ID_NO_COMPS_ID = 'low-nmz-subjid-trans-lex-rule := low-nominalization-lex-rule &\
+                [ SYNSEM.LOCAL.CAT.VAL [ COMPS < [ LOCAL [ CAT [ VAL.SPR < > ],\
+				      	                                   CONT.HOOK.INDEX #obj ] ] >,\
+				      	                SUBJ #subj ],\
+                DTR.SYNSEM.LOCAL.CAT.VAL [ COMPS < [ LOCAL [ CONT.HOOK.INDEX #obj ] ] >,\
+                                            SUBJ #subj ] ].'
+
+# A rule that identifies the object of mother and daughter and works for intransitive verbs, too.
+# Does not allow case change on the subject.
+LOW_LEXRULE_SUBJ_ID_COMPS_ID = 'low-nmz-no-subjid-compsid-lex-rule := low-nominalization-lex-rule &\
+                [ SYNSEM.LOCAL.CAT.VAL [ COMPS #comps,\
+                                        SUBJ #subj ],\
+                  DTR.SYNSEM.LOCAL.CAT.VAL [ COMPS #comps,\
+                                                SUBJ #subj ] ].'
 
 
 NMZ_CLAUSE = '-nominalized-clause-phrase := basic-unary-phrase &\
@@ -150,7 +199,7 @@ def customize_nmcs(mylang, ch, rules):
     """
     the main nominalized clause customization routine
     """
-    update_lexical_rules(ch)
+    update_lexical_rules(mylang, ch)
     for ns in ch.get('ns'):
         level = ns.get('level')
         nmzrel = ns.get('nmzRel')
@@ -190,20 +239,30 @@ def customize_nmcs(mylang, ch, rules):
                        # will be taken care of by INIT
                        # on the clausal verb?
                     mylang.add(typename + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].',merge=True)
-        if level == 'mid' or level == 'high':
-            mylang.set_section('lexrules')
-            mylang.add(HIGH_OR_MID_LEXRULE)
+        mylang.set_section('lexrules')
+        if level == 'high':
+            mylang.add(HIGH_OR_MID_LEXRULE_SUBJ_ID)
+        if level == 'mid':
+            if case_change('subj', ch):
+                mylang.add(MID_LEXRULE_NO_SUBJ_ID)
+            else:
+                mylang.add(HIGH_OR_MID_LEXRULE_SUBJ_ID)
         if level == 'low':
-            mylang.set_section('lexrules')
             mylang.add(LOW_NMZ)
-            if case_change(ch):
-                mylang.add(LOW_LEXRULE_NO_COMPS_ID)
-            mylang.add(LOW_LEXRULE_COMPS_ID)
-        elif level == 'mid':
+            if case_change('subj', ch):
+                if case_change('obj', ch):
+                    mylang.add(LOW_LEXRULE_NO_SUBJ_ID_NO_COMPS_ID)
+                mylang.add(LOW_LEXRULE_NO_SUBJ_ID_COMPS_ID)
+            else:
+                if case_change('obj', ch):
+                    mylang.add(LOW_LEXRULE_SUBJ_ID_NO_COMPS_ID)
+                mylang.add(LOW_LEXRULE_SUBJ_ID_COMPS_ID)
+        mylang.set_section('phrases')
+        if level == 'mid':
             mylang.set_section('phrases')
             mylang.add(level + NMZ_CLAUSE)
             rules.add(level + '-nominalized-clause := ' + level + '-nominalized-clause-phrase.')
-        elif level == 'high':
+        if level == 'high':
             mylang.set_section('phrases')
             if nmzrel == 'no':
                 mylang.add(level + NO_REL_NLZ_CLAUSE)
@@ -212,7 +271,9 @@ def customize_nmcs(mylang, ch, rules):
                 mylang.add(level + SUBJ_NMZ_CLAUSE)
                 rules.add(level + '-nominalized-clause := ' + level + '-nominalized-clause-phrase.')
 
-def case_change(ch):
+def case_change(arg, ch):
+    has_nmz = False
+    case_change = False
     for vpc in ch.get('verb-pc'):
         for lrt in vpc['lrt']:
             has_nmz = False
@@ -222,22 +283,29 @@ def case_change(ch):
                     has_nmz = True
                     if has_nmz and case_change:
                         return True
-                if f['name'] == 'case' and f['head'] == 'obj':
+                if f['name'] == 'case' and f['head'] == arg:
                     case_change = True
                     if has_nmz and case_change:
-                        return True
+                         return True
     return has_nmz and case_change
 
 '''
 This assumes that the lrt is associated with nominalization.
 '''
-def case_change_lrt(lrt):
+def case_change_lrt(arg, lrt):
     for f in lrt['feat']:
-        if f['name'] == 'case' and f['head'] == 'obj':
+        if f['name'] == 'case' and f['head'] == arg:
             return True
     return False
 
-def update_lexical_rules(ch):
+def get_head_type(arg, lrt, ch):
+    head_type = ''
+    for f in lrt['feat']:
+        if f['name'] == 'case' and f['head'] == arg:
+            head_type = ch.case_head(f['value'])
+    return head_type
+
+def update_lexical_rules(mylang, ch):
     for vpc in ch['verb-pc']:
         for lrt in vpc['lrt']:
             for f in lrt['feat']:
@@ -245,17 +313,49 @@ def update_lexical_rules(ch):
                     for ns in ch.get('ns'):
                         if ns.get('name') == f['value']:
                             level = ns.get('level')
-                            if level == 'mid' or level == 'high':
+                            if level == 'high':
                                 lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
                                     ['high-or-mid-nominalization-lex-rule'])
-                            if level == 'low':
-                                if case_change_lrt(lrt):
+                            if level == 'mid':
+                                if case_change_lrt('subj', lrt):
                                     lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
-                                     ['low-nmz-trans-lex-rule'])
+                                                                  ['mid-nominalization-lex-rule'])
+                                    mylang.set_section('lexrules')
+                                    subj_head_type = get_head_type('subj', lrt, ch)
+                                    mylang.add(
+                                        'mid-nominalization-lex-rule := [ SYNSEM.LOCAL.CAT.VAL.SUBJ < [ LOCAL.CAT.HEAD ' + subj_head_type + '] > ].')
                                 else:
                                     lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
-                                        ['low-nmz-compsid-lex-rule'])
-
+                                                                  ['high-or-mid-nominalization-lex-rule'])
+                            if level == 'low':
+                                if case_change_lrt('subj', lrt):
+                                    if case_change_lrt('obj', lrt):
+                                        lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
+                                                                      ['low-nmz-no-subjid-trans-lex-rule'])
+                                        mylang.set_section('lexrules')
+                                        subj_head_type = get_head_type('subj', lrt, ch)
+                                        mylang.add(
+                                            'low-nmz-no-subjid-trans-lex-rule := [ SYNSEM.LOCAL.CAT.VAL.SUBJ < [ LOCAL.CAT.HEAD ' + subj_head_type + '] > ].')
+                                        obj_head_type = get_head_type('obj', lrt, ch)
+                                        mylang.add(
+                                            'low-nmz-no-subjid-trans-lex-rule := [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD ' + obj_head_type + '] > ].')
+                                    else:
+                                        lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
+                                                                  ['low-nmz-no-subjid-compsid-lex-rule'])
+                                        mylang.set_section('lexrules')
+                                        subj_head_type = get_head_type('subj', lrt, ch)
+                                        mylang.add(
+                                            'low-nmz-no-subjid-compsid-lex-rule := [ SYNSEM.LOCAL.CAT.VAL.SUBJ < [ LOCAL.CAT.HEAD ' + subj_head_type + '] > ].')
+                                else:
+                                    if case_change_lrt('obj', lrt):
+                                        lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
+                                                                      ['low-nmz-subjid-trans-lex-rule'])
+                                        obj_head_type = get_head_type('obj', lrt, ch)
+                                        mylang.add(
+                                            'low-nmz-subjid-trans-lex-rule := [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD ' + obj_head_type + '] > ].')
+                                    else:
+                                        lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
+                                                                      ['low-nmz-subjid-compsid-lex-rule'])
 
 def add_features(mylang):
     mylang.set_section('addenda')
@@ -264,4 +364,3 @@ def add_features(mylang):
     mylang.add('noun-lex := [ SYNSEM.LOCAL.CAT.HEAD.NMZ - ].')
     mylang.set_section('verb-lex')
     mylang.add('verb-lex := [ SYNSEM.LOCAL.CAT.HEAD.NMZ - ].')
-
