@@ -254,7 +254,8 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
         mylang.add(additional +
                    '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + init_value + ' ].',
                    merge=True)
-        mylang.add(general + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + default_init_value + ' ].',
+        if not cs[CLAUSE_POS_SAME]:
+            mylang.add(general + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + default_init_value + ' ].',
                    merge=True)
     constrain_for_features(additional + '-phrase', cs, mylang,
                            'NON-HEAD-DTR.SYNSEM.',ch,is_nominalized_complement(cs))
@@ -279,9 +280,9 @@ def constrain_for_features(typename,choice,mylang,path_prefix,ch,is_nmz):
             mylang.add(typename + ' := [ ' + path_prefix + path + 'NMZ + ].',merge=True)
 
 
-#TODO: I haven't still grasped the general logic here, hopefully one day it'll generalize.
-#TODO: This isn't really special cases. This is the logic that has to do with extraposition,
-# plus one special case with complementizer.
+#TODO: This isn't really special cases. This is EXTRA feature handling,
+# plus adding SUBJ <> in some cases,
+# plus an actual special case(?) with complementizer.
 def handle_special_cases(additional, cs, general, mylang, rules, wo):
     if (wo in ['ovs', 'osv', 'v-initial','vos','v-final']) and cs[CLAUSE_POS_EXTRA]:
         if additional_needed(cs,wo):
