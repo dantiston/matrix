@@ -254,8 +254,7 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
         mylang.add(additional +
                    '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + init_value + ' ].',
                    merge=True)
-        if not cs[CLAUSE_POS_SAME]:
-            mylang.add(general + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + default_init_value + ' ].',
+        mylang.add(general + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + default_init_value + ' ].',
                    merge=True)
     constrain_for_features(additional + '-phrase', cs, mylang,
                            'NON-HEAD-DTR.SYNSEM.',ch,is_nominalized_complement(cs))
