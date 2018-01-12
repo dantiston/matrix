@@ -179,7 +179,7 @@ def customize_order(ch, cs, mylang, rules, typename, init, general, additional,e
     if need_customize_hc(wo,cs):
         #TODO: this should probably be split somehow; the number of args is unhealthy.
         if additional_needed(cs,wo):
-            constrain_head_comp_rules(mylang,rules,init,init_value,default_init_value,head,general,additional,cs,ch,extra)
+            constrain_head_comp_rules(mylang,rules,init,init_value,default_init_value,head,general,additional,cs,ch)
         handle_special_cases(additional, cs, general, mylang, rules, wo)
     if need_customize_hs(wo,cs):
         constrain_head_subj_rules(cs,mylang,rules,ch)
@@ -237,7 +237,7 @@ with respect to its head or the INIT feature. The default rule will
 also need to be constrained with respect to INIT, if INIT is used in
 the additional rule.
 '''
-def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,head,general,additional,cs,ch,extra):
+def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,head,general,additional,cs,ch):
     supertype = 'head-initial' if additional.startswith(constants.HEAD_COMP) else 'head-final'
     mylang.add(additional + '-phrase := basic-head-1st-comp-phrase & ' + supertype + '.'
            ,section = 'phrases',merge=True)
@@ -288,10 +288,6 @@ def handle_special_cases(additional, cs, general, mylang, rules, wo):
             mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < > ].',
                        section='phrases',merge=True)
     if wo in ['v-initial','vos','v-final'] and cs[CLAUSE_POS_EXTRA]:
-        #if not cs[COMP]:
-        #    if is_nominalized_complement(cs):
-        #        gen_head = '[ NMZ - ]'
-        #        mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + gen_head + ' ].')
         if not cs[CLAUSE_POS_SAME]:
             mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
             mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)

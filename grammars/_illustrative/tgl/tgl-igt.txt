@@ -1,0 +1,52 @@
+Language: Tagalog
+Language code: tgl
+Lines: translit-seg,gloss,translat
+Author: Olga Zamaraeva
+Date: January 12, 2018
+Source a: Schachter & Otanes. Tagalog Reference Grammar, UC Press. 1972
+Source b: Drellishak, Scott. Widespread but not universal. 2009.
+
+#1 Basic clause structure. 
+Source: b:88
+Vetted: f
+Judgment: g
+Phenomena: clausal complements
+ma-kita ang babae ng lalake
+FOC-see AF woman PF man
+`The woman sees a man.'
+
+#2 Subordinate clause structure. 
+Source: a:172
+Vetted: f
+Judgment: g
+Phenomena: clausal complements
+sinabi ko ng ma-kita ang babae ng lalake
+know 1SG COMP FOC-see AF woman PF man
+`I know that the woman sees a man.'
+
+#3 Subordinate clause structure. Obligatory complementizer. 
+Source: a:172
+Vetted: f
+Judgment: u
+Phenomena: clausal complements
+sinabi ko ma-kita ang babae ng lalake
+FOC-see 1SG AF woman PF man
+`I know that the woman sees a man.'
+
+#4 Subordinate clause structure. 
+Source: a:172
+Vetted: f
+Judgment: u
+Phenomena: clausal complements
+sinabi ko ma-kita ang babae ng lalake ng
+FOC.see 1SG AF woman PF man COMP
+`I know that the woman sees a man.'
+
+#5 Subordinate clause structure. Intransitive. 
+Source: a:178
+Vetted: f
+Judgment: g
+Phenomena: clausal complements
+sinabi ko ng matulog ang babae
+FOC.see 1SG COMP FOC.sleep AF woman
+`I saw that the woman slept.'
