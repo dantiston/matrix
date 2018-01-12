@@ -363,12 +363,6 @@ def constrain_lex_items(head,ch,cs,comptype, init_value, default_init_value,myla
                 mylang.add(comptype + ':= [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA - ] > ].',merge=True)
 
 
-def constrain_transitive_verb(head,cs):
-    return head == 'verb' \
-           or (head == '+vc' and cs[CLAUSE_POS_EXTRA]
-               and (not cs[CLAUSE_POS_SAME] or cs[COMP] == 'opt'))
-
-
 def constrain_lexitem_for_feature(typename, feature_path, feature_name, feature_value,mylang):
     mylang.add( typename + ' := [ ' + feature_path + '.' + feature_name.upper() + ' ' + feature_value + ' ]. ',
                             merge=True)
