@@ -225,8 +225,9 @@ and there is not a complementizer or
 there is a complementizer but it can only use the normal HCR.
 '''
 def additional_needed(cs,wo):
-     return not (wo in ['v-initial', 'vos'] and cs[CLAUSE_POS_SAME]
-                and (not cs[COMP] or (cs[COMP_POS_AFTER] and cs[COMP_POS_BEFORE])))
+    res = ((not wo in ['v-initial', 'vos'] and cs[CLAUSE_POS_SAME])
+                or ((not cs[COMP]) or (cs[COMP_POS_AFTER] and cs[COMP_POS_BEFORE])))
+    return res
 
 '''
 If an additional head-comp rule is needed, it may also need constraints
@@ -253,9 +254,9 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
                    merge=True)
     constrain_for_features(additional + '-phrase', cs, mylang,
                            'NON-HEAD-DTR.SYNSEM.',ch,is_nominalized_complement(cs))
-    if extra:
-        mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
-        mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
+    #if extra:
+    #    mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
+    #    mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
 
 
 
