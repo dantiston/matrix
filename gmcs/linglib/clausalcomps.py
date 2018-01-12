@@ -246,8 +246,9 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
         mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + head +' ].'
                ,merge=True)
     if is_nominalized_complement(cs):
-        mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD [ NMZ + ] ].'
+        mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.NMZ + ].'
                ,merge=True)
+        mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.NMZ - ].')
     if init:
         mylang.add(additional +
                    '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + init_value + ' ].',
@@ -256,9 +257,6 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
                    merge=True)
     constrain_for_features(additional + '-phrase', cs, mylang,
                            'NON-HEAD-DTR.SYNSEM.',ch,is_nominalized_complement(cs))
-    #if extra:
-    #    mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
-    #    mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
 
 
 
@@ -289,10 +287,10 @@ def handle_special_cases(additional, cs, general, mylang, rules, wo):
             mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < > ].',
                        section='phrases',merge=True)
     if wo in ['v-initial','vos','v-final'] and cs[CLAUSE_POS_EXTRA]:
-        if not cs[COMP]:
-            if is_nominalized_complement(cs):
-                gen_head = '[ NMZ - ]'
-                mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + gen_head + ' ].')
+        #if not cs[COMP]:
+        #    if is_nominalized_complement(cs):
+        #        gen_head = '[ NMZ - ]'
+        #        mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + gen_head + ' ].')
         if not cs[CLAUSE_POS_SAME]:
             mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
             mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
@@ -309,13 +307,6 @@ def complementizer_comp_head_needed(wo,cs):
             return False
         if cs[CLAUSE_POS_SAME] and cs[COMP]:
             return True
-    return False
-    #if wo in OV_ORDERS and not cs[COMP_POS_BEFORE]:
-    #    return False
-    #if wo in VO_ORDERS and not cs[COMP_POS_AFTER]:
-    #    return False
-    #return True
-
     return False
 
 def determine_clausal_verb_comp_head(cs):
