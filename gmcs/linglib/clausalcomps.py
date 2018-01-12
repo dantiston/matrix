@@ -311,7 +311,7 @@ def handle_special_cases(additional, cs, general, mylang, rules, wo):
                        '& [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].',section='phrases')
             rules.add('comp-head-compl := comp-head-complementizer-phrase.')
 
-def determine_clausal_verb_head(cs):
+def determine_clausal_verb_comp_head(cs):
     head = ''
     if cs[COMP]:
         if cs[COMP] == 'oblig':
@@ -474,9 +474,10 @@ Add clausal verb supertype to the grammar.
 # It is possible that that call should be moved to this module.
 
 def add_clausalcomp_verb_supertype(ch, mainorverbtype,mylang):
+    head = ch.case_head()
     typedef = CLAUSALCOMP + '-verb-lex := ' + mainorverbtype + '&\
       [ SYNSEM.LOCAL.CAT.VAL.COMPS < #comps >,\
-        ARG-ST < [ LOCAL.CAT.HEAD noun ],\
+        ARG-ST < [ LOCAL.CAT.HEAD ' + head + ' ],\
                  #comps &\
                  [ LOCAL.CAT.VAL [ SPR < >, COMPS < >, SUBJ < > ] ] > ].'
     mylang.add(typedef,section='verblex')
@@ -533,7 +534,7 @@ def update_verb_lextype(ch,verb, vtype):
     for ccs in ch.get(COMPS):
         if val.endswith(ccs.full_key):
             suffix = val
-            head = determine_clausal_verb_head(ccs)
+            head = determine_clausal_verb_comp_head(ccs)
     if suffix:
         name = vtype[0:vtype.find('verb-lex')-1]
         rest = 'clausal-verb-lex'
