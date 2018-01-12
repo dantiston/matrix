@@ -313,18 +313,19 @@ def handle_special_cases(additional, cs, general, mylang, rules, wo):
             rules.add('comp-head-compl := comp-head-complementizer-phrase.')
 
 def complementizer_comp_head_needed(wo,cs):
-    if wo in OV_ORDERS and not cs[COMP_POS_BEFORE]:
+    #if wo in OV_ORDERS and not cs[COMP_POS_BEFORE]:
+    #    return False
+    #if wo in VO_ORDERS and not cs[COMP_POS_AFTER]:
+    #    return False
+    #return True
+
+    if (wo == 'v-final' and cs[CLAUSE_POS_SAME] and cs[COMP]):
         return False
-    if wo in VO_ORDERS and not cs[COMP_POS_AFTER]:
+    if (wo == 'v-final' and cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME] and cs[COMP_POS_AFTER]):
+        return False
+    if wo in ['v-initial', 'vos'] and not cs[COMP_POS_AFTER]:
         return False
     return True
-
-    #if (wo == 'v-final' and cs[CLAUSE_POS_SAME] and cs[COMP]):
-    #    return False
-    #if (wo == 'v-final' and cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME] and cs[COMP_POS_AFTER]):
-    #    return False
-    #if wo in ['v-initial', 'vos'] and not cs[COMP_POS_AFTER]:
-    #    return False
 
 def determine_clausal_verb_comp_head(cs):
     head = ''
