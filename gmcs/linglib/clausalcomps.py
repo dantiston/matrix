@@ -296,17 +296,20 @@ def handle_special_cases(additional, cs, general, mylang, rules, wo):
         if not cs[CLAUSE_POS_SAME]:
             mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
             mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
-        #if (not wo == 'v-final' and cs[CLAUSE_POS_SAME] and cs[COMP]) or \
-        #        (wo == 'v-final' and cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME] and cs[COMP_POS_AFTER]):
         if complementizer_comp_head_needed(wo,cs):
             mylang.add('comp-head-complementizer-phrase := basic-head-1st-comp-phrase & head-final '
                        '& [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].',section='phrases')
             rules.add('comp-head-compl := comp-head-complementizer-phrase.')
 
 def complementizer_comp_head_needed(wo,cs):
-    return (not wo == 'v-final' and cs[CLAUSE_POS_SAME] and cs[COMP]) or \
-                (wo == 'v-final' and cs[CLAUSE_POS_EXTRA]
-                 and not cs[CLAUSE_POS_SAME] and cs[COMP_POS_AFTER])
+    if wo == 'v-final' and cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME] and cs[COMP_POS_AFTER]:
+        return True
+    if not wo == 'v-final' and cs[CLAUSE_POS_SAME] and cs[COMP]:
+        return True
+    return False
+    #return (not wo == 'v-final' and cs[CLAUSE_POS_SAME] and cs[COMP]) or \
+    #            (wo == 'v-final' and cs[CLAUSE_POS_EXTRA]
+    #             and not cs[CLAUSE_POS_SAME] and cs[COMP_POS_AFTER])
     #if wo in OV_ORDERS and not cs[COMP_POS_BEFORE]:
     #    return False
     #if wo in VO_ORDERS and not cs[COMP_POS_AFTER]:
