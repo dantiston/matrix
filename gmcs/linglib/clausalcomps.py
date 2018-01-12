@@ -319,13 +319,13 @@ def complementizer_comp_head_needed(wo,cs):
     #    return False
     #return True
 
-    if (wo == 'v-final' and cs[CLAUSE_POS_SAME] and cs[COMP]):
-        return False
+    if not (wo == 'v-final' and cs[CLAUSE_POS_SAME] and cs[COMP]):
+        return True
     if (wo == 'v-final' and cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME] and cs[COMP_POS_AFTER]):
-        return False
-    if wo in ['v-initial', 'vos'] and not cs[COMP_POS_AFTER]:
-        return False
-    return True
+        return True
+    #if wo in ['v-initial', 'vos'] and not cs[COMP_POS_AFTER]:
+    #    return False
+    return False
 
 def determine_clausal_verb_comp_head(cs):
     head = ''
