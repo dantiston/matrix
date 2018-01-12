@@ -289,30 +289,24 @@ def handle_special_cases(additional, cs, general, mylang, rules, wo):
             mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < > ].',
                        section='phrases',merge=True)
     if wo in ['v-initial','vos','v-final'] and cs[CLAUSE_POS_EXTRA]:
-        #if cs[COMP] == 'oblig':
-        #    add_head = 'comp'
-        #elif cs[COMP] == 'opt':
-        #    add_head = '+vc'
         if not cs[COMP]:
             if is_nominalized_complement(cs):
                 gen_head = '[ NMZ - ]'
-                #add_head = '[ NMZ + ]'
                 mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + gen_head + ' ].')
-            #else:
-                #add_head = 'verb'
         if not cs[CLAUSE_POS_SAME]:
             mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
             mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
-        #if not wo in ['v-initial', 'vos','v-final']:
-        #    mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + add_head + ' ].')
-        if (not wo == 'v-final' and cs[CLAUSE_POS_SAME] and cs[COMP]) or \
-                (wo == 'v-final' and cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME] and cs[COMP_POS_AFTER]):
-        #if complementizer_comp_head_needed(wo,cs):
+        #if (not wo == 'v-final' and cs[CLAUSE_POS_SAME] and cs[COMP]) or \
+        #        (wo == 'v-final' and cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME] and cs[COMP_POS_AFTER]):
+        if complementizer_comp_head_needed(wo,cs):
             mylang.add('comp-head-complementizer-phrase := basic-head-1st-comp-phrase & head-final '
                        '& [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].',section='phrases')
             rules.add('comp-head-compl := comp-head-complementizer-phrase.')
 
 def complementizer_comp_head_needed(wo,cs):
+    return (not wo == 'v-final' and cs[CLAUSE_POS_SAME] and cs[COMP]) or \
+                (wo == 'v-final' and cs[CLAUSE_POS_EXTRA]
+                 and not cs[CLAUSE_POS_SAME] and cs[COMP_POS_AFTER])
     #if wo in OV_ORDERS and not cs[COMP_POS_BEFORE]:
     #    return False
     #if wo in VO_ORDERS and not cs[COMP_POS_AFTER]:
