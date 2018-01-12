@@ -227,7 +227,7 @@ there is a complementizer but it can only use the normal HCR.
 def additional_needed(cs,wo):
     if wo in ['v-initial'] and cs[CLAUSE_POS_SAME] and not cs[COMP_POS_AFTER]:
         return False
-    return not (wo in ['vos'] and cs[CLAUSE_POS_SAME]
+    return not (wo in ['v-initial','vos'] and cs[CLAUSE_POS_SAME]
                 and ((not cs[COMP]) or (cs[COMP_POS_AFTER] and cs[COMP_POS_BEFORE])))
 
 
