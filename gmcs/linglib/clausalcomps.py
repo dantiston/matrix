@@ -289,17 +289,17 @@ def handle_special_cases(additional, cs, general, mylang, rules, wo):
             mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < > ].',
                        section='phrases',merge=True)
     if wo in ['v-initial','vos','v-final'] and cs[CLAUSE_POS_EXTRA]:
-        if cs[COMP] == 'oblig':
-            add_head = 'comp'
-        elif cs[COMP] == 'opt':
-            add_head = '+vc'
-        elif not cs[COMP]:
+        #if cs[COMP] == 'oblig':
+        #    add_head = 'comp'
+        #elif cs[COMP] == 'opt':
+        #    add_head = '+vc'
+        if not cs[COMP]:
             if is_nominalized_complement(cs):
                 gen_head = '[ NMZ - ]'
-                add_head = '[ NMZ + ]'
+                #add_head = '[ NMZ + ]'
                 mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + gen_head + ' ].')
-            else:
-                add_head = 'verb'
+            #else:
+                #add_head = 'verb'
         if not cs[CLAUSE_POS_SAME]:
             mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
             mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
