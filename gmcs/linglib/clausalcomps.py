@@ -225,6 +225,8 @@ and there is not a complementizer or
 there is a complementizer but it can only use the normal HCR.
 '''
 def additional_needed(cs,wo):
+    if wo in ['v-initial', 'vos'] and cs[CLAUSE_POS_SAME] and not cs[COMP_POS_AFTER]:
+        return False
     res = not (wo in ['v-initial', 'vos'] and cs[CLAUSE_POS_SAME]
                 and ((not cs[COMP]) or (cs[COMP_POS_AFTER] and cs[COMP_POS_BEFORE])))
     return res
