@@ -835,7 +835,7 @@ class ChoicesFile:
             if w and w[0] and w[1]:
                 if clausalcomps.is_nominalized_complement(ccs):
                     patterns += [ [ '%s-%s,%s'% (w[0],w[1],ccs.full_key), 'transitive-clausal-%s (%s-%s)' % (ccs.full_key,w[0],w[1]), False] ]
-            if w and w[0]:
+            if w and w[0] and not cm == 'focus':
                 patterns += [ [ '%s,%s'%(w[0],ccs.full_key), 'transitive-clausal-%s (%s-unspecified)' % (ccs.full_key,w[0]), False] ]
         return patterns
 
