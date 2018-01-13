@@ -616,7 +616,7 @@ def customize_matrix(path, arch_type, destination=None, force_dest=False):
     coordination.customize_coordination(mylang, ch, lexicon, rules, irules)
     yes_no_questions.customize_yesno_questions(mylang, ch, rules, lrules, hierarchies)
     clausalmods.customize_clausalmods(mylang, ch, lexicon, rules, roots)
-    clausalcomps.customize_clausalcomps(mylang,ch,lexicon,rules,irules)
+    clausalcomps.customize_clausalcomps(mylang,ch,lexicon,rules)
     customize_punctuation(grammar_path)
     customize_test_sentences(grammar_path)
     customize_itsdb(grammar_path)

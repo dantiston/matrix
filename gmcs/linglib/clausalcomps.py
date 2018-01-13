@@ -66,7 +66,7 @@ Should fully cover all the customization needed for
 what was specified on the Clausal Complements subpage
 of the Questionnaire.
 '''
-def customize_clausalcomps(mylang,ch,lexicon,rules,irules):
+def customize_clausalcomps(mylang,ch,lexicon,rules):
     if not COMPS in ch:
         return
     # Note: clausal verb type will be added by lexical_items.py,
