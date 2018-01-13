@@ -337,6 +337,8 @@ def customize_verb_case(mylang, ch):
     # because TDLFile has trouble with merges and open-ended lists.
     # Which should get fixed...  - sfd
 
+    # OZ: This currently also adds clausal types.
+
     for p in ch.patterns():
         rule_pattern = p[2]
         p = p[0].split(',')  # split off ',dirinv', if present
