@@ -1,0 +1,72 @@
+;;; -*- Mode: TDL; Coding: utf-8 -*-
+;;; Nouns
+
+Kim := proper-noun-lex &
+  [ STEM < "Kim" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_Kim_n_rel" ].
+
+Sandy := proper-noun-lex &
+  [ STEM < "Sandy" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_Sandy_n_rel" ].
+
+book := common-noun-lex &
+  [ STEM < "book" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_book_n_rel" ].
+
+aria := common-noun-lex &
+  [ STEM < "aria" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_aria_n_rel" ].
+
+;;; Adjectives
+
+;;; Case-marking adpositions
+
+gen-marker := case-marking-adp-lex &
+  [ STEM < "of" >,
+    SYNSEM.LOCAL [ CONT [ HOOK [ ICONS-KEY.IARG1 #clause,
+                                 CLAUSE-KEY #clause ],
+                          ICONS <!  !> ],
+                   CAT.HEAD [ CASE gen,
+                              CASE-MARKED + ] ] ].
+
+;;; Verbs
+
+left := intran-verb-lex &
+  [ STEM < "left" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_left_v_rel" ].
+
+read := tran-verb-lex &
+  [ STEM < "read" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_read_v_rel" ].
+
+sing := tran-verb-lex &
+  [ STEM < "sing" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_sing_v_rel" ].
+
+think := thought-clausal-verb-lex &
+  [ STEM < "think" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_think_v_rel" ].
+
+know := thought-clausal-verb-lex &
+  [ STEM < "know" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_know_v_1_rel" ].
+
+hear := perception-clausal-verb-lex &
+  [ STEM < "hear" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_know_v_2_rel" ].
+
+;;; Auxiliaries
+
+is := be-aux-lex &
+  [ STEM < "is" > ].
+
+;;; Determiners
+
+the := def-determiner-lex &
+  [ STEM < "the" >,
+    SYNSEM.LKEYS.KEYREL.PRED "_the_q_rel" ].
+
+;;; Complementizers
+
+comps1_complementizer1 := comps1-comp-lex-item &
+  [ STEM < "that" > ].
