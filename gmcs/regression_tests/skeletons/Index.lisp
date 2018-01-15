@@ -22,6 +22,7 @@
 (
 ((:path . "tiniest") (:content . "tiniest: A very basic grammar just to get the regression tests started.  SOV word order, no frills."))
  ;;; new-regression-test-here
+((:path . "ccomp-illustr6-eng") (:content . "ccomp-illustr6-eng: Clausal comps: Illustrative English"))
 ((:path . "ccomp-illustr5-tgl") (:content . "ccomp-illustr5-tgl: Clausal comps: Illustrative Tagalog."))
 ((:path . "ccomp-illustr4-laj") (:content . "ccomp-illustr4-laj: Clausal comps: Lango"))
 ((:path . "ccomp-illustr3-deu") (:content . "ccomp-illustr3-deu: Clausal Comps: Illustrative German."))
