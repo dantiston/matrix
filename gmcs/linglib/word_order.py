@@ -753,11 +753,10 @@ def customize_subord_word_order(mylang,ch,wo,rules):
             rules.add('subord-comp-head := subord-comp-head-phrase.')
             rules.add('subord-subj-head := subord-subj-head-phrase.')
 
-        # For German-like subordinate clauses, we need additional feature VC (verb cluster)
-        # to ensure that verbs and auxiliaries in subordinate clauses cluster at the end.
+            # For German-like subordinate clauses, we need additional feature VC (verb cluster)
+            # to ensure that verbs and auxiliaries in subordinate clauses cluster at the end.
             if 'has-aux' in ch and ch['has-aux'] == 'yes':
                 update_lex_items_vcluster(ch, mylang)
-                #if ch.get('subord-word-order') == 'vfinal' and wo == 'v2':
                 mylang.add('subord-phrase := [ SYNSEM.LOCAL.CAT.VC - ].')
                 mylang.add('basic-unary-phrase :+\
                               [ SYNSEM.LOCAL.CAT.VC #vc,\
