@@ -6,7 +6,7 @@ HIGH_OR_MID = 'high-or-mid-nominalization-lex-rule'
 MID = 'mid-nominalization-lex-rule'
 LOW = 'low-nominalization-lex-rule'
 LOW_NO_SUBJ_NO_COMPS = 'low-nmz-no-subjid-trans-lex-rule'
-LOW_COMPS = 'low-nmz-no-subjid-compsid-lex-rule'
+LOW_NO_SUBJ_COMPS = 'low-nmz-no-subjid-compsid-lex-rule'
 LOW_SUBJ_NO_COMPS = 'low-nmz-subjid-trans-lex-rule'
 
 NHS_SUPERTYPE = 'basic-head-subj-phrase'
@@ -113,7 +113,7 @@ LOW_LEXRULE_NO_SUBJ_ID_NO_COMPS_ID = LOW_NO_SUBJ_NO_COMPS + ' := low-nominalizat
 
 # A rule that identifies the object of mother and daughter and works for intransitive verbs, too.
 # Still allows case change on the subject.
-LOW_LEXRULE_NO_SUBJ_ID_COMPS_ID = LOW_COMPS + ' := low-nominalization-lex-rule &\
+LOW_LEXRULE_NO_SUBJ_ID_COMPS_ID = LOW_NO_SUBJ_COMPS + ' := low-nominalization-lex-rule &\
                 [ SYNSEM.LOCAL.CAT.VAL [ COMPS #comps,\
                                         SUBJ < [ LOCAL [ CAT.VAL.SPR < >,\
 				      	                                 CONT.HOOK.INDEX #subj ] ] > ],\
@@ -363,17 +363,17 @@ def update_lexical_rules(mylang, ch):
                             obj_head_type = get_head_type('obj', lrt, ch)
                             mylang.add(LOW_NO_SUBJ_NO_COMPS + ' := [ ' + path_comps + ' ' + obj_head_type + '] > ].')
                         else:
-                            lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + [LOW_COMPS])
+                            lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + [LOW_NO_SUBJ_COMPS])
                             mylang.set_section('lexrules')
                             subj_head_type = get_head_type('subj', lrt, ch)
-                            mylang.add(LOW_COMPS + ' := [ ' + path_subj + ' ' + subj_head_type + '] > ].')
+                            mylang.add(LOW_NO_SUBJ_COMPS + ' := [ ' + path_subj + ' ' + subj_head_type + '] > ].')
                     else:
                         if case_change_lrt('obj', lrt):
                             lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + [LOW_SUBJ_NO_COMPS])
                             obj_head_type = get_head_type('obj', lrt, ch)
                             mylang.add(LOW_SUBJ_NO_COMPS + ' := [ ' + path_comps + ' ' + obj_head_type + '] > ].')
                         else:
-                            lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + [LOW_COMPS])
+                            lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + [LOW_NO_SUBJ_COMPS])
 
 def add_nmz_feature(mylang):
     mylang.set_section('addenda')
