@@ -111,12 +111,8 @@ LOW_LEXRULE_NO_SUBJ_ID_NO_COMPS_ID = LOW_NO_SUBJ_NO_COMPS + ' := low-nominalizat
 # A rule that identifies the object of mother and daughter and works for intransitive verbs, too.
 # Still allows case change on the subject.
 LOW_LEXRULE_NO_SUBJ_ID_COMPS_ID = LOW_NO_SUBJ_COMPS + ' := low-nominalization-lex-rule &\
-                [ SYNSEM.LOCAL.CAT.VAL [ COMPS #comps,\
-                                        SUBJ < [ LOCAL [ CAT.VAL.SPR < >,\
-				      	                                 CONT.HOOK.INDEX #subj ] ] > ],\
-                  DTR.SYNSEM.LOCAL.CAT.VAL [ COMPS #comps,\
-                                                SUBJ < [ LOCAL [ CAT.VAL.SPR < >,\
-				      	                                 CONT.HOOK.INDEX #subj ] ] > ] ].'
+                [ SYNSEM.LOCAL.CAT.VAL [ COMPS #comps ],\
+                  DTR.SYNSEM.LOCAL.CAT.VAL [ COMPS #comps ] ].'
 
 # A rule that allows case change on the object and requires that there is an object.
 # Does not allow case change on the subject.
