@@ -337,7 +337,7 @@ def get_nmz_lexrules(ch):
 
 def update_lexical_rules(mylang, ch):
     path_subj = 'SYNSEM.LOCAL.CAT.VAL.SUBJ.FIRST.LOCAL.CAT.HEAD'
-    path_comps = 'SYNSEM.LOCAL.CAT.VAL.SUBJ.COMPS.LOCAL.CAT.HEAD'
+    path_comps = 'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT.HEAD'
     for lrt,val in get_nmz_lexrules(ch):
         for ns in ch.get('ns'):
             if ns.get('name') == val:
