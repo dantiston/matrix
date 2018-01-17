@@ -1,6 +1,6 @@
-from gmcs.utils import merge_constraints, get_name
+from gmcs.utils import get_name
 
-from gmcs import constants, utils
+from gmcs import constants
 
 ######################################################################
 # Clausal Complements

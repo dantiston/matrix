@@ -209,71 +209,77 @@ def customize_nmcs(mylang, ch, rules):
         nmzrel = ns.get('nmzRel')
         add_features(mylang)
         mylang.add('+nvcdmo :+ [ MOD < > ].')
-        super = ''
-        if level == 'low' or level == 'mid':
-            mylang.set_section('phrases')
-            wo = ch.get('word-order')
-            #OZ: special case for free and v2 word order. Haven't yet tested on V2!
-            if wo == 'free' or wo == 'v2':
-               typename1 = 'non-event-subj-head'
-               typename2 = 'non-event-head-subj'
-               rules.add(typename1 + ' := ' + typename1 + '-phrase.')
-               rules.add(typename2 + ' := ' + typename2 + '-phrase.')
-               mylang.add(typename1 + '-phrase := head-final-head-nexus &' + NHS_SUPERTYPE + '&' + NHS_DEF)
-               mylang.add(typename2 + '-phrase := head-initial-head-nexus &' + NHS_SUPERTYPE + '&' +NHS_DEF)
-            else:
-                if wo == 'osv' or wo == 'sov' or wo == 'svo' or wo == 'v-final':
-                    typename = 'non-event-subj-head'
-                    rules.add(typename + ' := ' + typename + '-phrase.')
-                    super = 'head-final'
-                elif wo == 'ovs' or wo == 'vos' or wo == 'vso' or wo == 'v-initial':
-                    typename = 'non-event-head-subj'
-                    rules.add(typename + ' := ' + typename + '-phrase.')
-                    super = 'head-initial'
-                if not typename:
-                    raise Exception('Invalid combination of word order and nominalization choices.')
-                mylang.add(typename + '-phrase := ' + NHS_SUPERTYPE + '&' + super + '&' + NHS_DEF)
-                #if wo in [ 'sov', 'svo', 'ovs', 'vos']: #OZ: ovs can turn into vso with extraposed complements
-                #TODO: Need to handle OVS still! It seems to be a special case,
-                # if extraposition is involved (see also word_order.py)
-                if wo in ['svo', 'vos', 'sov'] or (wo == 'ovs' \
-                        and len([ cs for cs in ch.get('comps') if cs['clause-pos-extra'] ])==0):
-                       # The above just checks if any complementation strategy involves extraposition;
-                       # but what if there are several different ones? Am I sure that it
-                       # will be taken care of by INIT
-                       # on the clausal verb?
-                    mylang.add(typename + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].',merge=True)
-        mylang.set_section('lexrules')
-        if level == 'high':
-            mylang.add(HIGH_OR_MID_LEXRULE_SUBJ_ID)
-        if level == 'mid':
-            if case_change('subj', ch):
-                mylang.add(MID_LEXRULE_NO_SUBJ_ID)
-            else:
-                mylang.add(HIGH_OR_MID_LEXRULE_SUBJ_ID)
-        if level == 'low':
-            mylang.add(LOW_NMZ)
-            if case_change('subj', ch):
-                if case_change('obj', ch):
-                    mylang.add(LOW_LEXRULE_NO_SUBJ_ID_NO_COMPS_ID)
-                mylang.add(LOW_LEXRULE_NO_SUBJ_ID_COMPS_ID)
-            else:
-                if case_change('obj', ch):
-                    mylang.add(LOW_LEXRULE_SUBJ_ID_NO_COMPS_ID)
-                mylang.add(LOW_LEXRULE_SUBJ_ID_COMPS_ID)
+        add_nonevent_subj_rules(ch, level, mylang, rules)
+        add_nmz_lexrules(ch, level, mylang)
+        add_nmz_clause_phrases(level, mylang, nmzrel, rules)
+
+
+def add_nmz_clause_phrases(level, mylang, nmzrel, rules):
+    mylang.set_section('phrases')
+    if level == 'mid':
         mylang.set_section('phrases')
-        if level == 'mid':
-            mylang.set_section('phrases')
-            mylang.add(level + NMZ_CLAUSE)
+        mylang.add(level + NMZ_CLAUSE)
+        rules.add(level + '-nominalized-clause := ' + level + '-nominalized-clause-phrase.')
+    if level == 'high':
+        mylang.set_section('phrases')
+        if nmzrel == 'no':
+            mylang.add(level + NO_REL_NLZ_CLAUSE)
+            rules.add(level + '-no-rel-nominalized-clause := ' + level + '-no-rel-nominalized-clause-phrase.')
+        elif nmzrel == 'yes':
+            mylang.add(level + SUBJ_NMZ_CLAUSE)
             rules.add(level + '-nominalized-clause := ' + level + '-nominalized-clause-phrase.')
-        if level == 'high':
-            mylang.set_section('phrases')
-            if nmzrel == 'no':
-                mylang.add(level + NO_REL_NLZ_CLAUSE)
-                rules.add(level + '-no-rel-nominalized-clause := ' + level + '-no-rel-nominalized-clause-phrase.')
-            elif nmzrel == 'yes':
-                mylang.add(level + SUBJ_NMZ_CLAUSE)
-                rules.add(level + '-nominalized-clause := ' + level + '-nominalized-clause-phrase.')
+
+
+def add_nmz_lexrules(ch, level, mylang):
+    mylang.set_section('lexrules')
+    if level == 'high':
+        mylang.add(HIGH_OR_MID_LEXRULE_SUBJ_ID)
+    if level == 'mid':
+        if case_change('subj', ch):
+            mylang.add(MID_LEXRULE_NO_SUBJ_ID)
+        else:
+            mylang.add(HIGH_OR_MID_LEXRULE_SUBJ_ID)
+    if level == 'low':
+        mylang.add(LOW_NMZ)
+        if case_change('subj', ch):
+            if case_change('obj', ch):
+                mylang.add(LOW_LEXRULE_NO_SUBJ_ID_NO_COMPS_ID)
+            mylang.add(LOW_LEXRULE_NO_SUBJ_ID_COMPS_ID)
+        else:
+            if case_change('obj', ch):
+                mylang.add(LOW_LEXRULE_SUBJ_ID_NO_COMPS_ID)
+            mylang.add(LOW_LEXRULE_SUBJ_ID_COMPS_ID)
+
+
+def add_nonevent_subj_rules(ch, level, mylang, rules):
+    super = ''
+    if level == 'low' or level == 'mid':
+        mylang.set_section('phrases')
+        wo = ch.get('word-order')
+        if wo == 'free' or wo == 'v2':
+            typename1 = 'non-event-subj-head'
+            typename2 = 'non-event-head-subj'
+            rules.add(typename1 + ' := ' + typename1 + '-phrase.')
+            rules.add(typename2 + ' := ' + typename2 + '-phrase.')
+            mylang.add(typename1 + '-phrase := head-final-head-nexus &' + NHS_SUPERTYPE + '&' + NHS_DEF)
+            mylang.add(typename2 + '-phrase := head-initial-head-nexus &' + NHS_SUPERTYPE + '&' + NHS_DEF)
+        else:
+            if wo == 'osv' or wo == 'sov' or wo == 'svo' or wo == 'v-final':
+                typename = 'non-event-subj-head'
+                rules.add(typename + ' := ' + typename + '-phrase.')
+                super = 'head-final'
+            elif wo == 'ovs' or wo == 'vos' or wo == 'vso' or wo == 'v-initial':
+                typename = 'non-event-head-subj'
+                rules.add(typename + ' := ' + typename + '-phrase.')
+                super = 'head-initial'
+            if not typename:
+                raise Exception('Invalid combination of word order and nominalization choices.')
+            mylang.add(typename + '-phrase := ' + NHS_SUPERTYPE + '&' + super + '&' + NHS_DEF)
+            if wo in ['svo', 'vos', 'sov'] or (wo == 'ovs' \
+                                                       and len(
+                    [cs for cs in ch.get('comps') if cs['clause-pos-extra']]) == 0):
+                mylang.add(typename + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].', merge=True)
+
 
 def case_change(arg, ch):
     has_nmz = False
@@ -309,57 +315,67 @@ def get_head_type(arg, lrt, ch):
             head_type = ch.case_head(f['value'])
     return head_type
 
-def update_lexical_rules(mylang, ch):
+def get_nmz_lexrules(ch):
+    rules = []
     for vpc in ch['verb-pc']:
         for lrt in vpc['lrt']:
             for f in lrt['feat']:
                 if 'nominalization' in f['name']:
-                    for ns in ch.get('ns'):
-                        if ns.get('name') == f['value']:
-                            level = ns.get('level')
-                            if level == 'high':
-                                lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
-                                    ['high-or-mid-nominalization-lex-rule'])
-                            if level == 'mid':
-                                if case_change_lrt('subj', lrt):
-                                    lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
-                                                                  ['mid-nominalization-lex-rule'])
-                                    mylang.set_section('lexrules')
-                                    subj_head_type = get_head_type('subj', lrt, ch)
-                                    mylang.add(
-                                        'mid-nominalization-lex-rule := [ SYNSEM.LOCAL.CAT.VAL.SUBJ < [ LOCAL.CAT.HEAD ' + subj_head_type + '] > ].')
-                                else:
-                                    lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
-                                                                  ['high-or-mid-nominalization-lex-rule'])
-                            if level == 'low':
-                                if case_change_lrt('subj', lrt):
-                                    if case_change_lrt('obj', lrt):
-                                        lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
-                                                                      ['low-nmz-no-subjid-trans-lex-rule'])
-                                        mylang.set_section('lexrules')
-                                        subj_head_type = get_head_type('subj', lrt, ch)
-                                        mylang.add(
-                                            'low-nmz-no-subjid-trans-lex-rule := [ SYNSEM.LOCAL.CAT.VAL.SUBJ < [ LOCAL.CAT.HEAD ' + subj_head_type + '] > ].')
-                                        obj_head_type = get_head_type('obj', lrt, ch)
-                                        mylang.add(
-                                            'low-nmz-no-subjid-trans-lex-rule := [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD ' + obj_head_type + '] > ].')
-                                    else:
-                                        lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
-                                                                  ['low-nmz-no-subjid-compsid-lex-rule'])
-                                        mylang.set_section('lexrules')
-                                        subj_head_type = get_head_type('subj', lrt, ch)
-                                        mylang.add(
-                                            'low-nmz-no-subjid-compsid-lex-rule := [ SYNSEM.LOCAL.CAT.VAL.SUBJ < [ LOCAL.CAT.HEAD ' + subj_head_type + '] > ].')
-                                else:
-                                    if case_change_lrt('obj', lrt):
-                                        lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
-                                                                      ['low-nmz-subjid-trans-lex-rule'])
-                                        obj_head_type = get_head_type('obj', lrt, ch)
-                                        mylang.add(
-                                            'low-nmz-subjid-trans-lex-rule := [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD ' + obj_head_type + '] > ].')
-                                    else:
-                                        lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
-                                                                      ['low-nmz-subjid-compsid-lex-rule'])
+                    rules.append((lrt,f['value']))
+    return rules
+
+def update_lexical_rules(mylang, ch):
+    #for vpc in ch['verb-pc']:
+    #    for lrt in vpc['lrt']:
+    #        for f in lrt['feat']:
+    #            if 'nominalization' in f['name']:
+    for lrt,val in get_nmz_lexrules(ch):
+        for ns in ch.get('ns'):
+            if ns.get('name') == val:
+                level = ns.get('level')
+                if level == 'high':
+                    lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
+                        ['high-or-mid-nominalization-lex-rule'])
+                if level == 'mid':
+                    if case_change_lrt('subj', lrt):
+                        lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
+                                                      ['mid-nominalization-lex-rule'])
+                        mylang.set_section('lexrules')
+                        subj_head_type = get_head_type('subj', lrt, ch)
+                        mylang.add(
+                            'mid-nominalization-lex-rule := [ SYNSEM.LOCAL.CAT.VAL.SUBJ < [ LOCAL.CAT.HEAD ' + subj_head_type + '] > ].')
+                    else:
+                        lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
+                                                      ['high-or-mid-nominalization-lex-rule'])
+                if level == 'low':
+                    if case_change_lrt('subj', lrt):
+                        if case_change_lrt('obj', lrt):
+                            lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
+                                                          ['low-nmz-no-subjid-trans-lex-rule'])
+                            mylang.set_section('lexrules')
+                            subj_head_type = get_head_type('subj', lrt, ch)
+                            mylang.add(
+                                'low-nmz-no-subjid-trans-lex-rule := [ SYNSEM.LOCAL.CAT.VAL.SUBJ < [ LOCAL.CAT.HEAD ' + subj_head_type + '] > ].')
+                            obj_head_type = get_head_type('obj', lrt, ch)
+                            mylang.add(
+                                'low-nmz-no-subjid-trans-lex-rule := [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD ' + obj_head_type + '] > ].')
+                        else:
+                            lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
+                                                      ['low-nmz-no-subjid-compsid-lex-rule'])
+                            mylang.set_section('lexrules')
+                            subj_head_type = get_head_type('subj', lrt, ch)
+                            mylang.add(
+                                'low-nmz-no-subjid-compsid-lex-rule := [ SYNSEM.LOCAL.CAT.VAL.SUBJ < [ LOCAL.CAT.HEAD ' + subj_head_type + '] > ].')
+                    else:
+                        if case_change_lrt('obj', lrt):
+                            lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
+                                                          ['low-nmz-subjid-trans-lex-rule'])
+                            obj_head_type = get_head_type('obj', lrt, ch)
+                            mylang.add(
+                                'low-nmz-subjid-trans-lex-rule := [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD ' + obj_head_type + '] > ].')
+                        else:
+                            lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
+                                                          ['low-nmz-subjid-compsid-lex-rule'])
 
 def add_features(mylang):
     mylang.set_section('addenda')

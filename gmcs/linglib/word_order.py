@@ -115,7 +115,7 @@ def customize_major_constituent_order(wo, mylang, ch, rules):
     # Complements attach before subjects
     if wo == 'ovs' or wo == 'vos' or wo == 'sov' or wo == 'svo':
         # If the language is OVS and extraposes clausal complements, we need subjects to attach low:
-        if not ((wo  == 'ovs' or wo == 'vos') and 'comps' in ch and extraposed_comps(ch)):
+        if not ((wo == 'ovs' or wo == 'vos') and 'comps' in ch and extraposed_comps(ch)):
             mylang.add(hs + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].')
 
     # Subjects attach before complements
