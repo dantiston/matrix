@@ -356,24 +356,24 @@ def update_lexical_rules(mylang, ch):
                             mylang.set_section('lexrules')
                             subj_head_type = get_head_type('subj', lrt, ch)
                             mylang.add(
-                                'low-nmz-no-subjid-trans-lex-rule := [ SYNSEM.LOCAL.CAT.VAL.SUBJ < [ LOCAL.CAT.HEAD ' + subj_head_type + '] > ].')
+                                'low-nmz-no-subjid-trans-lex-rule := [ ' + path + ' ' + subj_head_type + '] > ].')
                             obj_head_type = get_head_type('obj', lrt, ch)
                             mylang.add(
-                                'low-nmz-no-subjid-trans-lex-rule := [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD ' + obj_head_type + '] > ].')
+                                'low-nmz-no-subjid-trans-lex-rule := [ ' + path + ' ' + + obj_head_type + '] > ].')
                         else:
                             lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
                                                       ['low-nmz-no-subjid-compsid-lex-rule'])
                             mylang.set_section('lexrules')
                             subj_head_type = get_head_type('subj', lrt, ch)
                             mylang.add(
-                                'low-nmz-no-subjid-compsid-lex-rule := [ SYNSEM.LOCAL.CAT.VAL.SUBJ < [ LOCAL.CAT.HEAD ' + subj_head_type + '] > ].')
+                                'low-nmz-no-subjid-compsid-lex-rule := [ ' + path + ' ' + + subj_head_type + '] > ].')
                     else:
                         if case_change_lrt('obj', lrt):
                             lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
                                                           ['low-nmz-subjid-trans-lex-rule'])
                             obj_head_type = get_head_type('obj', lrt, ch)
                             mylang.add(
-                                'low-nmz-subjid-trans-lex-rule := [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD ' + obj_head_type + '] > ].')
+                                'low-nmz-subjid-trans-lex-rule := [ ' + path + ' ' + obj_head_type + '] > ].')
                         else:
                             lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
                                                           ['low-nmz-subjid-compsid-lex-rule'])
