@@ -8,6 +8,7 @@ LOW = 'low-nominalization-lex-rule'
 LOW_NO_SUBJ_NO_COMPS = 'low-nmz-no-subjid-trans-lex-rule'
 LOW_NO_SUBJ_COMPS = 'low-nmz-no-subjid-compsid-lex-rule'
 LOW_SUBJ_NO_COMPS = 'low-nmz-subjid-trans-lex-rule'
+LOW_SUBJ_COMPS = 'low-nmz-subjid-compsid-lex-rule'
 
 NHS_SUPERTYPE = 'basic-head-subj-phrase'
 NHS_DEF = '[ HEAD-DTR.SYNSEM [ LOCAL [ CONT.HOOK.INDEX ref-ind ],\
@@ -373,7 +374,7 @@ def update_lexical_rules(mylang, ch):
                             obj_head_type = get_head_type('obj', lrt, ch)
                             mylang.add(LOW_SUBJ_NO_COMPS + ' := [ ' + path_comps + ' ' + obj_head_type + '] > ].')
                         else:
-                            lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + [LOW_NO_SUBJ_COMPS])
+                            lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + [LOW_SUBJ_COMPS])
 
 def add_nmz_feature(mylang):
     mylang.set_section('addenda')
