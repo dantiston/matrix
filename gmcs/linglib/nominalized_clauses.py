@@ -359,12 +359,12 @@ def update_lexical_rules(mylang, ch):
                             subj_head_type = get_head_type('subj', lrt, ch)
                             mylang.add(LOW_NO_SUBJ_NO_COMPS + ' := [ ' + path + ' ' + subj_head_type + '] > ].')
                             obj_head_type = get_head_type('obj', lrt, ch)
-                            mylang.add(LOW_NO_SUBJ_NO_COMPS + ' := [ ' + path + ' ' + + obj_head_type + '] > ].')
+                            mylang.add(LOW_NO_SUBJ_NO_COMPS + ' := [ ' + path + ' ' + obj_head_type + '] > ].')
                         else:
                             lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + [LOW_NO_SUBJ_NO_COMPS])
                             mylang.set_section('lexrules')
                             subj_head_type = get_head_type('subj', lrt, ch)
-                            mylang.add(LOW_COMPS + ' := [ ' + path + ' ' + + subj_head_type + '] > ].')
+                            mylang.add(LOW_COMPS + ' := [ ' + path + ' ' + subj_head_type + '] > ].')
                     else:
                         if case_change_lrt('obj', lrt):
                             lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + [LOW_NO_SUBJ_NO_COMPS])
