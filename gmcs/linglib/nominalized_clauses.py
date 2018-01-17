@@ -1,5 +1,6 @@
 ###
 # Constants
+# Admittedly, they are a bit ugly but the hope is they will prevent some number of typo-bugs.
 ###
 
 HIGH_OR_MID = 'high-or-mid-nominalization-lex-rule'
@@ -132,7 +133,8 @@ LOW_LEXRULE_SUBJ_ID_COMPS_ID = 'low-nmz-subjid-compsid-lex-rule := low-nominaliz
                   DTR.SYNSEM.LOCAL.CAT.VAL [ COMPS #comps,\
                                                 SUBJ #subj ] ].'
 
-
+#A non-branching rule for nominalized clauses to form a NP, with nominalized_rel for the MRS.
+# For high nominalization.
 NMZ_CLAUSE = '-nominalized-clause-phrase := basic-unary-phrase &\
                                     [ SYNSEM.LOCAL.CAT [ HEAD noun &\
                                                 [ NMZ + ],\
@@ -157,6 +159,7 @@ NMZ_CLAUSE = '-nominalized-clause-phrase := basic-unary-phrase &\
             			    		  SPEC < > ]],\
             			            CONT.HOOK [ LTOP #larg ]]]] > ].'
 
+#A non-branching rule for nominalized clauses to form a NP, semantically emtpy.
 NO_REL_NLZ_CLAUSE = '-no-rel-nominalized-clause-phrase := basic-unary-phrase &\
   [ SYNSEM [ LOCAL.CAT [ HEAD noun &\
                             [ NMZ + ],\
@@ -175,6 +178,8 @@ NO_REL_NLZ_CLAUSE = '-no-rel-nominalized-clause-phrase := basic-unary-phrase &\
                                         SPEC < > ] ],\
 		CONT.HOOK [ LTOP #ltop ] ] ] ] > ].'
 
+#A non-branching rule for nominalized clauses to form a NP, with nominalized_rel for the MRS.
+# For middle nominalization.
 SUBJ_NMZ_CLAUSE = '-nominalized-clause-phrase := basic-unary-phrase &\
                           [ SYNSEM.LOCAL.CAT [ HEAD noun &\
                             [ NMZ + ],\
@@ -215,6 +220,11 @@ def customize_nmcs(mylang, ch, rules):
 
 
 def add_nmz_clause_phrases(level, mylang, nmzrel, rules):
+    """
+    Add non-branching rules which turn a nominalized clause into a NP.
+    @param level: high, mid, or low.
+    @param nmzrel: yes or no.
+    """
     mylang.set_section('phrases')
     if level == 'mid':
         mylang.set_section('phrases')
@@ -231,6 +241,10 @@ def add_nmz_clause_phrases(level, mylang, nmzrel, rules):
 
 
 def add_nmz_lexrules(ch, level, mylang):
+    """
+    Add appropriate lexical rule supertypes (definitions).
+    @param level: high, mid, or low.
+    """
     mylang.set_section('lexrules')
     if level == 'high':
         mylang.add(HIGH_OR_MID_LEXRULE_SUBJ_ID)
@@ -252,6 +266,9 @@ def add_nmz_lexrules(ch, level, mylang):
 
 
 def add_nonevent_subj_rules(ch, level, mylang, rules):
+    """
+    Add head-subject rules what work with non-events (e.g. nominalized things, nouns).
+    """
     super = ''
     if level == 'low' or level == 'mid':
         mylang.set_section('phrases')
@@ -282,6 +299,11 @@ def add_nonevent_subj_rules(ch, level, mylang, rules):
 
 
 def case_change(arg, ch):
+    """
+    @param arg: obj or subj
+    @return: True if there is any nominalization lexical rule anywhere
+    in the choices that specifies case change on either subject or object.
+    """
     has_nmz = False
     case_change = False
     for vpc in ch.get('verb-pc'):
@@ -301,12 +323,24 @@ def case_change(arg, ch):
 
 # This assumes that the lrt is associated with nominalization.
 def case_change_lrt(arg, lrt):
+    """
+    @param arg: obj or subj
+    @param lrt:
+    @return: True if this lrt specifies case change on arg.
+    """
     for f in lrt['feat']:
         if f['name'] == 'case' and f['head'] == arg:
             return True
     return False
 
 def get_head_type(arg, lrt, ch):
+    """
+    Call a function from choices.py to determine what is the lexical rule's head.
+    @param arg: obj or subj
+    @param lrt: lexical rule type object
+    @param ch: the entire choices object
+    @return: string corresponding to the head type, such as "noun" or "adp" or "+np"
+    """
     head_type = ''
     for f in lrt['feat']:
         if f['name'] == 'case' and f['head'] == arg:
@@ -329,6 +363,10 @@ def get_nmz_lexrules(ch):
     return rules
 
 def update_lexical_rules(mylang, ch):
+    """
+    Create appropriate lexical rule subtypes for nominalization.
+    Add an appropriate supertype to each nominalizing verbal position class.
+    """
     path_subj = 'SYNSEM.LOCAL.CAT.VAL.SUBJ.FIRST.LOCAL.CAT.HEAD'
     path_comps = 'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT.HEAD'
     for lrt,val in get_nmz_lexrules(ch):
@@ -369,6 +407,9 @@ def update_lexical_rules(mylang, ch):
                             lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + [LOW_SUBJ_COMPS])
 
 def add_nmz_feature(mylang):
+    """
+    Add NMZ feature to addenda, verb, and nouns.
+    """
     mylang.set_section('addenda')
     mylang.add('head :+ [ NMZ bool ].')
     mylang.set_section('noun-lex')
