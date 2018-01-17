@@ -207,7 +207,7 @@ def customize_nmcs(mylang, ch, rules):
     for ns in ch.get('ns'):
         level = ns.get('level')
         nmzrel = ns.get('nmzRel')
-        add_features(mylang)
+        add_nmz_feature(mylang)
         mylang.add('+nvcdmo :+ [ MOD < > ].')
         add_nonevent_subj_rules(ch, level, mylang, rules)
         add_nmz_lexrules(ch, level, mylang)
@@ -299,9 +299,7 @@ def case_change(arg, ch):
                          return True
     return has_nmz and case_change
 
-'''
-This assumes that the lrt is associated with nominalization.
-'''
+# This assumes that the lrt is associated with nominalization.
 def case_change_lrt(arg, lrt):
     for f in lrt['feat']:
         if f['name'] == 'case' and f['head'] == arg:
@@ -316,6 +314,12 @@ def get_head_type(arg, lrt, ch):
     return head_type
 
 def get_nmz_lexrules(ch):
+    """
+    Collect all lexical rule types from verbal
+    position classes that involve nominalization.
+    @param ch:
+    @return: rules (list of tuples (lrt, nominalization_value (e.g. "low")).
+    """
     rules = []
     for vpc in ch['verb-pc']:
         for lrt in vpc['lrt']:
@@ -325,10 +329,6 @@ def get_nmz_lexrules(ch):
     return rules
 
 def update_lexical_rules(mylang, ch):
-    #for vpc in ch['verb-pc']:
-    #    for lrt in vpc['lrt']:
-    #        for f in lrt['feat']:
-    #            if 'nominalization' in f['name']:
     for lrt,val in get_nmz_lexrules(ch):
         for ns in ch.get('ns'):
             if ns.get('name') == val:
@@ -343,7 +343,7 @@ def update_lexical_rules(mylang, ch):
                         mylang.set_section('lexrules')
                         subj_head_type = get_head_type('subj', lrt, ch)
                         mylang.add(
-                            'mid-nominalization-lex-rule := [ SYNSEM.LOCAL.CAT.VAL.SUBJ < [ LOCAL.CAT.HEAD ' + subj_head_type + '] > ].')
+                            'mid-nominalization-lex-rule := [ SYNSEM.LOCAL.CAT.VAL.SUBJ.FIRST.LOCAL.CAT.HEAD ' + subj_head_type + '] > ].')
                     else:
                         lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
                                                       ['high-or-mid-nominalization-lex-rule'])
@@ -377,7 +377,7 @@ def update_lexical_rules(mylang, ch):
                             lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
                                                           ['low-nmz-subjid-compsid-lex-rule'])
 
-def add_features(mylang):
+def add_nmz_feature(mylang):
     mylang.set_section('addenda')
     mylang.add('head :+ [ NMZ bool ].')
     mylang.set_section('noun-lex')
