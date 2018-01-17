@@ -335,7 +335,8 @@ def get_nmz_lexrules(ch):
     return rules
 
 def update_lexical_rules(mylang, ch):
-    path = 'SYNSEM.LOCAL.CAT.VAL.SUBJ.FIRST.LOCAL.CAT.HEAD'
+    path_subj = 'SYNSEM.LOCAL.CAT.VAL.SUBJ.FIRST.LOCAL.CAT.HEAD'
+    path_comps = 'SYNSEM.LOCAL.CAT.VAL.SUBJ.COMPS.LOCAL.CAT.HEAD'
     for lrt,val in get_nmz_lexrules(ch):
         for ns in ch.get('ns'):
             if ns.get('name') == val:
@@ -348,7 +349,7 @@ def update_lexical_rules(mylang, ch):
                         lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + [MID])
                         mylang.set_section('lexrules')
                         subj_head_type = get_head_type('subj', lrt, ch)
-                        mylang.add(MID + ' := [ ' + path + ' ' + subj_head_type + '] > ].')
+                        mylang.add(MID + ' := [ ' + path_subj + ' ' + subj_head_type + '] > ].')
                     else:
                         lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + [HIGH_OR_MID])
                 if level == 'low':
@@ -357,19 +358,19 @@ def update_lexical_rules(mylang, ch):
                             lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + [LOW_NO_SUBJ_NO_COMPS])
                             mylang.set_section('lexrules')
                             subj_head_type = get_head_type('subj', lrt, ch)
-                            mylang.add(LOW_NO_SUBJ_NO_COMPS + ' := [ ' + path + ' ' + subj_head_type + '] > ].')
+                            mylang.add(LOW_NO_SUBJ_NO_COMPS + ' := [ ' + path_subj + ' ' + subj_head_type + '] > ].')
                             obj_head_type = get_head_type('obj', lrt, ch)
-                            mylang.add(LOW_NO_SUBJ_NO_COMPS + ' := [ ' + path + ' ' + obj_head_type + '] > ].')
+                            mylang.add(LOW_NO_SUBJ_NO_COMPS + ' := [ ' + path_comps + ' ' + obj_head_type + '] > ].')
                         else:
                             lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + [LOW_NO_SUBJ_NO_COMPS])
                             mylang.set_section('lexrules')
                             subj_head_type = get_head_type('subj', lrt, ch)
-                            mylang.add(LOW_COMPS + ' := [ ' + path + ' ' + subj_head_type + '] > ].')
+                            mylang.add(LOW_COMPS + ' := [ ' + path_subj + ' ' + subj_head_type + '] > ].')
                     else:
                         if case_change_lrt('obj', lrt):
                             lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + [LOW_NO_SUBJ_NO_COMPS])
                             obj_head_type = get_head_type('obj', lrt, ch)
-                            mylang.add(LOW_NO_SUBJ_NO_COMPS + ' := [ ' + path + ' ' + obj_head_type + '] > ].')
+                            mylang.add(LOW_NO_SUBJ_NO_COMPS + ' := [ ' + path_comps + ' ' + obj_head_type + '] > ].')
                         else:
                             lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + [LOW_COMPS])
 
