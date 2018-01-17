@@ -329,6 +329,7 @@ def get_nmz_lexrules(ch):
     return rules
 
 def update_lexical_rules(mylang, ch):
+    path = 'SYNSEM.LOCAL.CAT.VAL.SUBJ.FIRST.LOCAL.CAT.HEAD'
     for lrt,val in get_nmz_lexrules(ch):
         for ns in ch.get('ns'):
             if ns.get('name') == val:
@@ -343,7 +344,7 @@ def update_lexical_rules(mylang, ch):
                         mylang.set_section('lexrules')
                         subj_head_type = get_head_type('subj', lrt, ch)
                         mylang.add(
-                            'mid-nominalization-lex-rule := [ SYNSEM.LOCAL.CAT.VAL.SUBJ.FIRST.LOCAL.CAT.HEAD ' + subj_head_type + '] > ].')
+                            'mid-nominalization-lex-rule := [ ' + path + ' ' + subj_head_type + '] > ].')
                     else:
                         lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
                                                       ['high-or-mid-nominalization-lex-rule'])
