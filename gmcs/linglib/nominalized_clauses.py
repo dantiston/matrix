@@ -2,6 +2,12 @@
 # Constants
 ###
 
+HIGH_OR_MID = 'high-or-mid-nominalization-lex-rule'
+MID = 'mid-nominalization-lex-rule'
+LOW = 'low-nominalization-lex-rule'
+LOW_NO_SUBJ_NO_COMPS = 'low-nmz-no-subjid-trans-lex-rule'
+LOW_COMPS = 'low-nmz-no-subjid-compsid-lex-rule'
+
 NHS_SUPERTYPE = 'basic-head-subj-phrase'
 NHS_DEF = '[ HEAD-DTR.SYNSEM [ LOCAL [ CONT.HOOK.INDEX ref-ind ],\
                                NON-LOCAL [ QUE 0-dlist,\
@@ -10,7 +16,7 @@ NHS_DEF = '[ HEAD-DTR.SYNSEM [ LOCAL [ CONT.HOOK.INDEX ref-ind ],\
 
 # A rule that does not allow case change on subject or object.
 # Only good for high and mid nominalization.
-HIGH_OR_MID_LEXRULE_SUBJ_ID = 'high-or-mid-nominalization-lex-rule := cat-change-with-ccont-lex-rule & same-cont-lex-rule &\
+HIGH_OR_MID_LEXRULE_SUBJ_ID = HIGH_OR_MID + ' := cat-change-with-ccont-lex-rule & same-cont-lex-rule &\
     [ SYNSEM.LOCAL [ CONT [ HOOK [ INDEX event ]],\
 		   CAT [ HEAD verb &\
 			      [ NMZ +,\
@@ -36,7 +42,7 @@ HIGH_OR_MID_LEXRULE_SUBJ_ID = 'high-or-mid-nominalization-lex-rule := cat-change
 
 # A rule that allows case change on the subject but not the object.
 # Only good for mid nominalization.
-MID_LEXRULE_NO_SUBJ_ID = 'mid-nominalization-lex-rule := cat-change-with-ccont-lex-rule & same-cont-lex-rule &\
+MID_LEXRULE_NO_SUBJ_ID = MID + ' := cat-change-with-ccont-lex-rule & same-cont-lex-rule &\
     [ SYNSEM.LOCAL [ CONT [ HOOK [ INDEX event ]],\
 		   CAT [ HEAD verb &\
 			      [ NMZ +,\
@@ -95,7 +101,7 @@ LOW_NMZ = 'low-nominalization-lex-rule := cat-change-with-ccont-lex-rule &\
 
 # A rule that allows case change on both subject and object and requires that there is an object.
 # Only good for transitive verbs.
-LOW_LEXRULE_NO_SUBJ_ID_NO_COMPS_ID = 'low-nmz-no-subjid-trans-lex-rule := low-nominalization-lex-rule &\
+LOW_LEXRULE_NO_SUBJ_ID_NO_COMPS_ID = LOW_NO_SUBJ_NO_COMPS + ' := low-nominalization-lex-rule &\
                 [ SYNSEM.LOCAL.CAT.VAL [ COMPS < [ LOCAL [ CAT [ VAL.SPR < > ],\
 				      	                                   CONT.HOOK.INDEX #obj ] ] >,\
 				      	                SUBJ < [ LOCAL [ CAT.VAL.SPR < >,\
@@ -106,7 +112,7 @@ LOW_LEXRULE_NO_SUBJ_ID_NO_COMPS_ID = 'low-nmz-no-subjid-trans-lex-rule := low-no
 
 # A rule that identifies the object of mother and daughter and works for intransitive verbs, too.
 # Still allows case change on the subject.
-LOW_LEXRULE_NO_SUBJ_ID_COMPS_ID = 'low-nmz-no-subjid-compsid-lex-rule := low-nominalization-lex-rule &\
+LOW_LEXRULE_NO_SUBJ_ID_COMPS_ID = LOW_COMPS + ' := low-nominalization-lex-rule &\
                 [ SYNSEM.LOCAL.CAT.VAL [ COMPS #comps,\
                                         SUBJ < [ LOCAL [ CAT.VAL.SPR < >,\
 				      	                                 CONT.HOOK.INDEX #subj ] ] > ],\
@@ -336,47 +342,36 @@ def update_lexical_rules(mylang, ch):
                 level = ns.get('level')
                 if level == 'high':
                     lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
-                        ['high-or-mid-nominalization-lex-rule'])
+                        [HIGH_OR_MID])
                 if level == 'mid':
                     if case_change_lrt('subj', lrt):
-                        lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
-                                                      ['mid-nominalization-lex-rule'])
+                        lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + [MID])
                         mylang.set_section('lexrules')
                         subj_head_type = get_head_type('subj', lrt, ch)
-                        mylang.add(
-                            'mid-nominalization-lex-rule := [ ' + path + ' ' + subj_head_type + '] > ].')
+                        mylang.add(MID + ' := [ ' + path + ' ' + subj_head_type + '] > ].')
                     else:
-                        lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
-                                                      ['high-or-mid-nominalization-lex-rule'])
+                        lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + [HIGH_OR_MID])
                 if level == 'low':
                     if case_change_lrt('subj', lrt):
                         if case_change_lrt('obj', lrt):
-                            lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
-                                                          ['low-nmz-no-subjid-trans-lex-rule'])
+                            lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + [LOW_NO_SUBJ_NO_COMPS])
                             mylang.set_section('lexrules')
                             subj_head_type = get_head_type('subj', lrt, ch)
-                            mylang.add(
-                                'low-nmz-no-subjid-trans-lex-rule := [ ' + path + ' ' + subj_head_type + '] > ].')
+                            mylang.add(LOW_NO_SUBJ_NO_COMPS + ' := [ ' + path + ' ' + subj_head_type + '] > ].')
                             obj_head_type = get_head_type('obj', lrt, ch)
-                            mylang.add(
-                                'low-nmz-no-subjid-trans-lex-rule := [ ' + path + ' ' + + obj_head_type + '] > ].')
+                            mylang.add(LOW_NO_SUBJ_NO_COMPS + ' := [ ' + path + ' ' + + obj_head_type + '] > ].')
                         else:
-                            lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
-                                                      ['low-nmz-no-subjid-compsid-lex-rule'])
+                            lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + [LOW_NO_SUBJ_NO_COMPS])
                             mylang.set_section('lexrules')
                             subj_head_type = get_head_type('subj', lrt, ch)
-                            mylang.add(
-                                'low-nmz-no-subjid-compsid-lex-rule := [ ' + path + ' ' + + subj_head_type + '] > ].')
+                            mylang.add(LOW_COMPS + ' := [ ' + path + ' ' + + subj_head_type + '] > ].')
                     else:
                         if case_change_lrt('obj', lrt):
-                            lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
-                                                          ['low-nmz-subjid-trans-lex-rule'])
+                            lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + [LOW_NO_SUBJ_NO_COMPS])
                             obj_head_type = get_head_type('obj', lrt, ch)
-                            mylang.add(
-                                'low-nmz-subjid-trans-lex-rule := [ ' + path + ' ' + obj_head_type + '] > ].')
+                            mylang.add(LOW_NO_SUBJ_NO_COMPS + ' := [ ' + path + ' ' + obj_head_type + '] > ].')
                         else:
-                            lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + \
-                                                          ['low-nmz-subjid-compsid-lex-rule'])
+                            lrt['supertypes'] = ', '.join(lrt['supertypes'].split(', ') + [LOW_COMPS])
 
 def add_nmz_feature(mylang):
     mylang.set_section('addenda')
