@@ -105,12 +105,8 @@ LOW_NMZ = 'low-nominalization-lex-rule := cat-change-with-ccont-lex-rule &\
 # Only good for transitive verbs.
 LOW_LEXRULE_NO_SUBJ_ID_NO_COMPS_ID = LOW_NO_SUBJ_NO_COMPS + ' := low-nominalization-lex-rule &\
                 [ SYNSEM.LOCAL.CAT.VAL [ COMPS < [ LOCAL [ CAT [ VAL.SPR < > ],\
-				      	                                   CONT.HOOK.INDEX #obj ] ] >,\
-				      	                SUBJ < [ LOCAL [ CAT.VAL.SPR < >,\
-				      	                                 CONT.HOOK.INDEX #subj ] ] > ],\
-                DTR.SYNSEM.LOCAL.CAT.VAL [ COMPS < [ LOCAL [ CONT.HOOK.INDEX #obj ] ] >,\
-                                            SUBJ < [ LOCAL [ CAT.VAL.SPR < >,\
-				      	                                    CONT.HOOK.INDEX #subj ] ] > ] ].'
+				      	                                   CONT.HOOK.INDEX #obj ] ] > ],\
+                DTR.SYNSEM.LOCAL.CAT.VAL [ COMPS < [ LOCAL [ CONT.HOOK.INDEX #obj ] ] > ] ].'
 
 # A rule that identifies the object of mother and daughter and works for intransitive verbs, too.
 # Still allows case change on the subject.
