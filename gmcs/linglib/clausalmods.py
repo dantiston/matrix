@@ -360,7 +360,7 @@ def add_non_branching_rules(mylang, rules, cms):
                               COMPS < >,\
 				SPEC < >,\
                                     SUBJ #subj ],\
-                              HEAD [ MOD < [ LOCAL scopal-mod &\
+                              HEAD adp & [ MOD < [ LOCAL scopal-mod &\
     						[ CAT [ HEAD verb,\
     							VAL [ SPR < >,\
     							      COMPS < > ]],\
@@ -382,8 +382,7 @@ def add_non_branching_rules(mylang, rules, cms):
     				        SPR < >,\
     					  COMPS < >,\
 					SPEC < > ]],\
-    			    CONT.HOOK.LTOP #scl ],\
-                          NON-LOCAL [ REL 0-dlist ] ] ] > ].')
+    			    CONT.HOOK.LTOP #scl ] ] ] > ].')
     if cms.get('subordinator') == 'pair':
         mylang.add('adv-marked-subord-clause-phrase := [ SYNSEM.LOCAL.CAT.SUBPAIR nopair,\
                                         SYNSEM.LOCAL.CAT.HEAD.MOD < [ LOCAL.CAT.SUBPAIR #subpair ] >,\
@@ -518,11 +517,12 @@ def add_morphological_subord_rel(mylang, cms, ch, rules):
             supertype = 'no-subordinator-nominalized-norel-subord-clause-phrase'
             mylang.add(supertype + ' := basic-unary-phrase &\
           [ SYNSEM [ LOCAL [ CAT [ MC -,\
-                                  VAL.SUBJ #subj,\
-                                  HEAD [ MOD < [ LOCAL scopal-mod &\
+                                  VAL [ SUBJ #subj,\
+                                        SPR #spr,\
+                                        COMPS < > ],\
+                                  HEAD adp & [ MOD < [ LOCAL scopal-mod &\
         						[ CAT [ HEAD verb,\
         							VAL [ SUBJ < >,\
-        							      SPR < >,\
         							      COMPS < > ]],\
         						  CONT.HOOK [ LTOP #mcl,\
         								INDEX #index ]]] > ]]]],\
@@ -536,21 +536,22 @@ def add_morphological_subord_rel(mylang, cms, ch, rules):
         		      LARG #scl ] !>,\
             		HOOK.INDEX #index ],\
             ARGS < [ SYNSEM [ LOCAL [ CAT [ HEAD noun,\
+        				    MC na-or-+,\
         				    VAL [ SUBJ #subj,\
-        				        SPR < >,\
+        				        SPR #spr,\
         					  COMPS < > ]],\
-        			    CONT.HOOK.LTOP #scl ],\
-                              NON-LOCAL [ REL 0-dlist ] ] ] > ].')
+        			    CONT.HOOK.LTOP #scl ] ] ] > ].')
         else:
             lextype.append('nmz')
             supertype = 'no-subordinator-nominalized-subord-clause-phrase'
             mylang.add(supertype + ' := basic-unary-phrase &\
             [ SYNSEM [ LOCAL [ CAT [ MC -,\
-                                    VAL.SUBJ #subj,\
-                                    HEAD [ MOD < [ LOCAL scopal-mod &\
+                                    VAL [ SUBJ #subj,\
+                                          SPR #spr,\
+                                          COMPS < > ],\
+                                    HEAD adp & [ MOD < [ LOCAL scopal-mod &\
           						[ CAT [ HEAD verb,\
-          							VAL [ SUBJ #subj,\
-          							      SPR < >,\
+          							VAL [ SUBJ < >,\
           							      COMPS < > ]],\
           						  CONT.HOOK [ LTOP #mcl,\
           								INDEX #index ]]] > ]]]],\
@@ -562,16 +563,18 @@ def add_morphological_subord_rel(mylang, cms, ch, rules):
               		HOOK.INDEX #index ],\
               ARGS < [ SYNSEM [ LOCAL [ CONT.HOOK.INDEX #scl,\
                                         CAT [ HEAD noun,\
+          				    MC na-or-+,\
           				    VAL [ SUBJ #subj,\
-          				        SPR < >,\
-          					  COMPS < > ]] ],\
-                                NON-LOCAL [ REL 0-dlist ] ] ] > ].')
+          				        SPR #spr,\
+          					  COMPS < > ]] ] ] ] > ].')
     else:
         supertype = 'morphological-subord-clause-phrase'
         mylang.add(supertype + ' := basic-unary-phrase &\
     [ SYNSEM [ LOCAL [ CAT [ MC -,\
-                            VAL.SUBJ #subj,\
-                            HEAD [ MOD < [ LOCAL scopal-mod &\
+                            VAL [ SUBJ #subj,\
+                                  SPR < >,\
+                                  COMPS < > ],\
+                            HEAD adp & [ MOD < [ LOCAL scopal-mod &\
   						[ CAT [ HEAD verb,\
   							VAL [ SUBJ < >,\
   							      SPR < >,\
@@ -588,11 +591,11 @@ def add_morphological_subord_rel(mylang, cms, ch, rules):
   		      LARG #scl ] !>,\
       		HOOK.INDEX #index ],\
       ARGS < [ SYNSEM [ LOCAL [ CAT [ HEAD verb,\
+  				    MC na-or-+,\
   				    VAL [ SUBJ #subj,\
   				    SPR < >,\
   					  COMPS < > ]],\
-  			    CONT.HOOK.LTOP #scl ],\
-                        NON-LOCAL [ REL 0-dlist ] ] ] > ].')
+  			    CONT.HOOK.LTOP #scl ] ] ] > ].')
     type = build_type_name(lextype)
     pred = cms.get('pred')
     if pred == '':
