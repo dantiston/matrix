@@ -728,8 +728,6 @@ of <span class=\"feat\">form</span> in your grammar:<br><br>"
 
 Check form-fin-nf "Finite-nonfinite" "" "Add finite/non-finite FORM feature distinction.</p>"
 
-Label "<p>Hint: Click Save and Stay to see the supertypes.</p>"
-
 Label "<p>It is often the case that languages have multiple non-finite
 forms, e.g., English: infinitive, past participle, present
 participle. If applicable, you may expand the hierarchy of verb <span
@@ -746,6 +744,7 @@ BeginIter form-subtype{i} "a Subtype for FORM"
 
 EndIter form-subtype
 
+Label "<p>(Hint: Click Save and Stay to see the supertypes.)</p>"
 
 Label "<h3>Other Syntactic and Semantic Features</h3>"
 
@@ -1628,7 +1627,14 @@ Label "<p><b>New section! Report bugs to Olga Zamaraeva.</b></p>"
 
 Label "<p>You may define several types of object clausal complements below.
 You may also leave this section blank, in which case the starter
-grammar produced will not support clausal complements.</p>"
+grammar produced will not support clausal complements. 
+<br><br>Specify a clausal verb type
+for each strategy in the Lexicon section. Choose the argument structure option
+corresponding to the complementation strategy. (There will be three options for
+the case frame: case unspecified; subject case -- object unspecified; both subject and
+object case specified. In most cases, you will want the second option. The third option
+is meant for verbs taking nominalized complements).
+</p>"
 
 Cache otherfeatures feature[0-9]+$ name
 
