@@ -1474,16 +1474,6 @@ def validate_nominalized_clauses(ch, vr):
             vr.err(ns.full_key + '_level','Mid and low nominalization must be specified as having semantics.')
         if not ns['nmzRel'] == 'yes' and not ns['nmzRel'] == 'no':
             vr.err(ns.full_key + '_nmzRel','Please choose whether nominalization contributes to the semantics.')
-        # if ns.get('level') == 'high':
-        #     if not ns.get('nmzRel'):
-        #         mess = 'You must select whether the nominalization is syntactic only' + \
-        #                ' or if it should be refelcted in the semantics.'
-        #         vr.err(ns.full_key + '_nmzRel', mess)
-        # else:
-        #     if ns.get('nmzRel') != '':
-        #         mess = 'This is not a valid choice for' + \
-        #                ' nominalization at V or VP'
-        #         vr.err(ns.full_key + '_nmzRel', mess)
         if ns.get('level') == 'mid':
             if ch.get('word-order') == 'vso' or ch.get('word-order') == 'osv':
                 mess = 'The analysis for your word order does not include a' + \
