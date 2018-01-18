@@ -48,7 +48,6 @@ COMPLEMENTIZER = 'complementizer' # Choices key for choices pertaining
                                   # a particular complementation strategy.
 EXTRA = 'EXTRA' # Feature for extraposed complements
 
-
 # Error messages:
 EXTRA_VO = 'The only supporded word orders for extraposed complements are: SOV, VOS, OVS, OSV, v-final. ' \
            'V-initial is not supported with optional complementizer.'
@@ -56,7 +55,7 @@ SAME_OR_EXTRA = 'Please choose whether the clausal complement takes the same pos
                         'complements or is extraposed to the end of the clause ' \
                         '(the latter valid only for strict OV orders).'
 WO_WARNING = 'You chose a flexible word order; note that the order will indeed be flexible, ' \
-             'even with respect to complementizers.'
+             'including within the embedded clause.'
 
 #### Methods ###
 
@@ -69,8 +68,7 @@ of the Questionnaire.
 def customize_clausalcomps(mylang,ch,lexicon,rules):
     if not COMPS in ch:
         return
-    # Note: clausal verb type will be added by lexical_items.py,
-    # just like a regular verb. It would be better to do it here instead?
+    # Note: clausal verb type will be added by lexical_items.py.
     have_comp = add_complementizers_to_lexicon(lexicon,ch)
     add_types_to_grammar(mylang,ch,rules,have_comp)
 
@@ -88,7 +86,6 @@ def add_complementizers_to_lexicon(lexicon,ch):
             lexicon.add(typedef)
             have_comp = True
     return have_comp
-
 
 def add_types_to_grammar(mylang,ch,rules,have_complementizer):
     if have_complementizer:
@@ -122,13 +119,13 @@ def constrain_complementizer(wo,cs,mylang,typename):
             default_init_val = '+'
             my_phrase = 'comp-head'
             other_phrase = 'head-comp'
+        if not init_val or not my_phrase or not other_phrase or not default_init_val:
+            raise Exception('Illegal combination of choises for complementizer position.')
         constrain_lexitem_for_feature(typename,path,'INIT',init_val,mylang)
         mylang.add(my_phrase + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + init_val + ' ].',
                    merge=True)
         mylang.add(other_phrase + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + default_init_val + ' ].',
                    merge=True)
-
-
 
 def use_init(ch, mylang, wo):
     init = False
@@ -138,7 +135,6 @@ def use_init(ch, mylang, wo):
             if init:
                 break
     return init
-
 
 def add_complementizer_supertype(mylang):
     mylang.add(COMP_LEX_ITEM_DEF, section=COMPLEX)
@@ -258,8 +254,6 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
                    merge=True)
     constrain_for_features(additional + '-phrase', cs, mylang,
                            'NON-HEAD-DTR.SYNSEM.',ch,is_nominalized_complement(cs))
-
-
 
 def constrain_for_features(typename,choice,mylang,path_prefix,ch,is_nmz):
     for f in choice['feat']:

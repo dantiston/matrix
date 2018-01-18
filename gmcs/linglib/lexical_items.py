@@ -293,9 +293,6 @@ def customize_verbs(mylang, ch, lexicon, hierarchies):
     for verb in ch.get('verb',[]):
         create_verb_lex_type(cases, ch, hierarchies, lexicon, mylang, verb)
 
-
-
-
 def create_verb_lex_type(cases, ch, hierarchies, lexicon, mylang, verb):
     stypes = verb.get('supertypes').split(', ')
     stype_names = [verb_id(ch[st]) for st in stypes if st != '']
@@ -317,7 +314,6 @@ def create_verb_lex_type(cases, ch, hierarchies, lexicon, mylang, verb):
     for stem in stems:
         add_stem_to_lexicon(lexicon, stem, vtype)
 
-
 def add_stem_to_lexicon(lexicon, stem, vtype):
     orthstr = orth_encode(stem.get('orth'))
     pred = stem.get('pred')
@@ -327,7 +323,6 @@ def add_stem_to_lexicon(lexicon, stem, vtype):
                     [ STEM < "' + orthstr + '" >, \
                       SYNSEM.LKEYS.KEYREL.PRED "' + pred + '" ].'
     lexicon.add(typedef)
-
 
 def construct_supertype_names(cases, ch, stype_names, verb):
     val = verb.get('valence')
@@ -383,7 +378,6 @@ def main_or_verb(ch):
 
 
 def customize_determiners(mylang, ch, lexicon, hierarchies):
-
     # Lexical type for determiners, if the language has any:
     if ch.get('has-dets') == 'yes':
         comment = \

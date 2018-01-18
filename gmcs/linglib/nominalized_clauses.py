@@ -292,9 +292,8 @@ def add_nonevent_subj_rules(ch, level, mylang, rules):
             if not typename:
                 raise Exception('Invalid combination of word order and nominalization choices.')
             mylang.add(typename + '-phrase := ' + NHS_SUPERTYPE + '&' + super + '&' + NHS_DEF)
-            if wo in ['svo', 'vos', 'sov'] or (wo == 'ovs' \
-                                                       and len(
-                    [cs for cs in ch.get('comps') if cs['clause-pos-extra']]) == 0):
+            if wo in ['svo', 'vos', 'sov'] \
+                    or (wo == 'ovs' and len([cs for cs in ch.get('comps') if cs['clause-pos-extra']]) == 0):
                 mylang.add(typename + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].', merge=True)
 
 
@@ -416,3 +415,11 @@ def add_nmz_feature(mylang):
     mylang.add('noun-lex := [ SYNSEM.LOCAL.CAT.HEAD.NMZ - ].')
     mylang.set_section('verb-lex')
     mylang.add('verb-lex := [ SYNSEM.LOCAL.CAT.HEAD.NMZ - ].')
+
+def validate(ch,vr):
+    for ns in ch.get('ns'):
+        level = ns.get('level')
+        if level in ['mid','low'] and not ns['nmzRel'] == 'yes':
+            vr.err(ns.full_key + '_level','Mid and low nominalization must be specified as having semantics.')
+        if not ns['nmzRel'] == 'yes' and not ns['nmzRel'] == 'no':
+            vr.err(ns.full_key + '_nmzRel','Please choose whether nominalization contributes to the semantics.')

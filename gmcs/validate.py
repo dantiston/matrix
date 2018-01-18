@@ -17,6 +17,7 @@ import gmcs.linglib.morphotactics
 import gmcs.linglib.negation
 import gmcs.linglib.lexicon
 import gmcs.linglib.clausalcomps
+import gmcs.linglib.nominalized_clauses
 
 
 ######################################################################
@@ -1484,6 +1485,7 @@ def validate(ch, extra = False):
     gmcs.linglib.morphotactics.validate(ch, vr)
     validate_test_sentences(ch, vr)
     gmcs.linglib.clausalcomps.validate(ch, vr)
+    gmcs.linglib.nominalized_clauses.validate(ch, vr)
     validate_clausalmods(ch, vr)
 
     validate_types(ch, vr)
