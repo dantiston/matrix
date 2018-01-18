@@ -502,7 +502,7 @@ def clausalverb_supertype(ch, cs):
         if f['name'] == 'nominalization':
             for ns in ch['ns']:
                 if ns['name'] == f['value']:
-                    if ns['nmzRel'] == 'yes':
+                    if ns['nmzRel'] == 'yes' or ns['level'] in ['mid','low']:
                         supertype = 'transitive-lex-item'
     if not supertype:
         supertype = 'clausal-second-arg-trans-lex-item'
@@ -529,7 +529,7 @@ def nonempty_nmz(cs,ch):
         if f['name'] == 'nominalization':
             for ns in ch['ns']:
                 if ns['name'] == f['value']:
-                    if ns['nmzRel'] == 'yes':
+                    if ns['nmzRel'] == 'yes' or ns['level'] in ['mid','low']:
                         return True
     return False
 
