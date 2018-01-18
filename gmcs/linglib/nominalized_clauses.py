@@ -416,10 +416,3 @@ def add_nmz_feature(mylang):
     mylang.set_section('verb-lex')
     mylang.add('verb-lex := [ SYNSEM.LOCAL.CAT.HEAD.NMZ - ].')
 
-def validate(ch,vr):
-    for ns in ch.get('ns'):
-        level = ns.get('level')
-        if level in ['mid','low'] and not ns['nmzRel'] == 'yes':
-            vr.err(ns.full_key + '_level','Mid and low nominalization must be specified as having semantics.')
-        if not ns['nmzRel'] == 'yes' and not ns['nmzRel'] == 'no':
-            vr.err(ns.full_key + '_nmzRel','Please choose whether nominalization contributes to the semantics.')
