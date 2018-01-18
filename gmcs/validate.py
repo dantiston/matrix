@@ -17,7 +17,6 @@ import gmcs.linglib.morphotactics
 import gmcs.linglib.negation
 import gmcs.linglib.lexicon
 import gmcs.linglib.clausalcomps
-import gmcs.linglib.nominalized_clauses
 
 
 ######################################################################
@@ -1461,6 +1460,32 @@ def validate_clausalmods(ch, vr):
             pass
 
 
+######################################################################
+# Validation nominalized clauses
+def validate_nominalized_clauses(ch, vr):
+    """Check to see if the user completed the necessary portions of the
+       Nominalized Clauses page and check for conflicts with word order"""
+    for ns in ch.get('ns'):
+        if not ns.get('name'):
+            mess = 'You must enter a name for the nominalization strategy.'
+            vr.err(ns.full_key + '_name', mess)
+        if ns.get('level') == 'high':
+            if not ns.get('nmzRel'):
+                mess = 'You must select whether the nominalization is syntactic only' + \
+                       ' or if it should be refelcted in the semantics.'
+                vr.err(ns.full_key + '_nmzRel', mess)
+        else:
+            if ns.get('nmzRel') != '':
+                mess = 'This is not a valid choice for' + \
+                       ' nominalization at V or VP'
+                vr.err(ns.full_key + '_nmzRel', mess)
+        if ns.get('level') == 'mid':
+            if ch.get('word-order') == 'vso' or ch.get('word-order') == 'osv':
+                mess = 'The analysis for your word order does not include a' + \
+                       ' VP constituent. You must select V or S nominalization.'
+                vr.err(ns.full_key + '_level', mess)
+
+
 def validate(ch, extra = False):
     """
     Validate the ChoicesFile ch.  Return a ValidationResult that
@@ -1485,7 +1510,7 @@ def validate(ch, extra = False):
     gmcs.linglib.morphotactics.validate(ch, vr)
     validate_test_sentences(ch, vr)
     gmcs.linglib.clausalcomps.validate(ch, vr)
-    gmcs.linglib.nominalized_clauses.validate(ch, vr)
+    validate_nominalized_clauses(ch, vr)
     validate_clausalmods(ch, vr)
 
     validate_types(ch, vr)
