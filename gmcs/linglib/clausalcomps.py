@@ -219,9 +219,9 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
     mylang.add(additional + '-phrase := basic-head-1st-comp-phrase & ' + supertype + '.'
            ,section = 'phrases',merge=True)
     rules.add(additional + ' := ' + additional + '-phrase.')
-    #if head:
-    #    mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + head +' ].'
-    #           ,merge=True)
+    if head:
+        mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + head +' ].'
+               ,merge=True)
     if is_nominalized_complement(cs):
         mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.NMZ + ].'
                ,merge=True)
