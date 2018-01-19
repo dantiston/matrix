@@ -49,8 +49,7 @@ COMPLEMENTIZER = 'complementizer' # Choices key for choices pertaining
 EXTRA = 'EXTRA' # Feature for extraposed complements
 
 # Error messages:
-EXTRA_VO = 'The only supporded word orders for extraposed complements are: SOV, VOS, OVS, OSV, v-final. ' \
-           'V-initial is not supported with optional complementizer.'
+EXTRA_VO = 'The only supporded word orders for extraposed complements are: SOV, VOS, OVS, OSV, v-final.'
 SAME_OR_EXTRA = 'Please choose whether the clausal complement takes the same position as noun ' \
                         'complements or is extraposed to the end of the clause ' \
                         '(the latter valid only for strict OV orders).'
@@ -188,17 +187,17 @@ def need_customize_hc(wo,cs):
 def need_customize_hs(wo,cs):
     return wo in ['vos'] and cs[CLAUSE_POS_EXTRA]
 
-# Assume OV order and complemetizer can attach before clause
+# Assume OV order and complementizer can attach before clause
 # or
 # VO order and complementizer can attach after.
-def customize_complementizer_order(wo,cs,mylang,rules):
-    if wo in OV_ORDERS and cs[COMP_POS_BEFORE]:
-        pass
-    elif wo in VO_ORDERS and cs[COMP_POS_AFTER]:
-        if wo in ['v-initial','vos']:
-            mylang.add('comp-head-phrase := basic-head-1st-comp-phrase & head-final '
-                       '& [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].',section='phrases')
-            rules.add('comp-head := comp-head-phrase.')
+# def customize_complementizer_order(wo,cs,mylang,rules):
+#     if wo in OV_ORDERS and cs[COMP_POS_BEFORE]:
+#         pass
+#     elif wo in VO_ORDERS and cs[COMP_POS_AFTER]:
+#         if wo in ['v-initial','vos']:
+#             mylang.add('comp-head-phrase := basic-head-1st-comp-phrase & head-final '
+#                        '& [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].',section='phrases')
+#             rules.add('comp-head := comp-head-phrase.')
 
 def constrain_head_subj_rules(cs,mylang,rules,ch):
     if cs[COMP]:
