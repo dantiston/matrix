@@ -188,14 +188,6 @@ def need_customize_hs(wo,cs):
     return wo in ['vos'] and cs[CLAUSE_POS_EXTRA]
 
 def constrain_head_subj_rules(cs,mylang,rules,ch):
-    if cs[COMP]:
-        head = 'comp' if cs[COMP] == 'oblig' else '+vc'
-    elif is_nominalized_complement(cs):
-        head = '[ NMZ + ]'
-    else:
-        head = 'verb'
-    #mylang.add('head-subj-ccomp-phrase := decl-head-subj-phrase & head-initial & '
-    #           '[ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD ' + head + ' ] > ].',section='phrases')
     mylang.add('head-subj-ccomp-phrase := decl-head-subj-phrase & head-initial & '
                '[ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA + ] > ].',section='phrases')
     constrain_for_features('head-subj-ccomp-phrase',cs,mylang,
@@ -425,7 +417,7 @@ def init_needed(wo, cs,mylang):
         elif wo == 'free':
             res = (cs[COMP_POS_AFTER] and not cs[COMP_POS_BEFORE]) or (cs[COMP_POS_BEFORE] and not cs[COMP_POS_AFTER])
     else:
-         res = (wo in OV_ORDERS or wo == 'vos') and cs[CLAUSE_POS_EXTRA] == 'on'
+         res = wo in OV_ORDERS and cs[CLAUSE_POS_EXTRA] == 'on'
     if res:
         mylang.add('head :+ [ INIT bool ].', section='addenda')
     return res
