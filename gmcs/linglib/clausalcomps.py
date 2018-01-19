@@ -328,8 +328,9 @@ def constrain_lex_items(ch,cs,comptype, init_value, default_init_value,mylang,in
             elif cs[CLAUSE_POS_SAME] and not cs[CLAUSE_POS_EXTRA]:
                 constrain_lexitem_for_feature(clausalverb,path,'INIT',default_init_value,mylang)
         for pos in ['intransitive-verb','transitive-verb','noun','adj','aux','det','cop']:
-            mylang.add(pos + '-lex := [ ' + path + '.INIT ' + default_init_value + ' ].'
-                       , merge=True)
+            if ch.get(pos) or pos in ['intransitive-verb','transitive-verb']:
+                mylang.add(pos + '-lex := [ ' + path + '.INIT ' + default_init_value + ' ].'
+                        , merge=True)
     if comptype and nominalized_comps(ch) and not is_nominalized_complement(cs):
         mylang.add(comptype + ':= [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.NMZ - ] > ].',merge=True)
     if extra and comptype:
