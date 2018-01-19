@@ -219,6 +219,7 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,h
     mylang.add(additional + '-phrase := basic-head-1st-comp-phrase & ' + supertype + '.'
            ,section = 'phrases',merge=True)
     rules.add(additional + ' := ' + additional + '-phrase.')
+    #OZ: I don't think this is needed. INIT does this work.
     #if head:
     #    mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + head +' ].'
     #           ,merge=True)
@@ -305,7 +306,7 @@ def constrain_transitive_verb(head,cs):
                and (not cs[CLAUSE_POS_SAME] or cs[COMP] == 'opt'))
 
 
-def constrain_lex_items(head,ch,cs,comptype, init_value, default_init_value,mylang,init,extra):
+def constrain_lex_items(ch,cs,comptype, init_value, default_init_value,mylang,init,extra):
     wo = ch.get(constants.WORD_ORDER)
     clausalverb = find_clausalverb_typename(ch,cs)
     path = 'SYNSEM.LOCAL.CAT.HEAD'
@@ -326,8 +327,8 @@ def constrain_lex_items(head,ch,cs,comptype, init_value, default_init_value,myla
                 constrain_lexitem_for_feature(clausalverb,path,'INIT',init_value,mylang)
             elif cs[CLAUSE_POS_SAME] and not cs[CLAUSE_POS_EXTRA]:
                 constrain_lexitem_for_feature(clausalverb,path,'INIT',default_init_value,mylang)
-        #if constrain_transitive_verb(head,cs):
-        mylang.add('transitive-verb-lex := [ ' + path + '.INIT ' + default_init_value + ' ].'
+        for pos in ['intransitive-verb','transitive-verb','noun','adj','aux','det','cop']:
+            mylang.add(pos + '-lex := [ ' + path + '.INIT ' + default_init_value + ' ].'
                        , merge=True)
     if comptype and nominalized_comps(ch) and not is_nominalized_complement(cs):
         mylang.add(comptype + ':= [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.NMZ - ] > ].',merge=True)
