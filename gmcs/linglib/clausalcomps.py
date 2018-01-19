@@ -187,18 +187,6 @@ def need_customize_hc(wo,cs):
 def need_customize_hs(wo,cs):
     return wo in ['vos'] and cs[CLAUSE_POS_EXTRA]
 
-# Assume OV order and complementizer can attach before clause
-# or
-# VO order and complementizer can attach after.
-# def customize_complementizer_order(wo,cs,mylang,rules):
-#     if wo in OV_ORDERS and cs[COMP_POS_BEFORE]:
-#         pass
-#     elif wo in VO_ORDERS and cs[COMP_POS_AFTER]:
-#         if wo in ['v-initial','vos']:
-#             mylang.add('comp-head-phrase := basic-head-1st-comp-phrase & head-final '
-#                        '& [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].',section='phrases')
-#             rules.add('comp-head := comp-head-phrase.')
-
 def constrain_head_subj_rules(cs,mylang,rules,ch):
     if cs[COMP]:
         head = 'comp' if cs[COMP] == 'oblig' else '+vc'
@@ -206,8 +194,10 @@ def constrain_head_subj_rules(cs,mylang,rules,ch):
         head = '[ NMZ + ]'
     else:
         head = 'verb'
+    #mylang.add('head-subj-ccomp-phrase := decl-head-subj-phrase & head-initial & '
+    #           '[ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD ' + head + ' ] > ].',section='phrases')
     mylang.add('head-subj-ccomp-phrase := decl-head-subj-phrase & head-initial & '
-               '[ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD ' + head + ' ] > ].',section='phrases')
+               '[ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA + ] > ].',section='phrases')
     constrain_for_features('head-subj-ccomp-phrase',cs,mylang,
                            'HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.',ch,is_nominalized_complement(cs))
     rules.add('head-subj-ccomp := head-subj-ccomp-phrase.')
