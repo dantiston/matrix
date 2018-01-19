@@ -169,7 +169,7 @@ def customize_order(ch, cs, mylang, rules, typename, init, general, additional,e
     default_init_value = '-' if init_value == '+' else '+'
     # What is the head of the added rule's head daughter?
     head = determine_head(wo,cs)
-    constrain_lex_items(head,ch,cs,typename,init_value,default_init_value,mylang,init,extra)
+    constrain_lex_items(ch,cs,typename,init_value,default_init_value,mylang,init,extra)
     # Constrain added and general rule wrt head and INIT
     if need_customize_hc(wo,cs):
         #TODO: this should probably be split somehow; the number of args is unhealthy.
