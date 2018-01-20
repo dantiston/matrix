@@ -368,7 +368,7 @@ def constrain_transitive_verb(head,cs):
 
 def constrain_lex_items_using_headtypes(ch,cs,comptype, mylang, extra):
     wo = ch.get(constants.WORD_ORDER)
-    path = 'SYNSEM.LOCAL.CAT.HEAD'
+    path = 'SYNSEM.LOCAL.CAT'
     head = determine_head(wo,cs)
     if cs[COMP]:
         if wo in VO_ORDERS:
