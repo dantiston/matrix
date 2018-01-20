@@ -317,10 +317,11 @@ def handle_special_cases(additional, cs, general, mylang, rules, wo,is_more_flex
         if additional_needed(cs,wo):
             mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < > ].',
                        section='phrases',merge=True)
-    if wo in ['v-initial','vos','v-final'] and cs[CLAUSE_POS_EXTRA]:
-        if not cs[CLAUSE_POS_SAME]:
-            mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
-            mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
+    if wo in ['v-initial','vos','v-final']:
+        if cs[CLAUSE_POS_EXTRA]:
+            if not cs[CLAUSE_POS_SAME]:
+                mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
+                mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
         if complementizer_comp_head_needed(wo,cs):
             if is_more_flex:
                 mylang.add('comp-head-complementizer-phrase := basic-head-1st-comp-phrase & head-final '
@@ -333,9 +334,9 @@ def handle_special_cases(additional, cs, general, mylang, rules, wo,is_more_flex
                            ':= [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
             rules.add('comp-head-compl := comp-head-complementizer-phrase.')
 
-#This assumes WO is in ['v-initial','vos','v-final'] and there is extraposition.
+#This assumes WO is in ['v-initial','vos','v-final'].
 def complementizer_comp_head_needed(wo,cs):
-    if wo == 'v-final' and not cs[CLAUSE_POS_SAME] and cs[COMP_POS_AFTER]:
+    if wo == 'v-final' and cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME] and cs[COMP_POS_AFTER]:
         return True
     if not wo == 'v-final':
         if wo  == 'v-initial' and not cs[COMP_POS_AFTER]:
