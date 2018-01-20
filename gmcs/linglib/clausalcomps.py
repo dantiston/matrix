@@ -336,8 +336,6 @@ def handle_special_cases(additional, cs, general, mylang, rules, wo,is_more_flex
 
 #This assumes WO is in ['v-initial','vos','v-final'].
 def complementizer_comp_head_needed(wo,cs):
-    if not cs[COMP] == 'oblig':
-        return False
     if wo == 'v-final' and cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME] and cs[COMP_POS_AFTER]:
         return True
     if not wo == 'v-final':
