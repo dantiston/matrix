@@ -416,7 +416,7 @@ def init_needed(wo, cs,mylang):
             elif cs[COMP_POS_AFTER]:
                 res = cs[CLAUSE_POS_EXTRA] == constants.ON
         elif wo in VO_ORDERS:
-            res = (cs[COMP_POS_AFTER] == constants.ON and not cs[COMP_POS_BEFORE] == constants.ON)
+            res = (cs[COMP_POS_AFTER] == constants.ON) #and not cs[COMP_POS_BEFORE] == constants.ON)
         elif wo == 'free':
             res = (cs[COMP_POS_AFTER] and not cs[COMP_POS_BEFORE]) or (cs[COMP_POS_BEFORE] and not cs[COMP_POS_AFTER])
     else:
