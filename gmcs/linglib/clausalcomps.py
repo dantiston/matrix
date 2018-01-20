@@ -169,7 +169,6 @@ def customize_order(ch, cs, mylang, rules, typename, init, general, additional,e
     #init_value = '+' if additional.startswith(constants.HEAD_COMP) else '-'
     #default_init_value = '-' if init_value == '+' else '+'
     constrain_lex_items(ch,cs,typename,init_add,init_gen,mylang,init,extra)
-    # Constrain added and general rule wrt head and INIT
     if need_customize_hc(wo,cs):
         if additional_needed(cs,wo):
             constrain_head_comp_rules(mylang,rules,init,general,additional,cs,ch)
@@ -210,7 +209,7 @@ def which_init(general, additional):
     supertype_gen = 'head-initial' if additional.startswith(constants.HEAD_COMP) else 'head-final'
     supertype_add = 'head-initial' if general.startswith(constants.HEAD_COMP) else 'head-final'
     init_general = '+' if supertype_gen == 'head-initial' else '-'
-    init_add = '-' if supertype_add == '+' else '+'
+    init_add = '-' if supertype_add == 'head-initial' else '-'
     return (init_general,init_add)
 
 
