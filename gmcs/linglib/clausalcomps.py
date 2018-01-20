@@ -172,7 +172,7 @@ def customize_order(ch, cs, mylang, rules, typename, init, general, additional,e
     if need_customize_hc(wo,cs):
         #TODO: this should probably be split somehow; the number of args is unhealthy.
         if additional_needed(cs,wo):
-            constrain_head_comp_rules(mylang,rules,init,init_value,default_init_value,general,additional,cs,ch)
+            constrain_head_comp_rules(mylang,rules,init,general,additional,cs,ch)
         handle_special_cases(additional, cs, general, mylang, rules, wo, init_value)
     if need_customize_hs(wo,cs):
         constrain_head_subj_rules(cs,mylang,rules,ch)
@@ -212,9 +212,10 @@ with respect to its head or the INIT feature. The default rule will
 also need to be constrained with respect to INIT, if INIT is used in
 the additional rule.
 '''
-def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,general,additional,cs,ch):
-    wo = ch.get(constants.WORD_ORDER)
+def constrain_head_comp_rules(mylang,rules,init,general,additional,cs,ch):
     supertype = 'head-initial' if additional.startswith(constants.HEAD_COMP) else 'head-final'
+    init_value = '+' if supertype == 'head-initial' else '-'
+    default_init_value = '-' if init_value == '+' else '+'
     mylang.add(additional + '-phrase := basic-head-1st-comp-phrase & ' + supertype + '.'
            ,section = 'phrases',merge=True)
     rules.add(additional + ' := ' + additional + '-phrase.')
@@ -224,14 +225,9 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,g
         if not cs[CLAUSE_POS_SAME]:
             mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.NMZ - ].')
     if init:
-        #if not (wo == 'vos' and complementizer_comp_head_needed(ch.get(constants.WORD_ORDER),cs)):
         mylang.add(additional +
                    '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + init_value + ' ].',
                    merge=True)
-        #else:
-        #    mylang.add(additional +
-        #           '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + default_init_value + ' ].',
-        #           merge=True)
         mylang.add(general + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + default_init_value + ' ].',
                    merge=True)
     constrain_for_features(additional + '-phrase', cs, mylang,
