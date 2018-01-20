@@ -116,6 +116,8 @@ def is_more_flexible_order(ch):
     If e.g. OV order is forbidden for clausal complements, must return False.
     """
     wo = ch.get(constants.WORD_ORDER)
+    if not wo in OV_ORDERS and not wo in VO_ORDERS:
+        return False
     for ccs in ch.get(COMPS):
         if wo in OV_ORDERS and not ccs[COMP_POS_AFTER] and not ccs[CLAUSE_POS_SAME]:
             return False
