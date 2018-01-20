@@ -235,8 +235,10 @@ and there is not a complementizer or
 there is a complementizer but it can only use the normal HCR.
 '''
 def additional_needed(cs,wo):
-    if wo in ['v-initial','vos'] and cs[CLAUSE_POS_EXTRA] \
+    if wo in ['vos'] and cs[CLAUSE_POS_EXTRA] \
             and cs[CLAUSE_POS_SAME] and cs[COMP_POS_BEFORE] and cs[COMP_POS_AFTER]:
+        return False
+    if wo == 'v-initial' and cs[CLAUSE_POS_SAME] and cs[COMP_POS_BEFORE] and cs[COMP_POS_AFTER]:
         return False
     if wo in OV_ORDERS and not cs[CLAUSE_POS_EXTRA] and not cs[COMP_POS_BEFORE]:
         return False
@@ -324,7 +326,8 @@ def handle_special_cases(additional, cs, general, mylang, rules, wo,is_more_flex
     if ((wo in ['ovs', 'osv', 'v-initial','vos','v-final']) and cs[CLAUSE_POS_EXTRA]) \
             or (wo in ['v-initial','vos'] and cs[COMP_POS_AFTER]):
         if additional_needed(cs,wo):
-            mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < > ].',
+            if not wo in ['v-initial','vos'] and additional.startswith(constants.COMP_HEAD):
+                mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < > ].',
                        section='phrases',merge=True)
     if wo in ['v-initial','vos','v-final']:
         if cs[CLAUSE_POS_EXTRA]:
