@@ -235,6 +235,8 @@ and there is not a complementizer or
 there is a complementizer but it can only use the normal HCR.
 '''
 def additional_needed(cs,wo):
+    if wo in ['v-initial','vos'] and cs[CLAUSE_POS_SAME] and cs[COMP_POS_BEFORE]:
+        return False
     if wo in OV_ORDERS and not cs[CLAUSE_POS_EXTRA] and not cs[COMP_POS_BEFORE]:
         return False
     if wo in VO_ORDERS and not cs[CLAUSE_POS_EXTRA] and not cs[COMP_POS_AFTER]:
@@ -325,9 +327,9 @@ def handle_special_cases(additional, cs, general, mylang, rules, wo,is_more_flex
                        section='phrases',merge=True)
     if wo in ['v-initial','vos','v-final']:
         if cs[CLAUSE_POS_EXTRA]:
-            #if not cs[CLAUSE_POS_SAME]:
-            mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
-            mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
+            if additional_needed(cs,wo):
+                mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
+                mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
         if complementizer_comp_head_needed(wo,cs) and not additional.startswith(constants.COMP_HEAD):
             # V-final will need two comp-head rules in some cases,
             # for the complementizer to be able to attach to an extraposed complement.
