@@ -325,9 +325,9 @@ def handle_special_cases(additional, cs, general, mylang, rules, wo,is_more_flex
                        section='phrases',merge=True)
     if wo in ['v-initial','vos','v-final']:
         if cs[CLAUSE_POS_EXTRA]:
-            if not cs[CLAUSE_POS_SAME]:
-                mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
-                mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
+            #if not cs[CLAUSE_POS_SAME]:
+            mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
+            mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
         if complementizer_comp_head_needed(wo,cs) and not additional.startswith(constants.COMP_HEAD):
             # V-final will need two comp-head rules in some cases,
             # for the complementizer to be able to attach to an extraposed complement.
