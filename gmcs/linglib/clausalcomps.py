@@ -272,6 +272,9 @@ def handle_special_cases(additional, cs, general, mylang, rules, wo):
         if complementizer_comp_head_needed(wo,cs):
             mylang.add('comp-head-complementizer-phrase := basic-head-1st-comp-phrase & head-final '
                        '& [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT - ].',section='phrases')
+            if not cs[CLAUSE_POS_SAME]:
+                mylang.add('comp-head-complementizer-phrase '
+                           ':= [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
             rules.add('comp-head-compl := comp-head-complementizer-phrase.')
 
 def complementizer_comp_head_needed1(wo,cs):
