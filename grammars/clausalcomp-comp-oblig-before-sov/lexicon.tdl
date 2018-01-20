@@ -21,7 +21,7 @@ tverb := tverb-verb-lex &
   [ STEM < "tverb" >,
     SYNSEM.LKEYS.KEYREL.PRED "_tverb_v_rel" ].
 
-cverb := cverb-verb-lex &
+cverb := cverb-clausal-verb-lex &
   [ STEM < "cverb" >,
     SYNSEM.LKEYS.KEYREL.PRED "_cverb_v_rel" ].
 

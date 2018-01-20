@@ -165,17 +165,15 @@ the complementation strategies in this grammar.
 '''
 def customize_order(ch, cs, mylang, rules, typename, init, general, additional,extra):
     wo = ch.get(constants.WORD_ORDER)
-    init_value = '+' if additional == constants.HEAD_COMP else '-'
+    init_value = '+' if additional.startswith(constants.HEAD_COMP) else '-'
     default_init_value = '-' if init_value == '+' else '+'
-    # What is the head of the added rule's head daughter?
-    head = determine_head(wo,cs)
     constrain_lex_items(ch,cs,typename,init_value,default_init_value,mylang,init,extra)
     # Constrain added and general rule wrt head and INIT
     if need_customize_hc(wo,cs):
         #TODO: this should probably be split somehow; the number of args is unhealthy.
         if additional_needed(cs,wo):
-            constrain_head_comp_rules(mylang,rules,init,init_value,default_init_value,head,general,additional,cs,ch)
-        handle_special_cases(additional, cs, general, mylang, rules, wo)
+            constrain_head_comp_rules(mylang,rules,init,init_value,default_init_value,general,additional,cs,ch)
+        handle_special_cases(additional, cs, general, mylang, rules, wo, init_value)
     if need_customize_hs(wo,cs):
         constrain_head_subj_rules(cs,mylang,rules,ch)
 
@@ -214,23 +212,24 @@ with respect to its head or the INIT feature. The default rule will
 also need to be constrained with respect to INIT, if INIT is used in
 the additional rule.
 '''
-def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,head,general,additional,cs,ch):
+def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,general,additional,cs,ch):
     supertype = 'head-initial' if additional.startswith(constants.HEAD_COMP) else 'head-final'
     mylang.add(additional + '-phrase := basic-head-1st-comp-phrase & ' + supertype + '.'
            ,section = 'phrases',merge=True)
     rules.add(additional + ' := ' + additional + '-phrase.')
-    #OZ: I don't think this is needed. INIT does this work.
-    #if head:
-    #    mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + head +' ].'
-    #           ,merge=True)
     if is_nominalized_complement(cs):
         mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.NMZ + ].'
                ,merge=True)
         if not cs[CLAUSE_POS_SAME]:
             mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.NMZ - ].')
     if init:
-        mylang.add(additional +
+        if not complementizer_comp_head_needed(ch.get(constants.WORD_ORDER),cs):
+            mylang.add(additional +
                    '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + init_value + ' ].',
+                   merge=True)
+        else:
+            mylang.add(additional +
+                   '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + default_init_value + ' ].',
                    merge=True)
         mylang.add(general + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + default_init_value + ' ].',
                    merge=True)
@@ -258,7 +257,7 @@ def constrain_for_features(typename,choice,mylang,path_prefix,ch,is_nmz):
 #TODO: This isn't really special cases. This is EXTRA feature handling,
 # plus adding SUBJ <> in some cases,
 # plus an actual special case(?) with complementizer.
-def handle_special_cases(additional, cs, general, mylang, rules, wo):
+def handle_special_cases(additional, cs, general, mylang, rules, wo,init_val):
     if (wo in ['ovs', 'osv', 'v-initial','vos','v-final']) and cs[CLAUSE_POS_EXTRA]:
         if additional_needed(cs,wo):
             mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < > ].',
@@ -269,7 +268,7 @@ def handle_special_cases(additional, cs, general, mylang, rules, wo):
             mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
         if complementizer_comp_head_needed(wo,cs):
             mylang.add('comp-head-complementizer-phrase := basic-head-1st-comp-phrase & head-final '
-                       '& [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].',section='phrases')
+                       '& [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + init_val +' ].',section='phrases')
             rules.add('comp-head-compl := comp-head-complementizer-phrase.')
 
 def complementizer_comp_head_needed(wo,cs):
@@ -279,6 +278,8 @@ def complementizer_comp_head_needed(wo,cs):
         if wo in ['v-initial'] and not cs[COMP_POS_AFTER]:
             return False
         if cs[CLAUSE_POS_SAME] and cs[COMP]:
+            return True
+        if wo == 'vos' and cs[CLAUSE_POS_EXTRA] and cs[COMP_POS_AFTER]:
             return True
     return False
 
@@ -529,8 +530,9 @@ def validate(ch,vr):
     if not ch.get(COMPS):
         pass
     matches = {}
+    wo = ch.get(constants.WORD_ORDER)
     for ccs in ch.get(COMPS):
-        if ch.get(constants.WORD_ORDER) in ['free','v2']:
+        if wo in ['free','v2']:
             vr.warn(ccs.full_key + '_'+ CLAUSE_POS_SAME,WO_WARNING)
         matches[ccs.full_key] = None
         for vb in ch.get('verb'):
@@ -544,8 +546,10 @@ def validate(ch,vr):
         if not (ccs[CLAUSE_POS_EXTRA] or ccs[CLAUSE_POS_SAME]):
             vr.err(ccs.full_key + '_' + CLAUSE_POS_SAME, SAME_OR_EXTRA)
         if ccs[CLAUSE_POS_EXTRA]:
-            if ch.get(constants.WORD_ORDER) in ['free','v2','svo','vso']:
+            if wo in ['free','v2','svo','vso']:
                 vr.err(ccs.full_key + '_' + CLAUSE_POS_EXTRA,EXTRA_VO)
+            if wo == 'vos' and ccs[COMP_POS_AFTER]:
+                vr.err('Clause-final complementizers were not implemented for extraposed complements in VOS orders')
         for f in ccs['feat']:
             feat = find_in_other_features(f['name'],ch)
             if feat:
@@ -557,7 +561,6 @@ def validate(ch,vr):
         if ccs['complementizer'] and not (ccs[COMP] == 'oblig' or ccs[COMP] == 'opt'):
             vr.err(ccs.full_key + '_' + COMP,
                    'Please choose whether the complementizer is obligatory or optional.')
-
 
 def find_in_other_features(name,ch):
     for f in ch.get('feature'):
