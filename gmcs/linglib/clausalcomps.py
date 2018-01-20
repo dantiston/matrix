@@ -343,7 +343,7 @@ def complementizer_comp_head_needed(wo,cs):
             return False
         if wo == 'vos' and cs[CLAUSE_POS_EXTRA] and cs[COMP_POS_AFTER]:
             return True
-        if cs[CLAUSE_POS_SAME] and cs[COMP]:
+        if cs[CLAUSE_POS_SAME] and cs[COMP] and cs[CLAUSE_POS_EXTRA]:
             return True
     return False
 
