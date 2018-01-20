@@ -224,14 +224,14 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,g
         if not cs[CLAUSE_POS_SAME]:
             mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.NMZ - ].')
     if init:
-        if not (wo == 'vos' and complementizer_comp_head_needed(ch.get(constants.WORD_ORDER),cs)):
-            mylang.add(additional +
+        #if not (wo == 'vos' and complementizer_comp_head_needed(ch.get(constants.WORD_ORDER),cs)):
+        mylang.add(additional +
                    '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + init_value + ' ].',
                    merge=True)
-        else:
-            mylang.add(additional +
-                   '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + default_init_value + ' ].',
-                   merge=True)
+        #else:
+        #    mylang.add(additional +
+        #           '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + default_init_value + ' ].',
+        #           merge=True)
         mylang.add(general + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + default_init_value + ' ].',
                    merge=True)
     constrain_for_features(additional + '-phrase', cs, mylang,
