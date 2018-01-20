@@ -284,12 +284,15 @@ def complementizer_comp_head_needed1(wo,cs):
         #    return True
     return False
 
+#This assumes WO is in ['v-initial','vos','v-final'] and there is extraposition.
 def complementizer_comp_head_needed(wo,cs):
-    if wo == 'v-final' and cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME] and cs[COMP_POS_AFTER]:
+    if wo == 'v-final' and not cs[CLAUSE_POS_SAME] and cs[COMP_POS_AFTER]:
         return True
     if not wo == 'v-final':
-        if wo in ['v-initial'] and not cs[COMP_POS_AFTER]:
+        if wo  == 'v-initial' and not cs[COMP_POS_AFTER]:
             return False
+        #if wo == 'vos' and cs[COMP_POS_AFTER]:
+        #    return True
         if cs[CLAUSE_POS_SAME] and cs[COMP]:
             return True
     return False
