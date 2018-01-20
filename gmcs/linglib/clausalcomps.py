@@ -322,17 +322,17 @@ def handle_special_cases(additional, cs, general, mylang, rules, wo,is_more_flex
             if not cs[CLAUSE_POS_SAME]:
                 mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
                 mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
-        if complementizer_comp_head_needed(wo,cs) and not (wo == 'vfinal' and additional.startswith(constants.COMP_HEAD)):
+        if complementizer_comp_head_needed(wo,cs) and not additional.startswith(constants.COMP_HEAD):
             if is_more_flex:
-                mylang.add('comp-head-phrase := basic-head-1st-comp-phrase & head-final '
+                mylang.add('comp-head-compl-phrase := basic-head-1st-comp-phrase & head-final '
                        '& [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].',section='phrases')
             else:
-                mylang.add('comp-head-phrase := basic-head-1st-comp-phrase & head-final '
+                mylang.add('comp-head-compl-phrase := basic-head-1st-comp-phrase & head-final '
                        '& [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT - ].',section='phrases')
             if not cs[CLAUSE_POS_SAME]:
-                mylang.add('comp-head-phrase '
+                mylang.add('comp-head-compl-phrase '
                            ':= [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
-            rules.add('comp-head-compl := comp-head-phrase.')
+            rules.add('comp-head-compl := comp-head-compl-phrase.')
 
 #This assumes WO is in ['v-initial','vos','v-final'].
 def complementizer_comp_head_needed(wo,cs):
