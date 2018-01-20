@@ -548,8 +548,8 @@ def validate(ch,vr):
         if ccs[CLAUSE_POS_EXTRA]:
             if wo in ['free','v2','svo','vso']:
                 vr.err(ccs.full_key + '_' + CLAUSE_POS_EXTRA,EXTRA_VO)
-            if wo == 'vos' and ccs[COMP_POS_AFTER]:
-                vr.err('Clause-final complementizers were not implemented for extraposed complements in VOS orders')
+            #if wo == 'vos' and ccs[COMP_POS_AFTER]:
+            #    vr.err('Clause-final complementizers were not implemented for extraposed complements in VOS orders')
         for f in ccs['feat']:
             feat = find_in_other_features(f['name'],ch)
             if feat:
