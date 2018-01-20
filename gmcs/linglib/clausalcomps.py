@@ -121,9 +121,9 @@ def is_more_flexible_order(ch):
     for ccs in ch.get(COMPS):
         if not ccs[COMP] == 'oblig':
             return False
-        if wo in OV_ORDERS and not ccs[COMP_POS_AFTER] and not ccs[CLAUSE_POS_SAME]:
+        if wo in OV_ORDERS and (not ccs[COMP_POS_AFTER] or not ccs[CLAUSE_POS_SAME]):
             return False
-        if wo in VO_ORDERS and not ccs[COMP_POS_BEFORE] and not ccs[CLAUSE_POS_SAME]:
+        if wo in VO_ORDERS and (not ccs[COMP_POS_BEFORE] or not ccs[CLAUSE_POS_SAME]):
             return False
     return True
 
