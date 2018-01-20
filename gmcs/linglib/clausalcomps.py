@@ -206,8 +206,8 @@ def additional_needed(cs,wo):
 
 
 def which_init(general, additional):
-    supertype_gen = 'head-initial' if additional.startswith(constants.HEAD_COMP) else 'head-final'
-    supertype_add = 'head-initial' if general.startswith(constants.HEAD_COMP) else 'head-final'
+    supertype_gen = 'head-initial' if general.startswith(constants.HEAD_COMP) else 'head-final'
+    supertype_add = 'head-initial' if additional.startswith(constants.HEAD_COMP) else 'head-final'
     init_general = '+' if supertype_gen == 'head-initial' else '-'
     init_add = '-' if supertype_add == 'head-initial' else '-'
     return (init_general,init_add)
