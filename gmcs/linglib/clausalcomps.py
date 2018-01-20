@@ -213,6 +213,7 @@ also need to be constrained with respect to INIT, if INIT is used in
 the additional rule.
 '''
 def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,general,additional,cs,ch):
+    wo = ch.get(constants.WORD_ORDER)
     supertype = 'head-initial' if additional.startswith(constants.HEAD_COMP) else 'head-final'
     mylang.add(additional + '-phrase := basic-head-1st-comp-phrase & ' + supertype + '.'
            ,section = 'phrases',merge=True)
@@ -223,7 +224,7 @@ def constrain_head_comp_rules(mylang,rules,init,init_value, default_init_value,g
         if not cs[CLAUSE_POS_SAME]:
             mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.NMZ - ].')
     if init:
-        if not complementizer_comp_head_needed(ch.get(constants.WORD_ORDER),cs):
+        if not wo == 'vos' and complementizer_comp_head_needed(ch.get(constants.WORD_ORDER),cs):
             mylang.add(additional +
                    '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + init_value + ' ].',
                    merge=True)
@@ -271,7 +272,7 @@ def handle_special_cases(additional, cs, general, mylang, rules, wo,init_val):
                        '& [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + init_val +' ].',section='phrases')
             rules.add('comp-head-compl := comp-head-complementizer-phrase.')
 
-def complementizer_comp_head_needed(wo,cs):
+def complementizer_comp_head_needed1(wo,cs):
     if wo == 'v-final' and cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME] and cs[COMP_POS_AFTER]:
         return True
     if not wo == 'v-final':
@@ -283,7 +284,7 @@ def complementizer_comp_head_needed(wo,cs):
         #    return True
     return False
 
-def complementizer_comp_head_needed1(wo,cs):
+def complementizer_comp_head_needed(wo,cs):
     if wo == 'v-final' and cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME] and cs[COMP_POS_AFTER]:
         return True
     if not wo == 'v-final':
