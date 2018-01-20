@@ -291,8 +291,8 @@ def complementizer_comp_head_needed(wo,cs):
     if not wo == 'v-final':
         if wo  == 'v-initial' and not cs[COMP_POS_AFTER]:
             return False
-        #if wo == 'vos' and cs[COMP_POS_AFTER]:
-        #    return True
+        if wo == 'vos' and cs[COMP_POS_AFTER]:
+            return True
         if cs[CLAUSE_POS_SAME] and cs[COMP]:
             return True
     return False
