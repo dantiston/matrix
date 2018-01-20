@@ -165,9 +165,10 @@ the complementation strategies in this grammar.
 '''
 def customize_order(ch, cs, mylang, rules, typename, init, general, additional,extra):
     wo = ch.get(constants.WORD_ORDER)
-    init_value = '+' if additional.startswith(constants.HEAD_COMP) else '-'
-    default_init_value = '-' if init_value == '+' else '+'
-    constrain_lex_items(ch,cs,typename,init_value,default_init_value,mylang,init,extra)
+    init_gen, init_add = which_init(general,additional)
+    #init_value = '+' if additional.startswith(constants.HEAD_COMP) else '-'
+    #default_init_value = '-' if init_value == '+' else '+'
+    constrain_lex_items(ch,cs,typename,init_add,init_gen,mylang,init,extra)
     # Constrain added and general rule wrt head and INIT
     if need_customize_hc(wo,cs):
         if additional_needed(cs,wo):
