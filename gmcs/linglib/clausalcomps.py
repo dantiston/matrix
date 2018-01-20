@@ -274,13 +274,13 @@ def handle_special_cases(additional, cs, general, mylang, rules, wo,init_val):
 def complementizer_comp_head_needed(wo,cs):
     if wo == 'v-final' and cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME] and cs[COMP_POS_AFTER]:
         return True
-    #if not wo == 'v-final':
-    if wo in ['v-initial','vos'] and cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME] and cs[COMP_POS_BEFORE]:
-        return False
+    if not wo == 'v-final':
+        if wo in ['v-initial','vos'] and cs[CLAUSE_POS_EXTRA] and not cs[CLAUSE_POS_SAME] and cs[COMP_POS_BEFORE]:
+            return False
         #if wo == 'vos' and cs[COMP_POS_AFTER]:
         #    return True
-        #if cs[CLAUSE_POS_SAME] and cs[COMP]:
-        #    return True
+        if cs[CLAUSE_POS_SAME] and cs[COMP]:
+            return True
     return False
 
 def determine_clausal_verb_comp_head(cs):
