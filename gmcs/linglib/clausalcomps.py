@@ -279,7 +279,7 @@ def constrain_head_comp_rules_headtype(mylang,rules,additional,cs,ch):
         mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.NMZ + ].'
                ,merge=True)
     mylang.add(additional +
-                   '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD. ' + head + ' ].',
+                   '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD ' + head + ' ].',
                    merge=True)
     constrain_for_features(additional + '-phrase', cs, mylang,
                            'NON-HEAD-DTR.SYNSEM.',ch,is_nominalized_complement(cs))
