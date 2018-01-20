@@ -238,6 +238,8 @@ def additional_needed(cs,wo):
     if wo in ['vos'] and cs[CLAUSE_POS_EXTRA] \
             and cs[CLAUSE_POS_SAME] and cs[COMP_POS_BEFORE] and cs[COMP_POS_AFTER]:
         return False
+    if wo == 'v-initial' and cs[CLAUSE_POS_SAME] and cs[CLAUSE_POS_EXTRA] and not cs[COMP_POS_AFTER]:
+        return False
     if wo == 'v-initial' and cs[CLAUSE_POS_SAME] and cs[COMP_POS_BEFORE] and cs[COMP_POS_AFTER]:
         return False
     if wo in OV_ORDERS and not cs[CLAUSE_POS_EXTRA] and not cs[COMP_POS_BEFORE]:
