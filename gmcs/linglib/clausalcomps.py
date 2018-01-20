@@ -170,10 +170,9 @@ def customize_order(ch, cs, mylang, rules, typename, init, general, additional,e
     constrain_lex_items(ch,cs,typename,init_value,default_init_value,mylang,init,extra)
     # Constrain added and general rule wrt head and INIT
     if need_customize_hc(wo,cs):
-        #TODO: this should probably be split somehow; the number of args is unhealthy.
         if additional_needed(cs,wo):
             constrain_head_comp_rules(mylang,rules,init,general,additional,cs,ch)
-        handle_special_cases(additional, cs, general, mylang, rules, wo, init_value)
+        handle_special_cases(additional, cs, general, mylang, rules, wo)
     if need_customize_hs(wo,cs):
         constrain_head_subj_rules(cs,mylang,rules,ch)
 
@@ -206,6 +205,14 @@ def additional_needed(cs,wo):
                 and ((not cs[COMP]) or (cs[COMP_POS_AFTER] and cs[COMP_POS_BEFORE])))
 
 
+def which_init(general, additional):
+    supertype_gen = 'head-initial' if additional.startswith(constants.HEAD_COMP) else 'head-final'
+    supertype_add = 'head-initial' if general.startswith(constants.HEAD_COMP) else 'head-final'
+    init_general = '+' if supertype_gen == 'head-initial' else '-'
+    init_add = '-' if supertype_add == '+' else '+'
+    return (init_general,init_add)
+
+
 '''
 If an additional head-comp rule is needed, it may also need constraints
 with respect to its head or the INIT feature. The default rule will
@@ -214,8 +221,7 @@ the additional rule.
 '''
 def constrain_head_comp_rules(mylang,rules,init,general,additional,cs,ch):
     supertype = 'head-initial' if additional.startswith(constants.HEAD_COMP) else 'head-final'
-    init_value = '+' if supertype == 'head-initial' else '-'
-    default_init_value = '-' if init_value == '+' else '+'
+    init_gen, init_add = which_init(general,additional)
     mylang.add(additional + '-phrase := basic-head-1st-comp-phrase & ' + supertype + '.'
            ,section = 'phrases',merge=True)
     rules.add(additional + ' := ' + additional + '-phrase.')
@@ -226,9 +232,9 @@ def constrain_head_comp_rules(mylang,rules,init,general,additional,cs,ch):
             mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.NMZ - ].')
     if init:
         mylang.add(additional +
-                   '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + init_value + ' ].',
+                   '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + init_add + ' ].',
                    merge=True)
-        mylang.add(general + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + default_init_value + ' ].',
+        mylang.add(general + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + init_gen + ' ].',
                    merge=True)
     constrain_for_features(additional + '-phrase', cs, mylang,
                            'NON-HEAD-DTR.SYNSEM.',ch,is_nominalized_complement(cs))
@@ -254,7 +260,7 @@ def constrain_for_features(typename,choice,mylang,path_prefix,ch,is_nmz):
 #TODO: This isn't really special cases. This is EXTRA feature handling,
 # plus adding SUBJ <> in some cases,
 # plus an actual special case(?) with complementizer.
-def handle_special_cases(additional, cs, general, mylang, rules, wo,init_val):
+def handle_special_cases(additional, cs, general, mylang, rules, wo):
     if (wo in ['ovs', 'osv', 'v-initial','vos','v-final']) and cs[CLAUSE_POS_EXTRA]:
         if additional_needed(cs,wo):
             mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < > ].',
@@ -265,7 +271,7 @@ def handle_special_cases(additional, cs, general, mylang, rules, wo,init_val):
             mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
         if complementizer_comp_head_needed(wo,cs):
             mylang.add('comp-head-complementizer-phrase := basic-head-1st-comp-phrase & head-final '
-                       '& [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].',section='phrases')
+                       '& [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT - ].',section='phrases')
             rules.add('comp-head-compl := comp-head-complementizer-phrase.')
 
 def complementizer_comp_head_needed1(wo,cs):
