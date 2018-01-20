@@ -325,7 +325,7 @@ def handle_special_cases(additional, cs, general, mylang, rules, wo,is_more_flex
         if complementizer_comp_head_needed(wo,cs) and not additional.startswith(constants.COMP_HEAD):
             # V-final will need two comp-head rules in some cases,
             # for the complementizer to be able to attach to an extraposed complement.
-            name = 'comp-head-compl' if wo == 'vfinal' else 'comp-head'
+            name = 'comp-head-compl' if wo == 'v-final' else 'comp-head'
             if is_more_flex:
                 mylang.add(name + '-phrase := basic-head-1st-comp-phrase & head-final '
                        '& [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].',section='phrases')
