@@ -326,7 +326,7 @@ def handle_special_cases(additional, cs, general, mylang, rules, wo,is_more_flex
     if ((wo in ['ovs', 'osv', 'v-initial','vos','v-final']) and cs[CLAUSE_POS_EXTRA]) \
             or (wo in ['v-initial','vos'] and cs[COMP_POS_AFTER]):
         if additional_needed(cs,wo):
-            if not wo in ['v-initial','vos'] and additional.startswith(constants.COMP_HEAD):
+            if not (wo in ['v-initial','vos'] and additional.startswith(constants.COMP_HEAD)):
                 mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < > ].',
                        section='phrases',merge=True)
     if wo in ['v-initial','vos','v-final']:
