@@ -99,9 +99,9 @@ def add_types_to_grammar(mylang,ch,rules,have_complementizer):
         if wo in OV or wo in VO:
             general, additional = determine_head_comp_rule_type(ch.get(constants.WORD_ORDER),cs)
             if is_more_flexible_order(wo,cs) and not init:
-                customize_order_using_headtypes(ch, cs, mylang, rules, typename, general,additional,extra)
+                customize_order_using_headtypes(ch, cs, mylang, rules, typename, general,additional)
             else:
-                customize_order(ch, cs, mylang, rules, typename, init,general,additional,extra)
+                customize_order(ch, cs, mylang, rules, typename, init,general,additional)
             if need_customize_hs(wo,cs):
                 constrain_head_subj_rules(cs,mylang,rules,ch)
             if extra:
@@ -110,14 +110,15 @@ def add_types_to_grammar(mylang,ch,rules,have_complementizer):
             constrain_complementizer(wo,cs,mylang,typename)
 
 
-def constrain_for_extra(additional, cs, general, mylang, wo,comptype):
+def constrain_for_extra(additional, cs, general, mylang, wo, comptype):
     if cs[EXTRA] and additional_hcr_needed(cs, wo):
         mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
         mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
-    if cs[EXTRA] and not cs[SAME]:
-        mylang.add(comptype + ':= [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA + ] > ].',merge=True)
-    elif cs[SAME] and not cs[EXTRA]:
-        mylang.add(comptype + ':= [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA - ] > ].',merge=True)
+    if comptype:
+        if cs[EXTRA] and not cs[SAME]:
+            mylang.add(comptype + ':= [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA + ] > ].',merge=True)
+        elif cs[SAME] and not cs[EXTRA]:
+            mylang.add(comptype + ':= [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA - ] > ].',merge=True)
 
 
 def is_more_flexible_order(wo,ccs):
@@ -214,7 +215,7 @@ init tells if the INIT feature is needed or not. The value must
 be true if INIT feature will be used in at least one of
 the complementation strategies in this grammar.
 '''
-def customize_order(ch, cs, mylang, rules, typename, init, general, additional,extra):
+def customize_order(ch, cs, mylang, rules, typename, init, general, additional):
     wo = ch.get(constants.WORD_ORDER)
     init_gen, init_add = which_init(general,additional)
     is_flex = is_more_flexible_order(wo,cs)
@@ -224,7 +225,7 @@ def customize_order(ch, cs, mylang, rules, typename, init, general, additional,e
             constrain_head_comp_rules(mylang,rules,init,general,additional,cs,ch)
         add_special_complementizer_HCR(additional, cs, general, mylang, rules, wo,is_flex)
 
-def customize_order_using_headtypes(ch, cs, mylang, rules, typename, general, additional,extra):
+def customize_order_using_headtypes(ch, cs, mylang, rules, typename, general, additional):
     wo = ch.get(constants.WORD_ORDER)
     is_flex = is_more_flexible_order(wo,cs)
     constrain_lex_items_using_headtypes(ch,cs,typename,mylang)
