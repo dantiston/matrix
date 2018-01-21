@@ -118,8 +118,8 @@ def is_more_flexible_order(ch):
     if not wo in OV and not wo in VO:
         return False
     for ccs in ch.get(COMPS):
-        #if not ccs[COMP] == 'oblig':
-        #    return False
+        if not ccs[COMP] == 'oblig':
+            return False
         if wo in OV and ((not ccs[AFT] or not ccs[SAME])
                                  or (ccs[AFT] and not ccs[BEF] and ccs[EXTRA])):
             return False
@@ -383,15 +383,13 @@ def complementizer_comp_head_needed(wo,cs):
     if wo == 'v-final' and cs[EXTRA] and not cs[SAME] and cs[AFT]:
         return True
     if not wo == 'v-final':
-        if wo in ['vos'] and cs[EXTRA] \
-              and cs[SAME] and cs[BEF] and cs[AFT]:
+        if wo in ['vos'] and cs[EXTRA] and cs[SAME] and cs[BEF] and not cs[AFT]:
           return False
         if wo  == 'v-initial' and cs[EXTRA] and not cs[AFT]:
             return False
         if wo == 'vos' and cs[EXTRA] and cs[AFT]:
             return True
-        if cs[SAME] and cs[COMP] \
-                and (cs[EXTRA] or cs[AFT]):
+        if cs[SAME] and cs[COMP] and (cs[EXTRA] or cs[AFT]):
             return True
     return False
 
