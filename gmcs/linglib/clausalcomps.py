@@ -118,8 +118,8 @@ def is_more_flexible_order(ch):
     if not wo in OV and not wo in VO:
         return False
     for ccs in ch.get(COMPS):
-        if not ccs[COMP] == 'oblig':
-            return False
+        #if not ccs[COMP] == 'oblig':
+        #    return False
         if wo in OV and ((not ccs[AFT] or not ccs[SAME])
                                  or (ccs[AFT] and not ccs[BEF] and ccs[EXTRA])):
             return False
