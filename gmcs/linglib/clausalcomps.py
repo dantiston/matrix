@@ -377,10 +377,10 @@ def constrain_for_features(typename,choice,mylang,path_prefix,ch,is_nmz):
 
 
 def need_low_subj_attachment(wo,cs,additional):
-    return ((wo in ['ovs', 'osv', 'v-initial','vos','v-final']) and cs[EXTRA]) \
-            or (wo in ['v-initial','vos'] and cs[AFT]) \
-               and not (wo in ['v-initial','vos']
-                        and additional.startswith(constants.COMP_HEAD))
+    relevant_order = wo in ['ovs', 'osv', 'v-initial','vos','v-final']
+    is_head_fin = additional.startswith(constants.COMP_HEAD)
+    vin = wo in ['v-initial','vos']
+    return ((relevant_order and cs[EXTRA])) or ((vin and cs[AFT]) and not (vin and is_head_fin))
 
 def enforce_low_subj(phrase_name,mylang):
     mylang.add(phrase_name + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < > ].',
