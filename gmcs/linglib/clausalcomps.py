@@ -240,7 +240,7 @@ def customize_order_using_headtypes(ch, cs, mylang, rules, typename, general, ad
     constrain_lex_items_using_headtypes(ch,cs,typename,mylang,extra)
     if need_customize_hc(wo,cs):
         if additional_hcr_needed(cs,wo):
-            constrain_head_comp_rules_headtype(mylang,rules,additional,cs,ch)
+            constrain_head_comp_rules_headtype(mylang,rules,general,additional,cs,ch)
         handle_special_cases(additional, cs, general, mylang, rules, wo,is_more_flexible_order(ch))
     if need_customize_hs(wo,cs):
         constrain_head_subj_rules(cs,mylang,rules,ch)
@@ -325,6 +325,7 @@ also need to be constrained with respect to INIT, if INIT is used in
 the additional rule.
 '''
 def constrain_head_comp_rules(mylang,rules,init,general,additional,cs,ch):
+    wo = ch.get(constants.WORD_ORDER)
     supertype = 'head-initial' if additional.startswith(constants.HEAD_COMP) else 'head-final'
     init_gen, init_add = which_init(general,additional)
     mylang.add(additional + '-phrase := basic-head-1st-comp-phrase & ' + supertype + '.'
@@ -342,8 +343,17 @@ def constrain_head_comp_rules(mylang,rules,init,general,additional,cs,ch):
                    merge=True)
     constrain_for_features(additional + '-phrase', cs, mylang,
                            'NON-HEAD-DTR.SYNSEM.',ch,is_nominalized_complement(cs))
+    if need_low_subj_attachment(wo,cs,additional):
+            enforce_low_subj(additional,mylang)
+    if wo in ['v-initial','vos','v-final']:
+        if cs[EXTRA] and additional_hcr_needed(cs,wo):
+                mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
+                mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
 
-def constrain_head_comp_rules_headtype(mylang,rules,additional,cs,ch):
+
+
+def constrain_head_comp_rules_headtype(mylang,rules,general,additional,cs,ch):
+    wo = ch.get(constants.WORD_ORDER)
     supertype = 'head-initial' if additional.startswith(constants.HEAD_COMP) else 'head-final'
     head = determine_head(ch.get(constants.WORD_ORDER),cs)
     mylang.add(additional + '-phrase := basic-head-1st-comp-phrase & ' + supertype + '.'
@@ -356,7 +366,12 @@ def constrain_head_comp_rules_headtype(mylang,rules,additional,cs,ch):
                    merge=True)
     constrain_for_features(additional + '-phrase', cs, mylang,
                            'NON-HEAD-DTR.SYNSEM.',ch,is_nominalized_complement(cs))
-
+    if need_low_subj_attachment(wo,cs,additional):
+            enforce_low_subj(additional,mylang)
+    if wo in ['v-initial','vos','v-final']:
+        if cs[EXTRA] and additional_hcr_needed(cs,wo):
+                mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
+                mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
 
 def constrain_for_features(typename,choice,mylang,path_prefix,ch,is_nmz):
     for f in choice['feat']:
@@ -393,29 +408,22 @@ def enforce_low_subj(phrase_name,mylang):
 # plus adding SUBJ <> in some cases,
 # plus an actual special case(?) with complementizer.
 def handle_special_cases(additional, cs, general, mylang, rules, wo,is_more_flex):
-    if need_low_subj_attachment(wo,cs,additional):
-        #if additional_hcr_needed(cs,wo):
-            enforce_low_subj(additional,mylang)
-    if wo in ['v-initial','vos','v-final']:
-        if cs[EXTRA] and additional_hcr_needed(cs,wo):
-                mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
-                mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
-        if complementizer_comp_head_needed(wo,cs) and not additional.startswith(constants.COMP_HEAD):
-            # V-final and VOS will need and additional (to additional) HCR in some cases,
-            # for the complementizer to be able to attach to an extraposed complement.
-            # The situation should be symmetric for v-initial but we aren't yet supporting
-            # extraposition to the beginning of the clause, so this doesn't fully come up.
-            name = 'comp-head-compl' if wo == 'v-final' else 'comp-head'
-            if is_more_flex:
-                mylang.add(name + '-phrase := basic-head-1st-comp-phrase & head-final '\
-                       '& [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].',section='phrases')
-            else:
-                mylang.add(name + '-phrase := basic-head-1st-comp-phrase & head-final '\
-                       '& [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT - ].',section='phrases')
-            if not cs[SAME]:
-                mylang.add(name + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].',
-                           merge=True)
-            rules.add(name + ' := ' + name + '-phrase.')
+    if complementizer_comp_head_needed(wo,cs) and not additional.startswith(constants.COMP_HEAD):
+        # V-final and VOS will need and additional (to additional) HCR in some cases,
+        # for the complementizer to be able to attach to an extraposed complement.
+        # The situation should be symmetric for v-initial but we aren't yet supporting
+        # extraposition to the beginning of the clause, so this doesn't fully come up.
+        name = 'comp-head-compl' if wo == 'v-final' else 'comp-head'
+        if is_more_flex:
+            mylang.add(name + '-phrase := basic-head-1st-comp-phrase & head-final '\
+                   '& [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].',section='phrases')
+        else:
+            mylang.add(name + '-phrase := basic-head-1st-comp-phrase & head-final '\
+                   '& [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT - ].',section='phrases')
+        if not cs[SAME]:
+            mylang.add(name + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].',
+                       merge=True)
+        rules.add(name + ' := ' + name + '-phrase.')
 
 def determine_clausal_verb_comp_head(cs):
     head = ''
@@ -482,8 +490,8 @@ def constrain_lex_items(ch,cs,comptype, init_value, default_init_value,mylang,in
                 constrain_lexitem_for_feature(clausalverb,path,'INIT',init_value,mylang)
             elif cs[SAME] and not cs[EXTRA]:
                 constrain_lexitem_for_feature(clausalverb,path,'INIT',default_init_value,mylang)
-        for pos in ['intransitive-verb','transitive-verb','noun','adj','aux','det','cop']:
-            if ch.get(pos) or pos in ['intransitive-verb','transitive-verb']:
+        for pos in ['transitive-verb','aux','det','cop']:
+            if ch.get(pos) or pos in ['transitive-verb']:
                 mylang.add(pos + '-lex := [ ' + path + '.INIT ' + default_init_value + ' ].'
                         , merge=True)
     if comptype and nominalized_comps(ch) and not is_nominalized_complement(cs):
@@ -560,9 +568,6 @@ def init_needed(wo, cs,mylang,is_flex):
         if wo in OV:
             if cs[COMP] == 'opt' and cs[EXTRA]:
                 res = True
-            # Note that cs is a dict which will return an empty string
-            # if the object is not there. In this case, the IF statement should
-            # return False, but perhaps it would be clearer to write this out.
             elif cs[BEF]:
                 if not cs[AFT]: # complementizer before clause only
                     res = True
