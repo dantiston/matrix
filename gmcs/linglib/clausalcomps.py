@@ -144,12 +144,16 @@ def is_more_flexible_order(ch):
         if not ccs[COMP] == 'oblig':
             return False
         if wo in OV:
+            return ccs[SAME] and ccs[AFT]
+            #Both extraposition and complementizer attachment before clause are strict
             strict_extra_bef = not ccs[AFT] or not ccs[SAME]
+            #Flexible extraposition but strict complementizer attachment after clause
             extra_strict_aft = ccs[AFT] and not ccs[BEF] and ccs[EXTRA]
             restricted = strict_extra_bef or extra_strict_aft
             if restricted:
                 return False
         if wo in VO:
+            return ccs[SAME] and ccs[BEF]
             strict_extra_aft = not ccs[BEF] or not ccs[SAME]
             extra_strict_bef = (ccs[BEF] and not ccs[AFT] and ccs[EXTRA])
             restricted = strict_extra_aft or extra_strict_bef
