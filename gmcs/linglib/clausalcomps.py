@@ -377,6 +377,8 @@ def constrain_for_features(typename,choice,mylang,path_prefix,ch,is_nmz):
 
 
 def need_low_subj_attachment(wo,cs,additional):
+    if not additional_hcr_needed(cs,wo):
+        return False
     relevant_order = wo in ['ovs', 'osv', 'v-initial','vos','v-final']
     is_head_fin = additional.startswith(constants.COMP_HEAD)
     vin = wo in ['v-initial','vos']
@@ -392,11 +394,10 @@ def enforce_low_subj(phrase_name,mylang):
 # plus an actual special case(?) with complementizer.
 def handle_special_cases(additional, cs, general, mylang, rules, wo,is_more_flex):
     if need_low_subj_attachment(wo,cs,additional):
-        if additional_hcr_needed(cs,wo):
+        #if additional_hcr_needed(cs,wo):
             enforce_low_subj(additional,mylang)
     if wo in ['v-initial','vos','v-final']:
-        if cs[EXTRA]:
-            if additional_hcr_needed(cs,wo):
+        if cs[EXTRA] and additional_hcr_needed(cs,wo):
                 mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
                 mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
         if complementizer_comp_head_needed(wo,cs) and not additional.startswith(constants.COMP_HEAD):
