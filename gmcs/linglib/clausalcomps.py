@@ -121,18 +121,12 @@ def is_more_flexible_order(ch):
     for ccs in ch.get(COMPS):
         if not ccs[COMP] == 'oblig':
             return False
-        if wo in OV:
-            strict_extra_bef = not ccs[AFT] or not ccs[SAME]
-            extra_strict_aft = ccs[AFT] and not ccs[BEF] and ccs[EXTRA]
-            restricted = strict_extra_bef or extra_strict_aft
-            if restricted:
-                return False
-        if wo in VO:
-            strict_extra_aft = not ccs[BEF] or not ccs[SAME]
-            extra_strict_bef = (ccs[BEF] and not ccs[AFT] and ccs[EXTRA])
-            restricted = strict_extra_aft or extra_strict_bef
-            if restricted:
-                return False
+        if wo in OV and ((not ccs[AFT] or not ccs[SAME])
+                                 or (ccs[AFT] and not ccs[BEF] and ccs[EXTRA])):
+            return False
+        if wo in VO and ((not ccs[BEF] or not ccs[SAME])
+                                or (ccs[BEF] and not ccs[AFT] and ccs[EXTRA])):
+            return False
     return True
 
 def constrain_complementizer(wo,cs,mylang,typename):
