@@ -105,15 +105,19 @@ def add_types_to_grammar(mylang,ch,rules,have_complementizer):
             if need_customize_hs(wo,cs):
                 constrain_head_subj_rules(cs,mylang,rules,ch)
             if extra:
-                constrain_for_extra(additional, cs, general, mylang, wo)
+                constrain_for_extra(additional, cs, general, mylang, wo,typename)
         elif wo == 'free':
             constrain_complementizer(wo,cs,mylang,typename)
 
 
-def constrain_for_extra(additional, cs, general, mylang, wo):
+def constrain_for_extra(additional, cs, general, mylang, wo,comptype):
     if cs[EXTRA] and additional_hcr_needed(cs, wo):
         mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
         mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
+    if cs[EXTRA] and not cs[SAME]:
+        mylang.add(comptype + ':= [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA + ] > ].',merge=True)
+    elif cs[SAME] and not cs[EXTRA]:
+        mylang.add(comptype + ':= [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA - ] > ].',merge=True)
 
 
 def is_more_flexible_order(wo,ccs):
@@ -214,7 +218,7 @@ def customize_order(ch, cs, mylang, rules, typename, init, general, additional,e
     wo = ch.get(constants.WORD_ORDER)
     init_gen, init_add = which_init(general,additional)
     is_flex = is_more_flexible_order(wo,cs)
-    constrain_lex_items(ch,cs,typename,init_add,init_gen,mylang,init,extra)
+    constrain_lex_items(ch,cs,typename,init_add,init_gen,mylang,init)
     if need_customize_hc(wo,cs):
         if additional_hcr_needed(cs,wo):
             constrain_head_comp_rules(mylang,rules,init,general,additional,cs,ch)
@@ -223,7 +227,7 @@ def customize_order(ch, cs, mylang, rules, typename, init, general, additional,e
 def customize_order_using_headtypes(ch, cs, mylang, rules, typename, general, additional,extra):
     wo = ch.get(constants.WORD_ORDER)
     is_flex = is_more_flexible_order(wo,cs)
-    constrain_lex_items_using_headtypes(ch,cs,typename,mylang,extra)
+    constrain_lex_items_using_headtypes(ch,cs,typename,mylang)
     if need_customize_hc(wo,cs):
         if additional_hcr_needed(cs,wo):
             constrain_head_comp_rules_headtype(mylang,rules,general,additional,cs,ch)
@@ -414,7 +418,7 @@ def constrain_transitive_verb(head,cs):
                and (not cs[SAME] or cs[COMP] == 'opt'))
 
 
-def constrain_lex_items_using_headtypes(ch,cs,comptype, mylang, extra):
+def constrain_lex_items_using_headtypes(ch,cs,comptype, mylang):
     wo = ch.get(constants.WORD_ORDER)
     path = 'SYNSEM.LOCAL.CAT'
     head = determine_head(wo,cs)
@@ -427,14 +431,9 @@ def constrain_lex_items_using_headtypes(ch,cs,comptype, mylang, extra):
                 constrain_lexitem_for_feature(comptype,path,'HEAD',head,mylang)
     if comptype and nominalized_comps(ch) and not is_nominalized_complement(cs):
         mylang.add(comptype + ':= [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.NMZ - ] > ].',merge=True)
-    if extra and comptype:
-            if cs[EXTRA] and not cs[SAME]:
-                mylang.add(comptype + ':= [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA + ] > ].',merge=True)
-            elif cs[SAME] and not cs[EXTRA]:
-                mylang.add(comptype + ':= [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA - ] > ].',merge=True)
 
 
-def constrain_lex_items(ch,cs,comptype, init_value, default_init_value,mylang,init,extra):
+def constrain_lex_items(ch,cs,comptype, init_value, default_init_value,mylang,init):
     wo = ch.get(constants.WORD_ORDER)
     clausalverb = find_clausalverb_typename(ch,cs)
     path = 'SYNSEM.LOCAL.CAT.HEAD'
@@ -461,11 +460,6 @@ def constrain_lex_items(ch,cs,comptype, init_value, default_init_value,mylang,in
                         , merge=True)
     if comptype and nominalized_comps(ch) and not is_nominalized_complement(cs):
         mylang.add(comptype + ':= [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.NMZ - ] > ].',merge=True)
-    if extra and comptype:
-            if cs[EXTRA] and not cs[SAME]:
-                mylang.add(comptype + ':= [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA + ] > ].',merge=True)
-            elif cs[SAME] and not cs[EXTRA]:
-                mylang.add(comptype + ':= [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA - ] > ].',merge=True)
 
 
 def constrain_lexitem_for_feature(typename, feature_path, feature_name, feature_value,mylang):
