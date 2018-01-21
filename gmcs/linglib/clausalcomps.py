@@ -144,11 +144,13 @@ def is_more_flexible_order(ch):
         if not ccs[COMP] == 'oblig':
             return False
         if wo in OV:
-            #Neither ccomps not compl. can use the normal HCR.
+            #Either ccomps or compl. cannot use normal HCR.
             strict_extra_bef = not ccs[AFT] or not ccs[SAME]
-            #Ccomp may use additional HCR but compl. can't.
+            #complementizers can't use additional HCR.
             extra_strict_aft = ccs[AFT] and not ccs[BEF] and ccs[EXTRA]
-            restricted = strict_extra_bef or extra_strict_aft
+            #ccomps can't use additional HCR.
+            noextra_bef = ccs[BEF] and not ccs[EXTRA]
+            restricted = strict_extra_bef or extra_strict_aft or noextra_bef
             if restricted:
                 return False
         if wo in VO:
