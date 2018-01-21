@@ -46,7 +46,6 @@ CLAUSALCOMP = 'clausal'
 COMPLEMENTIZER = 'complementizer' # Choices key for choices pertaining
                                   # to the complementizer defined for
                                   # a particular complementation strategy.
-EXTRA = 'EXTRA' # Feature for extraposed complements
 
 # Error messages:
 EXTRA_VO = 'The only supporded word orders for extraposed complements are: SOV, VOS, OVS, OSV, v-final.'
@@ -128,6 +127,36 @@ def is_more_flexible_order(ch):
                                 or (ccs[BEF] and not ccs[AFT] and ccs[EXTRA])):
             return False
     return True
+
+def is_more_flexible_order1(ch):
+    """
+    @param ch: choices
+    @return: True if the word order in complex sentences
+    subsumes the basic WO but not restricts it.
+    E.g. If in a SOV order both OV and VO is allowed for clausal complements.
+    Or if complementizers attach both before and after clause.
+    If e.g. OV order is forbidden for clausal complements, must return False.
+    """
+    wo = ch.get(constants.WORD_ORDER)
+    if not wo in OV and not wo in VO:
+        return False
+    for ccs in ch.get(COMPS):
+        if not ccs[COMP] == 'oblig':
+            return False
+        if wo in OV:
+            strict_extra_bef = not ccs[AFT] or not ccs[SAME]
+            extra_strict_aft = ccs[AFT] and not ccs[BEF] and ccs[EXTRA]
+            restricted = strict_extra_bef or extra_strict_aft
+            if restricted:
+                return False
+        if wo in VO:
+            strict_extra_aft = not ccs[BEF] or not ccs[SAME]
+            extra_strict_bef = (ccs[BEF] and not ccs[AFT] and ccs[EXTRA])
+            restricted = strict_extra_aft or extra_strict_bef
+            if restricted:
+                return False
+    return True
+
 
 def constrain_complementizer(wo,cs,mylang,typename):
     if not wo == 'free':
