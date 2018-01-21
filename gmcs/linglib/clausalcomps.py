@@ -275,12 +275,12 @@ def additional_hcr_needed(cs,wo):
     flex_cl = cs[EXTRA] and cs[SAME]
     #Complementizer position is flexible
     flex_comp = cs[BEF] and cs[AFT]
-    if wo in ['vos'] and flex_cl and flex_comp:
+    if wo in ['vos'] and cs[EXTRA] and cs[SAME] and cs[BEF] and cs[AFT]:
       return False #Because additional HSR instead
-    if wo == 'v-initial' and flex_cl and not cs[AFT]:
-      return False #Because additional HSR instead
-    if wo == 'v-initial' and cs[SAME] and flex_comp:
-      return False #Because additional HSR instead
+    if wo == 'v-initial' and cs[EXTRA] and cs[SAME] and not cs[AFT]:
+      return False
+    if wo == 'v-initial' and cs[SAME] and cs[BEF] and cs[AFT]:
+      return False
     if wo in OV and not cs[EXTRA] and not cs[BEF]:
         return False
     if wo in VO and not cs[EXTRA] and not cs[AFT]:
