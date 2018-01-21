@@ -98,7 +98,7 @@ def add_types_to_grammar(mylang,ch,rules,have_complementizer):
         typename = add_complementizer_subtype(cs, mylang,ch) if cs[COMP] else None
         if wo in OV or wo in VO:
             general, additional = determine_head_comp_rule_type(ch.get(constants.WORD_ORDER),cs)
-            if is_more_flexible_order(wo,cs):
+            if is_more_flexible_order(wo,cs) and not init:
                 customize_order_using_headtypes(ch, cs, mylang, rules, typename, general,additional,extra)
             else:
                 customize_order(ch, cs, mylang, rules, typename, init,general,additional,extra)
