@@ -376,9 +376,11 @@ def constrain_for_features(typename,choice,mylang,path_prefix,ch,is_nmz):
             mylang.add(typename + ' := [ ' + path_prefix + path + 'NMZ + ].',merge=True)
 
 
-def need_low_subj_attachment(wo,cs):
+def need_low_subj_attachment(wo,cs,additional):
     return ((wo in ['ovs', 'osv', 'v-initial','vos','v-final']) and cs[EXTRA]) \
-            or (wo in ['v-initial','vos'] and cs[AFT])
+            or (wo in ['v-initial','vos'] and cs[AFT]) \
+               and not (wo in ['v-initial','vos']
+                        and additional.startswith(constants.COMP_HEAD))
 
 def enforce_low_subj(phrase_name,mylang):
     mylang.add(phrase_name + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < > ].',
@@ -389,10 +391,9 @@ def enforce_low_subj(phrase_name,mylang):
 # plus adding SUBJ <> in some cases,
 # plus an actual special case(?) with complementizer.
 def handle_special_cases(additional, cs, general, mylang, rules, wo,is_more_flex):
-    if need_low_subj_attachment(wo,cs):
+    if need_low_subj_attachment(wo,cs,additional):
         if additional_hcr_needed(cs,wo):
-            if not (wo in ['v-initial','vos'] and additional.startswith(constants.COMP_HEAD)):
-                enforce_low_subj(additional,mylang)
+            enforce_low_subj(additional,mylang)
     if wo in ['v-initial','vos','v-final']:
         if cs[EXTRA]:
             if additional_hcr_needed(cs,wo):
