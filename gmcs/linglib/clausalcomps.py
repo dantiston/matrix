@@ -294,11 +294,13 @@ def additional_hcr_needed(cs,wo):
 def complementizer_comp_head_needed(wo,cs):
      #Ccomp clause position is flexible
     flex_cl = cs[EXTRA] and cs[SAME]
+    strict_ex = cs[EXTRA] and not cs[SAME]
+    comp_same = cs[BEF] and not cs[AFT]
     if wo in ['vos'] and cs[EXTRA] and cs[SAME] and cs[BEF] and not cs[AFT]:
       return False
     if wo  == 'v-initial' and cs[EXTRA] and not cs[AFT]:
         return False
-    if wo == 'vos' and cs[EXTRA] and cs[AFT]: 
+    if wo == 'vos' and cs[EXTRA] and cs[AFT]:
         return True
     if wo == 'v-final' and cs[EXTRA] and not cs[SAME] and cs[AFT]:
         return True
@@ -374,27 +376,33 @@ def constrain_for_features(typename,choice,mylang,path_prefix,ch,is_nmz):
             mylang.add(typename + ' := [ ' + path_prefix + path + 'NMZ + ].',merge=True)
 
 
+def need_low_subj_attachment(wo,cs):
+    return ((wo in ['ovs', 'osv', 'v-initial','vos','v-final']) and cs[EXTRA]) \
+            or (wo in ['v-initial','vos'] and cs[AFT])
+
+def enforce_low_subj(phrase_name,mylang):
+    mylang.add(phrase_name + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < > ].',
+        section='phrases',merge=True)
+
+
 #TODO: This isn't really special cases. This is EXTRA feature handling,
 # plus adding SUBJ <> in some cases,
 # plus an actual special case(?) with complementizer.
 def handle_special_cases(additional, cs, general, mylang, rules, wo,is_more_flex):
-    if ((wo in ['ovs', 'osv', 'v-initial','vos','v-final']) and cs[EXTRA]) \
-            or (wo in ['v-initial','vos'] and cs[AFT]):
+    if need_low_subj_attachment(wo,cs):
         if additional_hcr_needed(cs,wo):
             if not (wo in ['v-initial','vos'] and additional.startswith(constants.COMP_HEAD)):
-                mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < > ].',
-                       section='phrases',merge=True)
+                enforce_low_subj(additional,mylang)
     if wo in ['v-initial','vos','v-final']:
         if cs[EXTRA]:
             if additional_hcr_needed(cs,wo):
                 mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
                 mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
         if complementizer_comp_head_needed(wo,cs) and not additional.startswith(constants.COMP_HEAD):
-            # V-final will need two comp-head rules in some cases,
+            # V-final and VOS will need and additional (to additional) HCR in some cases,
             # for the complementizer to be able to attach to an extraposed complement.
             # The situation should be symmetric for v-initial but we aren't yet supporting
             # extraposition to the beginning of the clause, so this doesn't fully come up.
-            # We would use two head-comp rules in such a case.
             name = 'comp-head-compl' if wo == 'v-final' else 'comp-head'
             if is_more_flex:
                 mylang.add(name + '-phrase := basic-head-1st-comp-phrase & head-final '\
