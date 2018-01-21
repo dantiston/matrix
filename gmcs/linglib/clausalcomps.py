@@ -95,7 +95,7 @@ def add_types_to_grammar(mylang,ch,rules,have_complementizer):
     for cs in ch.get(COMPS):
         clausalverb = find_clausalverb_typename(ch,cs)
         customize_clausal_verb(clausalverb,mylang,ch,cs,extra)
-        typename = add_complementizer_subtype(cs, mylang,ch) if cs[COMP] else None
+        typename = add_complementizer_subtype(cs, mylang,ch,extra) if cs[COMP] else None
         if wo in OV or wo in VO:
             general, additional = determine_head_comp_rule_type(ch.get(constants.WORD_ORDER),cs)
             if is_more_flexible_order(wo,cs) and not init:
@@ -185,17 +185,18 @@ def use_init(ch, mylang, wo):
 def add_complementizer_supertype(mylang):
     mylang.add(COMP_LEX_ITEM_DEF, section=COMPLEX)
 
-def add_complementizer_subtype(cs, mylang,ch):
+def add_complementizer_subtype(cs, mylang,ch,extra):
     id = cs.full_key
     typename = id + '-' + COMP_LEX_ITEM
     mylang.add(typename + ' := ' + COMP_LEX_ITEM + '.', section=COMPLEX)
     constrain_for_features(typename,cs,mylang,'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.',ch,is_nominalized_complement(cs))
     if cs['cformvalue']:
         constrain_lexitem_for_feature(typename,'SYNSEM.LOCAL.CAT.HEAD','FORM',cs['cformvalue'],mylang)
-    if cs[EXTRA] and not cs[SAME]:
-        mylang.add(typename + ':= [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA + ] > ].',merge=True)
-    elif cs[SAME] and not cs[EXTRA]:
-        mylang.add(typename + ':= [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA - ] > ].',merge=True)
+    if extra:
+        if cs[EXTRA] and not cs[SAME]:
+            mylang.add(typename + ':= [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA + ] > ].',merge=True)
+        elif cs[SAME] and not cs[EXTRA]:
+            mylang.add(typename + ':= [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA - ] > ].',merge=True)
     return typename
 
 '''
