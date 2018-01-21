@@ -98,19 +98,19 @@ def add_types_to_grammar(mylang,ch,rules,have_complementizer):
         typename = add_complementizer_subtype(cs, mylang,ch,extra) if cs[COMP] else None
         if wo in OV or wo in VO:
             general, additional = determine_head_comp_rule_type(ch.get(constants.WORD_ORDER),cs)
-            if is_more_flexible_order(wo,cs) and not init:
-                customize_order_using_headtypes(ch, cs, mylang, rules, typename, general,additional)
-            else:
-                customize_order(ch, cs, mylang, rules, typename, init,general,additional)
+            #if is_more_flexible_order(wo,cs) and not init:
+            #    customize_order_using_headtypes(ch, cs, mylang, rules, typename, general,additional)
+            #else:
+            customize_order(ch, cs, mylang, rules, typename, init,general,additional)
             if need_customize_hs(wo,cs):
                 constrain_head_subj_rules(cs,mylang,rules,ch)
             if extra:
-                constrain_for_extra(additional, cs, general, mylang, wo)
+                constrain_for_extra(wo,general, additional, cs, mylang)
         elif wo == 'free':
             constrain_complementizer(wo,cs,mylang,typename)
 
 
-def constrain_for_extra(additional, cs, general, mylang, wo):
+def constrain_for_extra(wo,general, additional, cs, mylang):
     if cs[EXTRA] and additional_hcr_needed(cs, wo):
         mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
         mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
@@ -219,10 +219,16 @@ def customize_order(ch, cs, mylang, rules, typename, init, general, additional):
     wo = ch.get(constants.WORD_ORDER)
     init_gen, init_add = which_init(general,additional)
     is_flex = is_more_flexible_order(wo,cs)
-    constrain_lex_items(ch,cs,typename,init_add,init_gen,mylang,init)
+    if is_flex and not init:
+        constrain_lex_items_using_headtypes(ch,cs,typename,mylang)
+    else:
+        constrain_lex_items(ch,cs,typename,init_add,init_gen,mylang,init)
     if need_customize_hc(wo,cs):
         if additional_hcr_needed(cs,wo):
-            constrain_head_comp_rules(mylang,rules,init,general,additional,cs,ch)
+            if is_flex and not init:
+                constrain_head_comp_rules_headtype(mylang,rules,general,additional,cs,ch)
+            else:
+                constrain_head_comp_rules(mylang,rules,init,general,additional,cs,ch)
         add_special_complementizer_HCR(additional, cs, general, mylang, rules, wo,is_flex)
 
 def customize_order_using_headtypes(ch, cs, mylang, rules, typename, general, additional):
