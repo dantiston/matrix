@@ -116,7 +116,6 @@ def is_more_flexible_order(wo,ccs):
     """
     if not wo in OV and not wo in VO:
         return False
-    #for ccs in ch.get(COMPS):
     if not ccs[COMP] == 'oblig':
         return False
     if wo in OV:
@@ -268,6 +267,8 @@ def additional_hcr_needed(cs,wo):
 # additional_hcr_needed somehow, in the higher logic of the library.
 # I think additional HEAD comp HCR is needed only in a couple cases.
 def complementizer_comp_head_needed(wo,cs):
+    if not wo in ['v-initial','vos','v-final']:
+        return False
      #Ccomp clause position is flexible
     flex_cl = cs[EXTRA] and cs[SAME]
     strict_ex = cs[EXTRA] and not cs[SAME]
@@ -389,7 +390,7 @@ def handle_special_cases(additional, cs, general, mylang, rules, wo,is_more_flex
         # for the complementizer to be able to attach to an extraposed complement.
         # The situation should be symmetric for v-initial but we aren't yet supporting
         # extraposition to the beginning of the clause, so this doesn't fully come up.
-        name = 'comp-head-compl' if wo == 'v-final' else 'comp-head'
+        name = 'comp-head' if not general == 'comp-head' else 'comp-head-compl'
         if is_more_flex:
             mylang.add(name + '-phrase := basic-head-1st-comp-phrase & head-final '\
                    '& [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].',section='phrases')
