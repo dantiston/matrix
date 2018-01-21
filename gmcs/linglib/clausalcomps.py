@@ -105,7 +105,7 @@ def add_types_to_grammar(mylang,ch,rules,have_complementizer):
         elif wo == 'free':
             constrain_complementizer(wo,cs,mylang,typename)
 
-def is_more_flexible_order(ch):
+def is_more_flexible_order1(ch):
     """
     @param ch: choices
     @return: True if the word order in complex sentences
@@ -128,7 +128,7 @@ def is_more_flexible_order(ch):
             return False
     return True
 
-def is_more_flexible_order1(ch):
+def is_more_flexible_order(ch):
     """
     @param ch: choices
     @return: True if the word order in complex sentences
