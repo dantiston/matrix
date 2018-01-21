@@ -98,14 +98,14 @@ def add_types_to_grammar(mylang,ch,rules,have_complementizer):
         typename = add_complementizer_subtype(cs, mylang,ch) if cs[COMP] else None
         if wo in OV or wo in VO:
             general, additional = determine_head_comp_rule_type(ch.get(constants.WORD_ORDER),cs)
-            if is_more_flexible_order(ch):
+            if is_more_flexible_order(wo,cs):
                 customize_order_using_headtypes(ch, cs, mylang, rules, typename, general,additional,extra)
             else:
                 customize_order(ch, cs, mylang, rules, typename, init,general,additional,extra)
         elif wo == 'free':
             constrain_complementizer(wo,cs,mylang,typename)
 
-def is_more_flexible_order1(ch):
+def is_more_flexible_order(wo,ccs):
     """
     @param ch: choices
     @return: True if the word order in complex sentences
@@ -114,52 +114,28 @@ def is_more_flexible_order1(ch):
     Or if complementizers attach both before and after clause.
     If e.g. OV order is forbidden for clausal complements, must return False.
     """
-    wo = ch.get(constants.WORD_ORDER)
     if not wo in OV and not wo in VO:
         return False
-    for ccs in ch.get(COMPS):
-        if not ccs[COMP] == 'oblig':
-            return False
-        if wo in OV and ((not ccs[AFT] or not ccs[SAME])
-                                 or (ccs[AFT] and not ccs[BEF] and ccs[EXTRA])):
-            return False
-        if wo in VO and ((not ccs[BEF] or not ccs[SAME])
-                                or (ccs[BEF] and not ccs[AFT] and ccs[EXTRA])):
-            return False
-    return True
-
-def is_more_flexible_order(ch):
-    """
-    @param ch: choices
-    @return: True if the word order in complex sentences
-    subsumes the basic WO but not restricts it.
-    E.g. If in a SOV order both OV and VO is allowed for clausal complements.
-    Or if complementizers attach both before and after clause.
-    If e.g. OV order is forbidden for clausal complements, must return False.
-    """
-    wo = ch.get(constants.WORD_ORDER)
-    if not wo in OV and not wo in VO:
+    #for ccs in ch.get(COMPS):
+    if not ccs[COMP] == 'oblig':
         return False
-    for ccs in ch.get(COMPS):
-        if not ccs[COMP] == 'oblig':
+    if wo in OV:
+        #Either ccomps or compl. cannot use normal HCR.
+        strict_extra_bef = not ccs[AFT] or not ccs[SAME]
+        #complementizers can't use additional HCR.
+        extra_strict_aft = ccs[AFT] and not ccs[BEF] and ccs[EXTRA]
+        #ccomps can't use additional HCR.
+        noextra_bef = ccs[BEF] and not ccs[EXTRA]
+        restricted = strict_extra_bef or extra_strict_aft or noextra_bef
+        if restricted:
             return False
-        if wo in OV:
-            #Either ccomps or compl. cannot use normal HCR.
-            strict_extra_bef = not ccs[AFT] or not ccs[SAME]
-            #complementizers can't use additional HCR.
-            extra_strict_aft = ccs[AFT] and not ccs[BEF] and ccs[EXTRA]
-            #ccomps can't use additional HCR.
-            noextra_bef = ccs[BEF] and not ccs[EXTRA]
-            restricted = strict_extra_bef or extra_strict_aft or noextra_bef
-            if restricted:
-                return False
-        if wo in VO:
-            strict_extra_aft = not ccs[BEF] or not ccs[SAME]
-            extra_strict_bef = (ccs[BEF] and not ccs[AFT] and ccs[EXTRA])
-            noextra_bef = ccs[AFT] and not ccs[EXTRA]
-            restricted = strict_extra_aft or extra_strict_bef or noextra_bef
-            if restricted:
-                return False
+    if wo in VO:
+        strict_extra_aft = not ccs[BEF] or not ccs[SAME]
+        extra_strict_bef = (ccs[BEF] and not ccs[AFT] and ccs[EXTRA])
+        noextra_bef = ccs[AFT] and not ccs[EXTRA]
+        restricted = strict_extra_aft or extra_strict_bef or noextra_bef
+        if restricted:
+            return False
     return True
 
 
@@ -188,9 +164,9 @@ def constrain_complementizer(wo,cs,mylang,typename):
 
 def use_init(ch, mylang, wo):
     init = False
-    is_flex = is_more_flexible_order(ch)
     if wo in OV or wo in VO or wo == 'free':
         for cs in ch.get(COMPS):
+            is_flex = is_more_flexible_order(wo,cs)
             init = init_needed(wo, cs, mylang, is_flex)
             if init:
                 break
@@ -231,7 +207,7 @@ def customize_order(ch, cs, mylang, rules, typename, init, general, additional,e
     if need_customize_hc(wo,cs):
         if additional_hcr_needed(cs,wo):
             constrain_head_comp_rules(mylang,rules,init,general,additional,cs,ch)
-        handle_special_cases(additional, cs, general, mylang, rules, wo,is_more_flexible_order(ch))
+        handle_special_cases(additional, cs, general, mylang, rules, wo,is_more_flexible_order(wo,cs))
     if need_customize_hs(wo,cs):
         constrain_head_subj_rules(cs,mylang,rules,ch)
 
@@ -241,7 +217,7 @@ def customize_order_using_headtypes(ch, cs, mylang, rules, typename, general, ad
     if need_customize_hc(wo,cs):
         if additional_hcr_needed(cs,wo):
             constrain_head_comp_rules_headtype(mylang,rules,general,additional,cs,ch)
-        handle_special_cases(additional, cs, general, mylang, rules, wo,is_more_flexible_order(ch))
+        handle_special_cases(additional, cs, general, mylang, rules, wo,is_more_flexible_order(wo,cs))
     if need_customize_hs(wo,cs):
         constrain_head_subj_rules(cs,mylang,rules,ch)
 
