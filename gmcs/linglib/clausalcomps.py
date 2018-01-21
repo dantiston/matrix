@@ -156,7 +156,8 @@ def is_more_flexible_order(ch):
         if wo in VO:
             strict_extra_aft = not ccs[BEF] or not ccs[SAME]
             extra_strict_bef = (ccs[BEF] and not ccs[AFT] and ccs[EXTRA])
-            restricted = strict_extra_aft or extra_strict_bef
+            noextra_bef = ccs[AFT] and not ccs[EXTRA]
+            restricted = strict_extra_aft or extra_strict_bef or noextra_bef
             if restricted:
                 return False
     return True
