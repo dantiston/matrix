@@ -380,17 +380,16 @@ def handle_special_cases(additional, cs, general, mylang, rules, wo,is_more_flex
 
 #This assumes WO is in ['v-initial','vos','v-final'].
 def complementizer_comp_head_needed(wo,cs):
+    if wo in ['vos'] and cs[EXTRA] and cs[SAME] and cs[BEF] and not cs[AFT]:
+      return False
+    if wo  == 'v-initial' and cs[EXTRA] and not cs[AFT]:
+        return False
+    if wo == 'vos' and cs[EXTRA] and cs[AFT]:
+        return True
     if wo == 'v-final' and cs[EXTRA] and not cs[SAME] and cs[AFT]:
         return True
-    if not wo == 'v-final':
-        if wo in ['vos'] and cs[EXTRA] and cs[SAME] and cs[BEF] and not cs[AFT]:
-          return False
-        if wo  == 'v-initial' and cs[EXTRA] and not cs[AFT]:
-            return False
-        if wo == 'vos' and cs[EXTRA] and cs[AFT]:
-            return True
-        if cs[SAME] and cs[COMP] and (cs[EXTRA] or cs[AFT]):
-            return True
+    if not wo == 'v-final' and cs[SAME] and cs[COMP] and (cs[EXTRA] or cs[AFT]):
+        return True
     return False
 
 
