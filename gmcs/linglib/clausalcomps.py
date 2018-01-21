@@ -102,6 +102,8 @@ def add_types_to_grammar(mylang,ch,rules,have_complementizer):
                 customize_order_using_headtypes(ch, cs, mylang, rules, typename, general,additional,extra)
             else:
                 customize_order(ch, cs, mylang, rules, typename, init,general,additional,extra)
+            if need_customize_hs(wo,cs):
+                constrain_head_subj_rules(cs,mylang,rules,ch)
         elif wo == 'free':
             constrain_complementizer(wo,cs,mylang,typename)
 
@@ -202,23 +204,25 @@ the complementation strategies in this grammar.
 def customize_order(ch, cs, mylang, rules, typename, init, general, additional,extra):
     wo = ch.get(constants.WORD_ORDER)
     init_gen, init_add = which_init(general,additional)
+    is_flex = is_more_flexible_order(wo,cs)
     constrain_lex_items(ch,cs,typename,init_add,init_gen,mylang,init,extra)
     if need_customize_hc(wo,cs):
         if additional_hcr_needed(cs,wo):
             constrain_head_comp_rules(mylang,rules,init,general,additional,cs,ch)
-        handle_special_cases(additional, cs, general, mylang, rules, wo,is_more_flexible_order(wo,cs))
-    if need_customize_hs(wo,cs):
-        constrain_head_subj_rules(cs,mylang,rules,ch)
+        add_special_complementizer_HCR(additional, cs, general, mylang, rules, wo,is_flex)
+    #if need_customize_hs(wo,cs):
+    #    constrain_head_subj_rules(cs,mylang,rules,ch)
 
 def customize_order_using_headtypes(ch, cs, mylang, rules, typename, general, additional,extra):
     wo = ch.get(constants.WORD_ORDER)
+    is_flex = is_more_flexible_order(wo,cs)
     constrain_lex_items_using_headtypes(ch,cs,typename,mylang,extra)
     if need_customize_hc(wo,cs):
         if additional_hcr_needed(cs,wo):
             constrain_head_comp_rules_headtype(mylang,rules,general,additional,cs,ch)
-        handle_special_cases(additional, cs, general, mylang, rules, wo,is_more_flexible_order(wo,cs))
-    if need_customize_hs(wo,cs):
-        constrain_head_subj_rules(cs,mylang,rules,ch)
+        add_special_complementizer_HCR(additional, cs, general, mylang, rules, wo, is_flex)
+    #if need_customize_hs(wo,cs):
+    #    constrain_head_subj_rules(cs,mylang,rules,ch)
 
 
 def need_customize_hc(wo,cs):
@@ -246,10 +250,6 @@ Note that this relies that for some situations, complementizer_head_comp_needed
 will be called separately! (Which is bad of course and should be rewritten).
 '''
 def additional_hcr_needed(cs,wo):
-    #Ccomp clause position is flexible
-    flex_cl = cs[EXTRA] and cs[SAME]
-    #Complementizer position is flexible
-    flex_comp = cs[BEF] and cs[AFT]
     if wo in ['vos'] and cs[EXTRA] and cs[SAME] and cs[BEF] and cs[AFT]:
       return False #Because additional HSR instead
     if wo == 'v-initial' and cs[EXTRA] and cs[SAME] and not cs[AFT]:
@@ -269,10 +269,6 @@ def additional_hcr_needed(cs,wo):
 def complementizer_comp_head_needed(wo,cs):
     if not wo in ['v-initial','vos','v-final']:
         return False
-     #Ccomp clause position is flexible
-    flex_cl = cs[EXTRA] and cs[SAME]
-    strict_ex = cs[EXTRA] and not cs[SAME]
-    comp_same = cs[BEF] and not cs[AFT]
     if wo in ['vos'] and cs[EXTRA] and cs[SAME] and cs[BEF] and not cs[AFT]:
       return False
     if wo  == 'v-initial' and cs[EXTRA] and not cs[AFT]:
@@ -285,15 +281,12 @@ def complementizer_comp_head_needed(wo,cs):
         return True
     return False
 
-
-
 def which_init(general, additional):
     supertype_gen = 'head-initial' if general.startswith(constants.HEAD_COMP) else 'head-final'
     supertype_add = 'head-initial' if additional.startswith(constants.HEAD_COMP) else 'head-final'
     init_general = '+' if supertype_gen == 'head-initial' else '-'
     init_add = '+' if supertype_add == 'head-initial' else '-'
     return (init_general,init_add)
-
 
 '''
 If an additional head-comp rule is needed, it may also need constraints
@@ -326,8 +319,6 @@ def constrain_head_comp_rules(mylang,rules,init,general,additional,cs,ch):
         if cs[EXTRA] and additional_hcr_needed(cs,wo):
                 mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
                 mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
-
-
 
 def constrain_head_comp_rules_headtype(mylang,rules,general,additional,cs,ch):
     wo = ch.get(constants.WORD_ORDER)
@@ -384,7 +375,7 @@ def enforce_low_subj(phrase_name,mylang):
 #TODO: This isn't really special cases. This is EXTRA feature handling,
 # plus adding SUBJ <> in some cases,
 # plus an actual special case(?) with complementizer.
-def handle_special_cases(additional, cs, general, mylang, rules, wo,is_more_flex):
+def add_special_complementizer_HCR(additional, cs, general, mylang, rules, wo,is_more_flex):
     if complementizer_comp_head_needed(wo,cs) and not additional.startswith(constants.COMP_HEAD):
         # V-final and VOS will need and additional (to additional) HCR in some cases,
         # for the complementizer to be able to attach to an extraposed complement.
