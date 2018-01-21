@@ -105,20 +105,15 @@ def add_types_to_grammar(mylang,ch,rules,have_complementizer):
             if need_customize_hs(wo,cs):
                 constrain_head_subj_rules(cs,mylang,rules,ch)
             if extra:
-                constrain_for_extra(additional, cs, general, mylang, wo,typename)
+                constrain_for_extra(additional, cs, general, mylang, wo)
         elif wo == 'free':
             constrain_complementizer(wo,cs,mylang,typename)
 
 
-def constrain_for_extra(additional, cs, general, mylang, wo, comptype):
+def constrain_for_extra(additional, cs, general, mylang, wo):
     if cs[EXTRA] and additional_hcr_needed(cs, wo):
         mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
         mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
-    if comptype:
-        if cs[EXTRA] and not cs[SAME]:
-            mylang.add(comptype + ':= [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA + ] > ].',merge=True)
-        elif cs[SAME] and not cs[EXTRA]:
-            mylang.add(comptype + ':= [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA - ] > ].',merge=True)
 
 
 def is_more_flexible_order(wo,ccs):
@@ -197,6 +192,10 @@ def add_complementizer_subtype(cs, mylang,ch):
     constrain_for_features(typename,cs,mylang,'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.',ch,is_nominalized_complement(cs))
     if cs['cformvalue']:
         constrain_lexitem_for_feature(typename,'SYNSEM.LOCAL.CAT.HEAD','FORM',cs['cformvalue'],mylang)
+    if cs[EXTRA] and not cs[SAME]:
+        mylang.add(typename + ':= [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA + ] > ].',merge=True)
+    elif cs[SAME] and not cs[EXTRA]:
+        mylang.add(typename + ':= [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.EXTRA - ] > ].',merge=True)
     return typename
 
 '''
