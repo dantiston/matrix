@@ -294,14 +294,11 @@ def additional_hcr_needed(cs,wo):
 def complementizer_comp_head_needed(wo,cs):
      #Ccomp clause position is flexible
     flex_cl = cs[EXTRA] and cs[SAME]
-    #Complementizer position is flexible
-    flex_comp = cs[BEF] and cs[AFT]
-    fully_flex = flex_cl and flex_comp
-    if wo in ['vos'] and flex_cl and flex_comp:
+    if wo in ['vos'] and cs[EXTRA] and cs[SAME] and cs[BEF] and not cs[AFT]:
       return False
     if wo  == 'v-initial' and cs[EXTRA] and not cs[AFT]:
         return False
-    if wo == 'vos' and cs[EXTRA] and cs[AFT]: #and not fully_flex:
+    if wo == 'vos' and cs[EXTRA] and cs[AFT]: 
         return True
     if wo == 'v-final' and cs[EXTRA] and not cs[SAME] and cs[AFT]:
         return True
