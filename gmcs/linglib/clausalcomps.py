@@ -191,7 +191,7 @@ def use_init(ch, mylang, wo):
     is_flex = is_more_flexible_order(ch)
     if wo in OV or wo in VO or wo == 'free':
         for cs in ch.get(COMPS):
-            init = init_needed(ch.get(constants.WORD_ORDER), cs, mylang, is_flex)
+            init = init_needed(wo, cs, mylang, is_flex)
             if init:
                 break
     return init
@@ -229,7 +229,7 @@ def customize_order(ch, cs, mylang, rules, typename, init, general, additional,e
     init_gen, init_add = which_init(general,additional)
     constrain_lex_items(ch,cs,typename,init_add,init_gen,mylang,init,extra)
     if need_customize_hc(wo,cs):
-        if additional_needed(cs,wo):
+        if additional_hcr_needed(cs,wo):
             constrain_head_comp_rules(mylang,rules,init,general,additional,cs,ch)
         handle_special_cases(additional, cs, general, mylang, rules, wo,is_more_flexible_order(ch))
     if need_customize_hs(wo,cs):
@@ -239,7 +239,7 @@ def customize_order_using_headtypes(ch, cs, mylang, rules, typename, general, ad
     wo = ch.get(constants.WORD_ORDER)
     constrain_lex_items_using_headtypes(ch,cs,typename,mylang,extra)
     if need_customize_hc(wo,cs):
-        if additional_needed(cs,wo):
+        if additional_hcr_needed(cs,wo):
             constrain_head_comp_rules_headtype(mylang,rules,additional,cs,ch)
         handle_special_cases(additional, cs, general, mylang, rules, wo,is_more_flexible_order(ch))
     if need_customize_hs(wo,cs):
@@ -267,20 +267,47 @@ An additional HCR will *not* be needed if:
 The matrix order is VO and clausal complements are not extraposed,
 and there is not a complementizer or
 there is a complementizer but it can only use the normal HCR.
+Note that this relies that for some situations, complementizer_head_comp_needed
+will be called separately! (Which is bad of course and should be rewritten).
 '''
-def additional_needed(cs,wo):
-    if wo in ['vos'] and cs[EXTRA] \
-          and cs[SAME] and cs[BEF] and cs[AFT]:
-      return False
-    if wo == 'v-initial' and cs[SAME] and cs[EXTRA] and not cs[AFT]:
-      return False
-    if wo == 'v-initial' and cs[SAME] and cs[BEF] and cs[AFT]:
-      return False
+def additional_hcr_needed(cs,wo):
+    #Ccomp clause position is flexible
+    flex_cl = cs[EXTRA] and cs[SAME]
+    #Complementizer position is flexible
+    flex_comp = cs[BEF] and cs[AFT]
+    if wo in ['vos'] and flex_cl and flex_comp:
+      return False #Because additional HSR instead
+    if wo == 'v-initial' and flex_cl and not cs[AFT]:
+      return False #Because additional HSR instead
+    if wo == 'v-initial' and cs[SAME] and flex_comp:
+      return False #Because additional HSR instead
     if wo in OV and not cs[EXTRA] and not cs[BEF]:
         return False
     if wo in VO and not cs[EXTRA] and not cs[AFT]:
         return False
     return True
+
+#This assumes WO is in ['v-initial','vos','v-final'].
+# This is an interesting function which should ideally be merged with
+# additional_hcr_needed somehow, in the higher logic of the library.
+# I think additional HEAD comp HCR is needed only in a couple cases.
+def complementizer_comp_head_needed(wo,cs):
+     #Ccomp clause position is flexible
+    flex_cl = cs[EXTRA] and cs[SAME]
+    #Complementizer position is flexible
+    flex_comp = cs[BEF] and cs[AFT]
+    #if wo in ['vos'] and flex_cl and flex_comp:
+    #  return False
+    #if wo  == 'v-initial' and cs[EXTRA] and not cs[AFT]:
+    #    return False
+    #if wo == 'vos' and cs[EXTRA] and cs[AFT]:
+    #    return True
+    if wo == 'v-final' and cs[EXTRA] and not cs[SAME] and cs[AFT]:
+        return True
+    if not wo == 'v-final' and cs[SAME] and cs[COMP] and (cs[EXTRA] or cs[AFT]):
+        return True
+    return False
+
 
 
 def which_init(general, additional):
@@ -309,8 +336,7 @@ def constrain_head_comp_rules(mylang,rules,init,general,additional,cs,ch):
         if not cs[SAME]:
             mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.NMZ - ].')
     if init:
-        mylang.add(additional +
-                   '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + init_add + ' ].',
+        mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + init_add + ' ].',
                    merge=True)
         mylang.add(general + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + init_gen + ' ].',
                    merge=True)
@@ -356,13 +382,13 @@ def constrain_for_features(typename,choice,mylang,path_prefix,ch,is_nmz):
 def handle_special_cases(additional, cs, general, mylang, rules, wo,is_more_flex):
     if ((wo in ['ovs', 'osv', 'v-initial','vos','v-final']) and cs[EXTRA]) \
             or (wo in ['v-initial','vos'] and cs[AFT]):
-        if additional_needed(cs,wo):
+        if additional_hcr_needed(cs,wo):
             if not (wo in ['v-initial','vos'] and additional.startswith(constants.COMP_HEAD)):
                 mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < > ].',
                        section='phrases',merge=True)
     if wo in ['v-initial','vos','v-final']:
         if cs[EXTRA]:
-            if additional_needed(cs,wo):
+            if additional_hcr_needed(cs,wo):
                 mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
                 mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
         if complementizer_comp_head_needed(wo,cs) and not additional.startswith(constants.COMP_HEAD):
@@ -382,22 +408,6 @@ def handle_special_cases(additional, cs, general, mylang, rules, wo,is_more_flex
                 mylang.add(name + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].',
                            merge=True)
             rules.add(name + ' := ' + name + '-phrase.')
-
-#This assumes WO is in ['v-initial','vos','v-final'].
-def complementizer_comp_head_needed(wo,cs):
-    if wo in ['vos'] and cs[EXTRA] and cs[SAME] and cs[BEF] and not cs[AFT]:
-      return False
-    if wo  == 'v-initial' and cs[EXTRA] and not cs[AFT]:
-        return False
-    if wo == 'vos' and cs[EXTRA] and cs[AFT]:
-        return True
-    if wo == 'v-final' and cs[EXTRA] and not cs[SAME] and cs[AFT]:
-        return True
-    if not wo == 'v-final' and cs[SAME] and cs[COMP] and (cs[EXTRA] or cs[AFT]):
-        return True
-    return False
-
-
 
 def determine_clausal_verb_comp_head(cs):
     head = ''
