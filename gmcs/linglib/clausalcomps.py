@@ -104,6 +104,10 @@ def add_types_to_grammar(mylang,ch,rules,have_complementizer):
                 customize_order(ch, cs, mylang, rules, typename, init,general,additional,extra)
             if need_customize_hs(wo,cs):
                 constrain_head_subj_rules(cs,mylang,rules,ch)
+            if wo in ['v-initial','vos','v-final']:
+                if cs[EXTRA] and additional_hcr_needed(cs,wo):
+                        mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
+                        mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
         elif wo == 'free':
             constrain_complementizer(wo,cs,mylang,typename)
 
@@ -210,8 +214,6 @@ def customize_order(ch, cs, mylang, rules, typename, init, general, additional,e
         if additional_hcr_needed(cs,wo):
             constrain_head_comp_rules(mylang,rules,init,general,additional,cs,ch)
         add_special_complementizer_HCR(additional, cs, general, mylang, rules, wo,is_flex)
-    #if need_customize_hs(wo,cs):
-    #    constrain_head_subj_rules(cs,mylang,rules,ch)
 
 def customize_order_using_headtypes(ch, cs, mylang, rules, typename, general, additional,extra):
     wo = ch.get(constants.WORD_ORDER)
@@ -221,8 +223,6 @@ def customize_order_using_headtypes(ch, cs, mylang, rules, typename, general, ad
         if additional_hcr_needed(cs,wo):
             constrain_head_comp_rules_headtype(mylang,rules,general,additional,cs,ch)
         add_special_complementizer_HCR(additional, cs, general, mylang, rules, wo, is_flex)
-    #if need_customize_hs(wo,cs):
-    #    constrain_head_subj_rules(cs,mylang,rules,ch)
 
 
 def need_customize_hc(wo,cs):
@@ -315,10 +315,10 @@ def constrain_head_comp_rules(mylang,rules,init,general,additional,cs,ch):
                            'NON-HEAD-DTR.SYNSEM.',ch,is_nominalized_complement(cs))
     if need_low_subj_attachment(wo,cs,additional):
             enforce_low_subj(additional,mylang)
-    if wo in ['v-initial','vos','v-final']:
-        if cs[EXTRA] and additional_hcr_needed(cs,wo):
-                mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
-                mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
+    #if wo in ['v-initial','vos','v-final']:
+    #    if cs[EXTRA] and additional_hcr_needed(cs,wo):
+    #            mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
+    #            mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
 
 def constrain_head_comp_rules_headtype(mylang,rules,general,additional,cs,ch):
     wo = ch.get(constants.WORD_ORDER)
@@ -336,10 +336,10 @@ def constrain_head_comp_rules_headtype(mylang,rules,general,additional,cs,ch):
                            'NON-HEAD-DTR.SYNSEM.',ch,is_nominalized_complement(cs))
     if need_low_subj_attachment(wo,cs,additional):
             enforce_low_subj(additional,mylang)
-    if wo in ['v-initial','vos','v-final']:
-        if cs[EXTRA] and additional_hcr_needed(cs,wo):
-                mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
-                mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
+    #if wo in ['v-initial','vos','v-final']:
+    #    if cs[EXTRA] and additional_hcr_needed(cs,wo):
+    #            mylang.add(additional + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA + ].', merge=True)
+    #            mylang.add(general + '-phrase := [ NON-HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.EXTRA - ].', merge=True)
 
 def constrain_for_features(typename,choice,mylang,path_prefix,ch,is_nmz):
     for f in choice['feat']:
