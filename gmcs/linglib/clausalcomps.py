@@ -1,6 +1,7 @@
 from gmcs.utils import get_name
 
 from gmcs import constants
+from gmcs.linglib import lexbase
 
 ######################################################################
 # Clausal Complements
@@ -98,9 +99,6 @@ def add_types_to_grammar(mylang,ch,rules,have_complementizer):
         typename = add_complementizer_subtype(cs, mylang,ch,extra) if cs[COMP] else None
         if wo in OV or wo in VO:
             general, additional = determine_head_comp_rule_type(ch.get(constants.WORD_ORDER),cs)
-            #if is_more_flexible_order(wo,cs) and not init:
-            #    customize_order_using_headtypes(ch, cs, mylang, rules, typename, general,additional)
-            #else:
             customize_order(ch, cs, mylang, rules, typename, init,general,additional)
             if need_customize_hs(wo,cs):
                 constrain_head_subj_rules(cs,mylang,rules,ch)
@@ -226,20 +224,10 @@ def customize_order(ch, cs, mylang, rules, typename, init, general, additional):
     if need_customize_hc(wo,cs):
         if additional_hcr_needed(cs,wo):
             if is_flex and not init:
-                constrain_head_comp_rules_headtype(mylang,rules,general,additional,cs,ch)
+                constrain_head_comp_rules_headtype(mylang,rules,additional,cs,ch)
             else:
                 constrain_head_comp_rules(mylang,rules,init,general,additional,cs,ch)
         add_special_complementizer_HCR(additional, cs, general, mylang, rules, wo,is_flex)
-
-def customize_order_using_headtypes(ch, cs, mylang, rules, typename, general, additional):
-    wo = ch.get(constants.WORD_ORDER)
-    is_flex = is_more_flexible_order(wo,cs)
-    constrain_lex_items_using_headtypes(ch,cs,typename,mylang)
-    if need_customize_hc(wo,cs):
-        if additional_hcr_needed(cs,wo):
-            constrain_head_comp_rules_headtype(mylang,rules,general,additional,cs,ch)
-        add_special_complementizer_HCR(additional, cs, general, mylang, rules, wo, is_flex)
-
 
 def need_customize_hc(wo,cs):
     return (wo in ['vos', 'v-initial', 'sov', 'v-final', 'osv', 'ovs'] and cs[EXTRA]) \
@@ -332,7 +320,7 @@ def constrain_head_comp_rules(mylang,rules,init,general,additional,cs,ch):
     if need_low_subj_attachment(wo,cs,additional):
             enforce_low_subj(additional,mylang)
 
-def constrain_head_comp_rules_headtype(mylang,rules,general,additional,cs,ch):
+def constrain_head_comp_rules_headtype(mylang,rules,additional,cs,ch):
     wo = ch.get(constants.WORD_ORDER)
     supertype = 'head-initial' if additional.startswith(constants.HEAD_COMP) else 'head-final'
     head = determine_head(ch.get(constants.WORD_ORDER),cs)
@@ -461,9 +449,10 @@ def constrain_lex_items(ch,cs,comptype, init_value, default_init_value,mylang,in
                 constrain_lexitem_for_feature(clausalverb,path,'INIT',init_value,mylang)
             elif cs[SAME] and not cs[EXTRA]:
                 constrain_lexitem_for_feature(clausalverb,path,'INIT',default_init_value,mylang)
-        for pos in ['transitive-verb','aux','det','cop']:
-            if ch.get(pos) or pos in ['transitive-verb']:
-                mylang.add(pos + '-lex := [ ' + path + '.INIT ' + default_init_value + ' ].'
+        for pos in ['tverb','aux','det','cop']:
+            if ch.get(pos) or pos in ['tverb']:
+                name = lexbase.LEXICAL_SUPERTYPES[pos]
+                mylang.add(name + ' := [ ' + path + '.INIT ' + default_init_value + ' ].'
                         , merge=True)
     if comptype and nominalized_comps(ch) and not is_nominalized_complement(cs):
         mylang.add(comptype + ':= [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.NMZ - ] > ].',merge=True)
