@@ -13,7 +13,6 @@
 # imports
 
 import os
-import cgi
 import cgitb
 import glob
 import re
@@ -33,8 +32,7 @@ from collections import defaultdict
 # HTML blocks, used to create web pages
 
 def dummy():
-    pass # let emacs know the indentation is 2 spaces
-
+    pass # let emacs know the indentation is 2 spaces 
 
 HTTP_header = 'Content-type: text/html;charset=UTF-8'
 
@@ -859,7 +857,7 @@ class MatrixDefFile:
                 if len(word) > 3:
                     items = [(k, v.get(word[3])) for (k, v) in items]
                 html += HTML_jscache % (cache_name,
-                                        '\n'.join(["'" + ':'.join((v, k)) + "',"
+                                        '\n'.join(["\"" + ':'.join((v, k)) + "\","
                                                    for (k, v) in items]))
             elif word[0] == 'Label':
                 if len(word) > 2:
@@ -971,8 +969,6 @@ class MatrixDefFile:
                 # probably by calling it incorrectly, but the check should not hurt.
                 while i < len(lines)-1 and lines[i].strip().startswith('fill'):
                     word = tokenize_def(replace_vars(lines[i], vars))
-                    # arguments are labeled like p=pattern, l(literal_feature)=1,
-                    # n(nameOnly)=1, c=cat
                     #note: possible cat values are "noun", "verb" or "both"
                     argstring = ','.join(['true' if a in ('n', 'l') else "'%s'" % x
                                           for (a, x) in [w.split('=') for w in word[1:]]])
@@ -1236,20 +1232,14 @@ class MatrixDefFile:
     # Create and print the matrix subpage for the specified section
     # based on the arguments, which are the name of the section and
     # a cookie that determines where to look for the choices file
-    def sub_page(self, section, cookie, vr,ch=None):
+    def sub_page(self, section, cookie, vr):
         print HTTP_header + '\n'
         print HTML_pretitle
         if section == 'lexicon':
             print "<script type='text/javascript' src='web/draw.js'></script>"
 
-        if cookie:
-            choices_file = 'sessions/' + cookie + '/choices'
-            choices = ChoicesFile(choices_file)
-        else:
-            if ch:
-                choices = ch
-            else:
-                raise Exception('Calling deffile.sub_page without a cookie and without an explicit choices object')
+        choices_file = 'sessions/' + cookie + '/choices'
+        choices = ChoicesFile(choices_file)
 
         section_begin = -1
         section_end = -1

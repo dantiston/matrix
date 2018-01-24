@@ -557,6 +557,7 @@ def customize_matrix(path, arch_type, destination=None, force_dest=False):
     # init_form_hierarchy()
     verbal_features.init_verbal_hierarchies(ch, hierarchies)
 
+    customize_punctuation(grammar_path)
 
     #Integrate choices related to lexical entries imported from
     #Toolbox lexicon file(s), if any.  NOTE: This needs to be called
@@ -617,7 +618,7 @@ def customize_matrix(path, arch_type, destination=None, force_dest=False):
     yes_no_questions.customize_yesno_questions(mylang, ch, rules, lrules, hierarchies)
     clausalmods.customize_clausalmods(mylang, ch, lexicon, rules, roots)
     clausalcomps.customize_clausalcomps(mylang,ch,lexicon,rules)
-    customize_punctuation(grammar_path)
+    #customize_punctuation(grammar_path)
     customize_test_sentences(grammar_path)
     customize_itsdb(grammar_path)
     customize_script(grammar_path)
