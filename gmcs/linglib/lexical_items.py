@@ -35,6 +35,10 @@ def det_id(item):
     """Return the identifier for a determiner lexical item."""
     return get_name(item) + '-determiner-lex'
 
+def adp_id(item):
+    """Return the identifier for an adposition lexical item."""
+    return get_name(item) + '-adp-lex'
+
 
 ##########################################################
 # insert_ids()
@@ -293,6 +297,9 @@ def customize_verbs(mylang, ch, lexicon, hierarchies):
     for verb in ch.get('verb',[]):
         create_verb_lex_type(cases, ch, hierarchies, lexicon, mylang, verb)
 
+
+
+
 def create_verb_lex_type(cases, ch, hierarchies, lexicon, mylang, verb):
     stypes = verb.get('supertypes').split(', ')
     stype_names = [verb_id(ch[st]) for st in stypes if st != '']
@@ -314,6 +321,7 @@ def create_verb_lex_type(cases, ch, hierarchies, lexicon, mylang, verb):
     for stem in stems:
         add_stem_to_lexicon(lexicon, stem, vtype)
 
+
 def add_stem_to_lexicon(lexicon, stem, vtype):
     orthstr = orth_encode(stem.get('orth'))
     pred = stem.get('pred')
@@ -323,6 +331,7 @@ def add_stem_to_lexicon(lexicon, stem, vtype):
                     [ STEM < "' + orthstr + '" >, \
                       SYNSEM.LKEYS.KEYREL.PRED "' + pred + '" ].'
     lexicon.add(typedef)
+
 
 def construct_supertype_names(cases, ch, stype_names, verb):
     val = verb.get('valence')
@@ -378,6 +387,7 @@ def main_or_verb(ch):
 
 
 def customize_determiners(mylang, ch, lexicon, hierarchies):
+
     # Lexical type for determiners, if the language has any:
     if ch.get('has-dets') == 'yes':
         comment = \
@@ -472,6 +482,59 @@ def customize_nouns(mylang, ch, lexicon, hierarchies):
                                       SUBJ < >, \
                                       SPEC < > ] ], \
              ARG-ST < #spr > ].'
+
+    # EKN 2017-12-18 In some languages, possessor nouns or 
+    # possessor-marking adpositions act as specifiers to nouns. 
+    # This checks to see which kinds of possessive strategies
+    # have been defined, and makes the head type of the noun-lex's
+    # SPR conditional on that. It also checks for cases where only 
+    # the possessum is marked, since in these cases, the possessor
+    # noun must have a non-empty SPEC list even though it has gone
+    # through no lexical rules.
+    
+    # Check all possessive strategies to see what combo of 
+    # strategies you have:
+    spec_strat=False #Does the strategy use the head-spec rule?
+    affixal_strat=False #Does the strategy include affixal poss markers?
+    nonaffixal_strat=False
+    possessor_mark=False
+    possessum_mark=False
+    for strat in ch.get('poss-strat',[]):
+        if strat.get('mod-spec')=='spec' and strat.get('mark-loc')!='neither':
+            spec_strat=True
+            if strat.get('mark-loc')=='possessor' or strat.get('mark-loc')=='both':
+                possessor_mark=True
+                if strat.get('possessor-type')=='affix':
+                    affixal_strat=True
+                else:
+                    nonaffixal_strat=True
+            elif strat.get('mark-loc')=='possessum':
+                possessum_mark=True
+                if strat.get('possessum-type')=='affix':
+                    affixal_strat=True
+                if strat.get('possessum-type')=='non-affix':
+                    nonaffixal_strat=True
+
+    # Add a typedef that takes into account all strategies
+    if spec_strat:
+        if affixal_strat and nonaffixal_strat:
+            spr_head_type='+npd'
+        elif affixal_strat:
+            spr_head_type='+nd'            
+        elif nonaffixal_strat:
+            spr_head_type='+pd'            
+        if possessum_mark:
+            spec_constraint=''
+        else:
+            spec_constraint=',\
+                             SPEC <>'
+        typedef= \
+        'noun-lex := basic-noun-lex & basic-one-arg & no-hcons-lex-item & \
+           [ SYNSEM.LOCAL [ CAT.VAL [ SPR < #spr & [ LOCAL.CAT.HEAD '+spr_head_type+' ] >,\
+                                      COMPS < >, \
+                                      SUBJ < > '+spec_constraint+' ] ], \
+             ARG-ST < #spr > ].'
+
     mylang.add(typedef)
 
     # Adding empty MOD on general definitiion for noun-lex
