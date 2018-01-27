@@ -90,7 +90,8 @@ LOW_NMZ = 'low-nominalization-lex-rule := cat-change-with-ccont-lex-rule &\
 	            HCONS <! qeq &\
 		        [ HARG #arg1,\
 		      LARG #larg ] !>,\
-	            HOOK [ INDEX #arg0,\
+	            HOOK [ XARG #xarg,\
+	                    INDEX #arg0,\
 		        LTOP #ltop ]],\
                 DTR.SYNSEM.LOCAL [ CAT [ HEAD [ MOD #mod ],\
 			     VAL [ SUBJ < [ LOCAL [ CONT.HOOK.INDEX #subj ] ] >,\
@@ -99,7 +100,8 @@ LOW_NMZ = 'low-nominalization-lex-rule := cat-change-with-ccont-lex-rule &\
 			     MKG #mkg,\
 			     HC-LIGHT #hc-light,\
 			     POSTHEAD #posthead ],\
-		       CONT.HOOK [ LTOP #larg ]]].'
+		       CONT.HOOK [ XARG #xarg,\
+		                LTOP #larg ]]].'
 
 
 # A rule that allows case change on both subject and object and requires that there is an object.
@@ -135,7 +137,7 @@ LOW_LEXRULE_SUBJ_ID_COMPS_ID = 'low-nmz-subjid-compsid-lex-rule := low-nominaliz
 
 #A non-branching rule for nominalized clauses to form a NP, with nominalized_rel for the MRS.
 # For high nominalization.
-NMZ_CLAUSE = '-nominalized-clause-phrase := basic-unary-phrase &\
+NMZ_CLAUSE = '-nominalized-clause-phrase := unary-phrase &\
                                     [ SYNSEM.LOCAL.CAT [ HEAD noun &\
                                                 [ NMZ + ],\
             		                VAL [ SPR < [ OPT + ] >,\
@@ -149,7 +151,8 @@ NMZ_CLAUSE = '-nominalized-clause-phrase := basic-unary-phrase &\
             	                    HCONS <! qeq &\
                 		            [ HARG #arg1,\
             	    	            LARG #larg ] !>,\
-            	                    HOOK [ INDEX #arg0,\
+            	                    HOOK [ XARG #xarg,\
+            	                        INDEX #arg0,\
             		                LTOP #ltop ]],\
                                     ARGS < [ SYNSEM [ LOCAL [ CAT [ HEAD verb &\
             					     [ NMZ + ],\
@@ -157,10 +160,11 @@ NMZ_CLAUSE = '-nominalized-clause-phrase := basic-unary-phrase &\
             	    				  SUBJ < #subj >,\
             		    			  SPR < >,\
             			    		  SPEC < > ]],\
-            			            CONT.HOOK [ LTOP #larg ]]]] > ].'
+            			            CONT.HOOK [ XARG #xarg,\
+            			                LTOP #larg ]]]] > ].'
 
 #A non-branching rule for nominalized clauses to form a NP, semantically emtpy.
-NO_REL_NLZ_CLAUSE = '-no-rel-nominalized-clause-phrase := basic-unary-phrase &\
+NO_REL_NLZ_CLAUSE = '-no-rel-nominalized-clause-phrase := unary-phrase &\
   [ SYNSEM [ LOCAL.CAT [ HEAD noun &\
                             [ NMZ + ],\
                          VAL [ COMPS < >,\
@@ -169,18 +173,20 @@ NO_REL_NLZ_CLAUSE = '-no-rel-nominalized-clause-phrase := basic-unary-phrase &\
                                         SPEC < > ]]],\
     C-CONT [ RELS <! !>,\
 	     HCONS <! !>,\
-	     HOOK [ LTOP #ltop ] ],\
+	     HOOK [ XARG #xarg,\
+	            LTOP #ltop ] ],\
     ARGS < [ SYNSEM [ LOCAL [ CAT [ HEAD verb &\
                                        [ NMZ + ],\
                                   VAL [ COMPS < >,\
                                         SUBJ < >,\
                                         SPR < >,\
                                         SPEC < > ] ],\
-		CONT.HOOK [ LTOP #ltop ] ] ] ] > ].'
+		CONT.HOOK [ XARG #xarg,\
+		            LTOP #ltop ] ] ] ] > ].'
 
 #A non-branching rule for nominalized clauses to form a NP, with nominalized_rel for the MRS.
 # For middle nominalization.
-SUBJ_NMZ_CLAUSE = '-nominalized-clause-phrase := basic-unary-phrase &\
+SUBJ_NMZ_CLAUSE = '-nominalized-clause-phrase := unary-phrase &\
                           [ SYNSEM.LOCAL.CAT [ HEAD noun &\
                             [ NMZ + ],\
 		       VAL [ SPR < [ OPT + ] >,'\
@@ -194,7 +200,8 @@ SUBJ_NMZ_CLAUSE = '-nominalized-clause-phrase := basic-unary-phrase &\
 	     HCONS <! qeq &\
 		    [ HARG #arg1,\
 		      LARG #larg ] !>,\
-	     HOOK [ INDEX #arg0,\
+	     HOOK [ XARG #xarg,\
+	     INDEX #arg0,\
 		    LTOP #ltop ]],\
     ARGS < [ SYNSEM [ LOCAL [ CAT [ HEAD verb &\
 					 [ NMZ + ],\
@@ -202,7 +209,8 @@ SUBJ_NMZ_CLAUSE = '-nominalized-clause-phrase := basic-unary-phrase &\
 					  SUBJ < >,\
 					  SPR < >,\
 					  SPEC < > ]],\
-			      CONT.HOOK [ LTOP #larg ]]]] > ].'
+			      CONT.HOOK [ XARG #xarg,\
+			                LTOP #larg ]]]] > ].'
 
 def customize_nmcs(mylang, ch, rules):
     """
