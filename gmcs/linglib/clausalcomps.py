@@ -1,5 +1,4 @@
 from gmcs.utils import get_name
-from gmcs.utils import TDLencode
 
 
 from gmcs import constants
@@ -76,7 +75,6 @@ def customize_clausalcomps(mylang,ch,lexicon,rules):
 def add_complementizers_to_lexicon(lexicon,ch):
     lexicon.add_literal(';;; Complementizers')
     have_comp = False
-    #seen = {}
     for comp_strategy in ch[COMPS]:
         id = comp_strategy.full_key
         stype = id + '-' + COMP_LEX_ITEM
@@ -191,8 +189,8 @@ def add_complementizer_supertype(mylang):
 
 def add_complementizer_subtype(cs, mylang,ch,extra):
     id = cs.full_key
-    #typename = id + '-' + COMP_LEX_ITEM
-    typename = list(cs.get('stem'))[0]['name'] # This is a hack until complementizers are proper POS
+    typename = id + '-' + COMP_LEX_ITEM
+    #typename = list(cs.get('stem'))[0]['name'] # This is a hack until complementizers are proper POS
     mylang.add(typename + ' := ' + COMP_LEX_ITEM + '.', section=COMPLEX)
     constrain_for_features(typename,cs,mylang,'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.',ch,is_nominalized_complement(cs))
     if cs['cformvalue']:
