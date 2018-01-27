@@ -191,7 +191,8 @@ def add_complementizer_supertype(mylang):
 
 def add_complementizer_subtype(cs, mylang,ch,extra):
     id = cs.full_key
-    typename = id + '-' + COMP_LEX_ITEM
+    #typename = id + '-' + COMP_LEX_ITEM
+    typename = list(cs.get('stem'))[0]['name'] # This is a hack until complementizers are proper POS
     mylang.add(typename + ' := ' + COMP_LEX_ITEM + '.', section=COMPLEX)
     constrain_for_features(typename,cs,mylang,'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.',ch,is_nominalized_complement(cs))
     if cs['cformvalue']:
