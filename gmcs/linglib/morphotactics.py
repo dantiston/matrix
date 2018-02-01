@@ -950,9 +950,12 @@ def basic_pc_validation(choices, pc, vr):
                'Each position class must have at least one input defined.')
     else:
         # All user-defined inputs must be defined
-        if any(inp not in choices and inp not in LEXICAL_SUPERTYPES
-               for inp in pc.get('inputs','').split(', ')):
-            vr.err(pc.full_key + '_inputs',
+        inputs = pc.get('inputs','').split(', ')
+        for inp in inputs:
+            if inp not in choices and inp not in LEXICAL_SUPERTYPES:
+        #if any(inp not in choices and inp not in LEXICAL_SUPERTYPES
+        #       for inp in inputs):
+                vr.err(pc.full_key + '_inputs',
                    'Every lexical type, lexical rule type, or position class ' + \
                    'that serves as the input to a position class must be ' + \
                    'defined somewhere in the questionnaire.')

@@ -1464,23 +1464,6 @@ def validate_clausalmods(ch, vr):
             mess = 'You must select a subordinator type.'
             vr.err(cms.full_key + '_subordinator', mess)
 
-######################################################################
-# Validation of clausal modifiers
-def validate_clausalmods(ch, vr):
-    """Check to see if the user completed the necessary portions of the
-       Clausal Modifiers page and check for unsupported combinations of choices"""
-    for cms in ch.get('cms'):
-        # First check the choices that are required for all clausal mod strategies
-        if not cms.get('position'):
-            mess = 'You must select a position for the clausal modifier.'
-            vr.err(cms.full_key + '_position', mess)
-        if not cms.get('modifier-attach'):
-            mess = 'You must select VP or S attachment for the clausal modifier.'
-            vr.err(cms.full_key + '_modifier-attach', mess)
-        if not cms.get('subordinator'):
-            mess = 'You must select a subordinator type.'
-            vr.err(cms.full_key + '_subordinator', mess)
-
         # Next check the choices required for free and pair subordinators
         if cms.get('subordinator') == 'free' or cms.get('subordinator') == 'pair':
             if not cms.get('subposition'):
@@ -1526,27 +1509,32 @@ def validate_clausalmods(ch, vr):
                 vr.warn(cms.full_key + '_subordinator', mess)
 
         # Check for unsupoorted combinations with nominalization
-        if cms.get('subordinaotor-type') == 'adverb':
-            for feat in cms.get('feat'):
-                if feat.get('name') == 'nominalization':
-                    mess = 'Nominalization is not supported of the adverb analysis.'
-                    vr.err(feat.full_key + '_name', mess)
-        for feat in cms.get('feat'):
-            if feat.get('name') == 'nominalization':
-                mess = 'If multiple nominalization strategies are allowed in the grammar,' +\
+	nominalized = False
+	for feat in cms.get('feat'):
+	    if feat.get('name') == 'nominalization':
+		nominalized = True
+	if nominalized == True:    
+            mess = 'If multiple nominalization strategies are allowed in the grammar,' +\
                         ' and clausal modifiers require nominalization, the produced grammar' +\
                         ' will allow any nominalinalization strategy for the clausal modifier strategy.'
-                vr.warn(feat.full_key + '_name', mess)
+            vr.warn(feat.full_key + '_name', mess)
+	    if cms.get('subordinaotor-type') == 'adverb':
+                mess = 'Nominalization is not supported of the adverb analysis.'
+                vr.err(cms.full_key + '_subordinator-type', mess)
+            for feat in cms.get('feat'):
+	        if feat.get('name') == 'mood' or feat.get('name') == 'aspect':
+	       	    mess = 'Aspect and mood are not present on nominal projections,' +\
+                        	' and therefore are not supported in connection with nominalization.'
+	            vr.err(feat.full_key + '_name', mess)
 
         # Check for unsupported features
         for feat in cms.get('feat'):
-            if feat.get('type') == 'index':
+            if feat.get('name') == 'index':
                 mess = 'Index besides aspect and mood are not supported at this time.'
-                vr.err(feat.full_key + '_type', mess)
+                vr.err(feat.full_key + '_name', mess)
             if feat.get('name') == 'situation':
                 mess = 'Situation aspect is not supported at this time.'
-                vr.err(feat.full_key + '_type', mess)
-
+                vr.err(feat.full_key + '_name', mess)
 
 
 ######################################################################
@@ -1797,4 +1785,5 @@ if __name__ == "__main__":
                 column += len(w) + 1
         print
     print
+
 
