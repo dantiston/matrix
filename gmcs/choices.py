@@ -579,7 +579,6 @@ class ChoicesFile:
             self.convert_30_to_31()
 
 
-
         # As we get more versions, add more version-conversion methods, and:
         # if self.version < N:
         #   self.convert_N-1_to_N

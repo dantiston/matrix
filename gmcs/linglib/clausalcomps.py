@@ -651,6 +651,9 @@ def validate(ch,vr):
         pass
     matches = {}
     wo = ch.get(constants.WORD_ORDER)
+    for v in ch.get('verb'):
+        if get_name(v) == 'clausal':
+            vr.err("The word 'clausal' is reserved; please use another name.")
     for ccs in ch.get(COMPS):
         if wo in ['free','v2']:
             vr.warn(ccs.full_key + '_'+ SAME,WO_WARNING)
