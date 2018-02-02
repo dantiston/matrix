@@ -33,7 +33,7 @@ LEXICAL_SUPERTYPES = {'noun':'noun-lex',
                       'det':'determiner-lex',
                       'aux':'aux-lex',
                       'adj':'adj-lex',
-                      'compl':'comp-lex'}
+                      'comp':'comp-lex'}
 
 ###############
 ### CLASSES ###
