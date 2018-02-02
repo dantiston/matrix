@@ -396,7 +396,7 @@ def determine_clausal_verb_comp_head(cs):
     head = ''
     if cs[COMP]:
         if cs[COMP] == 'oblig':
-            head = 'compl'
+            head = 'comp'
         elif cs[COMP] == 'opt':
             head = '+vc'
     else:
