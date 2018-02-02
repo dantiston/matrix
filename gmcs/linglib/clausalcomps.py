@@ -479,7 +479,7 @@ def determine_head(wo,cs):
             if cs[EXTRA]:
                 head = '+vc'
             elif cs[SAME]:
-                head = 'compl'
+                head = 'comp'
         elif cs[AFT]:
             if cs[EXTRA]:
                 head = 'verb'
@@ -488,7 +488,7 @@ def determine_head(wo,cs):
             if cs[EXTRA]:
                 head = '+vc'
             elif cs[SAME]:
-                head = 'compl'
+                head = 'comp'
         elif cs[BEF]:
             if cs[EXTRA]:
                 head = '+vc'
