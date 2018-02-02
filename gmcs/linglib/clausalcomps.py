@@ -25,7 +25,7 @@ COMPLEX = 'complex' # TDL file section name for complementizer lexical items
 COMP_LEX_ITEM = 'comp-lex-item'
 
 COMP_LEX_ITEM_DEF = COMP_LEX_ITEM + ' := raise-sem-lex-item & basic-one-arg &\
-      [ SYNSEM.LOCAL.CAT [ HEAD comp &\
+      [ SYNSEM.LOCAL.CAT [ HEAD compl &\
                                 [ MOD < > ],\
                            VAL [ SPR < >,\
                                  SUBJ < >,\
@@ -383,7 +383,7 @@ def add_special_complementizer_HCR(additional, cs, general, mylang, rules, wo,is
         name = 'comp-head' if not general == 'comp-head' else 'comp-head-compl'
         if is_more_flex:
             mylang.add(name + '-phrase := basic-head-1st-comp-phrase & head-final '\
-                   '& [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].',section='phrases')
+                   '& [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD compl ].',section='phrases')
         else:
             mylang.add(name + '-phrase := basic-head-1st-comp-phrase & head-final '\
                    '& [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT - ].',section='phrases')
@@ -396,7 +396,7 @@ def determine_clausal_verb_comp_head(cs):
     head = ''
     if cs[COMP]:
         if cs[COMP] == 'oblig':
-            head = 'comp'
+            head = 'compl'
         elif cs[COMP] == 'opt':
             head = '+vc'
     else:
@@ -407,7 +407,8 @@ def determine_clausal_verb_comp_head(cs):
 def find_clausalverb_typename(ch,cs):
     for v in ch.get(constants.VERB):
         if v.get(constants.VALENCE).endswith(cs.full_key):
-            return get_name(v) + '-verb-lex'
+            name = get_name(v) + '-verb-lex' if not get_name(v).endswith('-verb-lex') else get_name(v)
+            return name
 
 
 def constrain_transitive_verb(head,cs):
@@ -478,7 +479,7 @@ def determine_head(wo,cs):
             if cs[EXTRA]:
                 head = '+vc'
             elif cs[SAME]:
-                head = 'comp'
+                head = 'compl'
         elif cs[AFT]:
             if cs[EXTRA]:
                 head = 'verb'
@@ -487,7 +488,7 @@ def determine_head(wo,cs):
             if cs[EXTRA]:
                 head = '+vc'
             elif cs[SAME]:
-                head = 'comp'
+                head = 'compl'
         elif cs[BEF]:
             if cs[EXTRA]:
                 head = '+vc'
