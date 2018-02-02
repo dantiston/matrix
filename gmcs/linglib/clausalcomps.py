@@ -25,7 +25,7 @@ COMPLEX = 'complex' # TDL file section name for complementizer lexical items
 COMP_LEX_ITEM = 'comp-lex-item'
 
 COMP_LEX_ITEM_DEF = COMP_LEX_ITEM + ' := raise-sem-lex-item & basic-one-arg &\
-      [ SYNSEM.LOCAL.CAT [ HEAD compl &\
+      [ SYNSEM.LOCAL.CAT [ HEAD comp &\
                                 [ MOD < > ],\
                            VAL [ SPR < >,\
                                  SUBJ < >,\
@@ -383,7 +383,7 @@ def add_special_complementizer_HCR(additional, cs, general, mylang, rules, wo,is
         name = 'comp-head' if not general == 'comp-head' else 'comp-head-compl'
         if is_more_flex:
             mylang.add(name + '-phrase := basic-head-1st-comp-phrase & head-final '\
-                   '& [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD compl ].',section='phrases')
+                   '& [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD comp ].',section='phrases')
         else:
             mylang.add(name + '-phrase := basic-head-1st-comp-phrase & head-final '\
                    '& [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT - ].',section='phrases')
