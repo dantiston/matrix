@@ -623,7 +623,8 @@ def update_verb_lextype(ch,verb, vtype):
             head = determine_clausal_verb_comp_head(ccs)
     if suffix:
         name = vtype[0:vtype.find('verb-lex')-1]
-        rest = 'clausal-verb-lex'
+        #rest = 'clausal-verb-lex'
+        rest = 'verb-lex'
         vtype = name + '-' + rest
     return vtype,head
 
