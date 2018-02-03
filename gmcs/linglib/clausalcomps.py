@@ -89,6 +89,9 @@ def add_complementizers_to_lexicon(lexicon,ch):
             have_comp = True
     return have_comp
 
+'''
+general_head comes from the word order library
+'''
 def add_types_to_grammar(mylang,ch,rules,have_complementizer):
     if have_complementizer:
         mylang.set_section(COMPLEX)
@@ -129,6 +132,7 @@ def constrain_wrt_quest_part(cs,wo,ch,mylang,typename):
         constrain_lexitem_for_feature(typename,path,'INIT',default_init_val,mylang)
         mylang.add(my_phrase + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + default_init_val + ' ].',
                    merge=True,section='phrases')
+
         mylang.add(additional + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.INIT ' + init_val + ' ].',
                    merge=True,section='phrases')
         #quest_part_name = TDLencode(ch.get('q-part-orth'))

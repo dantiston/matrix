@@ -362,6 +362,7 @@ def specialize_word_order(hc,orders, mylang, ch, rules):
     auxcomp = ch.get('aux-comp')
     wo = ch.get('word-order')
     auxorder = ch.get('aux-comp-order')
+    compl_order = orders['compl_order']
 
     if ch.get('has-aux') == 'yes':
         vcluster = determine_vcluster(auxcomp, auxorder, wo, ch)
@@ -396,6 +397,8 @@ def specialize_word_order(hc,orders, mylang, ch, rules):
 
     # ASF: allowing for both prepositions and postpositions
     # if it is both HEADFINAL is used (for now) to register order of adposition
+    # OZ 2018-02-02 looks like there was already a HEADFINAL feature used similarly to INIT (see clausalcomps).
+    # They should probably be harmonized.
     if 'both' in adp:
         mylang.add('head-comp-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEADFINAL - ].')
         mylang.add('comp-head-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.HEADFINAL + ].')
@@ -519,9 +522,9 @@ def specialize_word_order(hc,orders, mylang, ch, rules):
         comp_head_is_not.append('adp')
     if adp == 'free-post' or adp == 'vo-post':
         head_comp_is_not.append('adp')
-    if qpart_order == 'free-qs' or qpart_order == 'ov-qs':
+    if (qpart_order == 'free-qs' or qpart_order == 'ov-qs') and not ('vo-vc' in compl_order or 'ov-vc' in compl_order):
         comp_head_is_not.append('comp')
-    if qpart_order == 'free-sq'or qpart_order == 'vo-sq':
+    if (qpart_order == 'free-sq'or qpart_order == 'vo-sq') and not ('ov-cv' in compl_order or 'vo-cv' in compl_order):
         head_comp_is_not.append('comp')
 
 
@@ -653,6 +656,7 @@ def specialize_word_order(hc,orders, mylang, ch, rules):
         mylang.add('comp-head-phrase := [ SYNSEM.LOCAL.CAT.HEAD ' + head + ' ].',
                    'The head of comp-head-phrase can\'t be: ' + str(comp_head_is_not))
 
+    return head
 
 # ERB 2006-10-05 Below is what I had before I had to generalize because
 # of addition of qpart_order.
@@ -806,6 +810,7 @@ def determine_consistent_order(wo,hc,ch):
     adp = 'easy'
     aux = 'easy'
     qpart_order = 'easy'
+    compl_order = []
 
     # Is the ordering of adpositions consistent with the ordering of O and V?
     # Assuming that adpositions are consistent within a language (i.e., you won't
@@ -871,6 +876,8 @@ def determine_consistent_order(wo,hc,ch):
     # to other kinds of head-comp?  I'm assuming for now that question particles
     # and other complementizers will behave the same way.  Are there languages
     # in which that is not true?
+    # OZ 2018-02-02 Aparently, there are, for example Dagaare (according to 567 students).
+    # So, need different complementizers behave differently (e.g. by using the INIT feature).
 
     if ch.get('q-part-order'):
         if wo == 'free':
@@ -883,8 +890,20 @@ def determine_consistent_order(wo,hc,ch):
         elif hc == 'head-comp' and ch.get('q-part-order') == 'after':
             qpart_order = 'vo-sq'
 
+    if ch.get('comps'):
+        for ccs in ch.get('comps'):
+            if hc == 'comp-head':
+                if ccs['comp-pos-before']:
+                    compl_order.append('ov-cv')
+                if ccs['comp-pos-after']:
+                    compl_order.append('ov-vc')
+            elif hc == 'head-comp':
+                if ccs['comp-pos-after']:
+                    compl_order.append('vo-vc')
+                if ccs['comp-pos-before']:
+                    compl_order.append('vo-cv')
             # return what we learned
 
-    return {'adp': adp, 'aux': aux, 'qpart_order': qpart_order} #TODO: verify key
+    return {'adp': adp, 'aux': aux, 'qpart_order': qpart_order, 'compl_order':compl_order} #TODO: verify key
 
 
