@@ -656,8 +656,6 @@ def specialize_word_order(hc,orders, mylang, ch, rules):
         mylang.add('comp-head-phrase := [ SYNSEM.LOCAL.CAT.HEAD ' + head + ' ].',
                    'The head of comp-head-phrase can\'t be: ' + str(comp_head_is_not))
 
-    return head
-
 # ERB 2006-10-05 Below is what I had before I had to generalize because
 # of addition of qpart_order.
 
