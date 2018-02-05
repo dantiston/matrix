@@ -1084,7 +1084,7 @@ def update_lex_items_vcluster(ch, mylang):
             if cms.get('subordinator-type') == 'head':
                 mylang.add('adposition-subord-lex-item := [ SYNSEM.LOCAL.CAT.VC - ].', merge=True, section='subordlex')
     if 'comps' in ch:
-        mylang.add('comp-lex-item := [ SYNSEM.LOCAL.CAT.VC - ].', merge=True, section='complex')
+        mylang.add('complementizer-lex-item := [ SYNSEM.LOCAL.CAT.VC - ].', merge=True, section='complex')
     if 'has-adj' in ch:
         mylang.add('adj-lex := [ SYNSEM.LOCAL.CAT.VC - ].', merge=True, section='adjlex')
 
