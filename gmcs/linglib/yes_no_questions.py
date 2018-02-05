@@ -131,7 +131,8 @@ def customize_yesno_questions(mylang, ch, rules, lrules, hierarchies):
         comment = 'Subtype for question particles. Constrains SF to ques.'
         typedef = '''
       qpart-lex-item := complementizer-lex-item &
-         [ SYNSEM.LOCAL [ CAT.MC +, CONT.HOOK.INDEX.SF ques ] ].'''
+         [ SYNSEM.LOCAL [ CONT.HOOK.INDEX.SF ques ],
+                          CAT.VAL.COMPS < [ LOCAL.CAT.MC + ] > ].'''
         mylang.add(typedef, comment, section='complex')
 
         # ERB 2010-04-15 If we have a finite/non-finite distinction in the
