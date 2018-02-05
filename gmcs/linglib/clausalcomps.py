@@ -22,7 +22,7 @@ AFT = 'comp-pos-after' # Choice name for complementizer attaching after embedded
 
 COMPLEX = 'complex' # TDL file section name for complementizer lexical items
 
-COMP_LEX_ITEM = 'complemetizer-lex-item'
+COMP_LEX_ITEM = 'complementizer-lex-item'
 
 COMP_LEX_ITEM_DEF = COMP_LEX_ITEM + ' := raise-sem-lex-item & basic-one-arg &\
       [ SYNSEM.LOCAL.CAT [ HEAD comp &\
