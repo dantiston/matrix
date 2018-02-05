@@ -1,8 +1,0 @@
-1 noun1 tverb noun2 1 17
-2 *noun1 noun2 tverb 0 11
-3 cverb noun1 noun2 tverb noun3 comp1 1 34
-4 noun2 tverb noun3 comp1 cverb noun1 1 34
-
-;;; Total CPU time: 9 msecs
-;;; Mean edges: 24.00
-;;; Mean parses: 0.75

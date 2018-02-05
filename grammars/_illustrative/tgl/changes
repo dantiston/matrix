@@ -1,3 +1,0 @@
-1. absolutely no additional head-comp rule for tgl :)
-2. clausal verb head value messed up! need adp head in case of tgl, or +np. Get noun & +np for some buggy reason.
-3. Was creating a rouge additional rule for complementizer attaching after the clause when not needed.

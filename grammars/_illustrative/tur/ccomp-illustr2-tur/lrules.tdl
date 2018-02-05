@@ -1,6 +1,0 @@
-;;; -*- Mode: TDL; Coding: utf-8 -*-
-nom4-lex := nom4-lex-rule.
-
-3sg-lex := 3sg-lex-rule.
-
-subj-lex := subj-lex-rule.

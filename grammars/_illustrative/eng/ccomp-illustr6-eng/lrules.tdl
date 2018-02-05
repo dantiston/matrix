@@ -1,4 +1,0 @@
-;;; -*- Mode: TDL; Coding: utf-8 -*-
-nom-acc-lex := nom-acc-lex-rule.
-
-case-synth-genitive-lex := case-synth-genitive-lex-rule.
