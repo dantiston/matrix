@@ -22,7 +22,7 @@ AFT = 'comp-pos-after' # Choice name for complementizer attaching after embedded
 
 COMPLEX = 'complex' # TDL file section name for complementizer lexical items
 
-COMP_LEX_ITEM = 'comp-lex-item'
+COMP_LEX_ITEM = 'complemetizer-lex-item'
 
 COMP_LEX_ITEM_DEF = COMP_LEX_ITEM + ' := raise-sem-lex-item & basic-one-arg &\
       [ SYNSEM.LOCAL.CAT [ HEAD comp &\
@@ -214,7 +214,7 @@ def use_init(ch, mylang, wo):
     return init
 
 def add_complementizer_supertype(mylang):
-    mylang.add(COMP_LEX_ITEM_DEF, section=COMPLEX)
+    mylang.add(COMP_LEX_ITEM_DEF, section=COMPLEX,merge=True)
 
 def add_complementizer_subtype(cs, mylang,ch,extra):
     id = cs.full_key
