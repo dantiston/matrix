@@ -15,7 +15,6 @@ from gmcs.linglib.lexicon import get_all_supertypes
 from gmcs.linglib.clausalmods import get_subord_stemids
 from gmcs.linglib.clausalmods import add_subord_name
 
-
 # helper functions
 def verb_id(item):
     """Return the identifier for a verb lexical item."""
