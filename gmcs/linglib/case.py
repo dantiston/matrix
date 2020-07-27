@@ -16,57 +16,57 @@ from gmcs.utils import get_name
 #     [canonical name, friendly name, abbreviation]
 def case_names(ch):
     # first, make two lists: the canonical and user-provided case names
-    cm = ch.get('case-marking')
+    cm = ch.get('case.case-marking')
     canon = []
     user = []
     if cm == 'nom-acc':
         canon.append('nom')
-        user.append(ch[cm + '-nom-case-name'])
+        user.append(ch[f'case.{cm}-nom-case-name'])
         canon.append('acc')
-        user.append(ch[cm + '-acc-case-name'])
+        user.append(ch[f'case.{cm}-acc-case-name'])
     elif cm == 'erg-abs':
         canon.append('erg')
-        user.append(ch[cm + '-erg-case-name'])
+        user.append(ch[f'case.{cm}-erg-case-name'])
         canon.append('abs')
-        user.append(ch[cm + '-abs-case-name'])
+        user.append(ch[f'case.{cm}-abs-case-name'])
     elif cm == 'tripartite':
         canon.append('s_case')
-        user.append(ch[cm + '-s-case-name'])
+        user.append(ch[f'case.{cm}-s-case-name'])
         canon.append('a_case')
-        user.append(ch[cm + '-a-case-name'])
+        user.append(ch[f'case.{cm}-a-case-name'])
         canon.append('o_case')
-        user.append(ch[cm + '-o-case-name'])
+        user.append(ch[f'case.{cm}-o-case-name'])
     elif cm in ['split-s']:
         canon.append('a_case')
-        user.append(ch[cm + '-a-case-name'])
+        user.append(ch[f'case.{cm}-a-case-name'])
         canon.append('o_case')
-        user.append(ch[cm + '-o-case-name'])
+        user.append(ch[f'case.{cm}-o-case-name'])
     elif cm in ['fluid-s']:
         canon.append('a_case+o_case')
         user.append('fluid')
         canon.append('a_case')
-        user.append(ch[cm + '-a-case-name'])
+        user.append(ch[f'case.{cm}-a-case-name'])
         canon.append('o_case')
-        user.append(ch[cm + '-o-case-name'])
+        user.append(ch[f'case.{cm}-o-case-name'])
     elif cm in ['split-n', 'split-v']:
         canon.append('nom')
-        user.append(ch[cm + '-nom-case-name'])
+        user.append(ch[f'case.{cm}-nom-case-name'])
         canon.append('acc')
-        user.append(ch[cm + '-acc-case-name'])
+        user.append(ch[f'case.{cm}-acc-case-name'])
         canon.append('erg')
-        user.append(ch[cm + '-erg-case-name'])
+        user.append(ch[f'case.{cm}-erg-case-name'])
         canon.append('abs')
-        user.append(ch[cm + '-abs-case-name'])
+        user.append(ch[f'case.{cm}-abs-case-name'])
     elif cm in ['focus']:
         canon.append('focus')
-        user.append(ch[cm + '-focus-case-name'])
+        user.append(ch[f'case.{cm}-focus-case-name'])
         canon.append('a_case')
-        user.append(ch[cm + '-a-case-name'])
+        user.append(ch[f'case.{cm}-a-case-name'])
         canon.append('o_case')
-        user.append(ch[cm + '-o-case-name'])
+        user.append(ch[f'case.{cm}-o-case-name'])
 
     # fill in any additional cases the user has specified
-    for case in ch.get('case'):
+    for case in ch.get('case.case', ()):
         canon.append(case['name'])
         user.append(case['name'])
 

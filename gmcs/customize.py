@@ -457,7 +457,7 @@ def customize_matrix(path, arch_type, destination=None, force_dest=False):
     # from pprint import pprint
     # pprint(ch._root)
 
-    language = ch['general.language']
+    language = ch.get('general.language', '')
 
     if force_dest:
         grammar_path = destination
