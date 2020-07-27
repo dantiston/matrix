@@ -4,51 +4,46 @@
 ######################################################################
 # imports
 
-import os
-import datetime
-import shutil
-from . import tdl
-#import tarfile
-#import gzip
-#import zipfile
-import sys
-#import re
 import codecs
+import datetime
+import os
+import shutil
+import sys
+
 from subprocess import call
 
 from delphin import tsdb
+from delphin_choices.choices import Choices
 
-from gmcs.choices import ChoicesFile
-#from gmcs.utils import TDLencode
-#from gmcs.utils import get_name
+from gmcs import tdl
+
+# from gmcs.choices import ChoicesFile
 from gmcs.utils import format_comment_block
 
-#from gmcs.lib import TDLHierarchy
-
-from gmcs.linglib import morphotactics
-from gmcs.linglib import information_structure
-from gmcs.linglib import argument_optionality
-from gmcs.linglib import direct_inverse
-from gmcs.linglib import case
-from gmcs.linglib import word_order
-from gmcs.linglib import features
-from gmcs.linglib import lexical_items
-from gmcs.linglib import agreement_features
 from gmcs.linglib import adnominal_possession
-from gmcs.linglib import verbal_features
-from gmcs.linglib import negation
+from gmcs.linglib import agreement_features
+from gmcs.linglib import argument_optionality
+from gmcs.linglib import case
+from gmcs.linglib import clausalcomps
+from gmcs.linglib import clausalmods
 from gmcs.linglib import coordination
-from gmcs.linglib import yes_no_questions
+from gmcs.linglib import direct_inverse
+from gmcs.linglib import features
+from gmcs.linglib import information_structure
+from gmcs.linglib import lexical_items
+from gmcs.linglib import morphotactics
+from gmcs.linglib import negation
+from gmcs.linglib import nominalized_clauses
 from gmcs.linglib import toolboximport
 from gmcs.linglib import valence_change
-from gmcs.linglib import clausalmods
-from gmcs.linglib import nominalized_clauses
-from gmcs.linglib import clausalcomps
+from gmcs.linglib import verbal_features
+from gmcs.linglib import word_order
+from gmcs.linglib import yes_no_questions
 
 ######################################################################
 # globals
 
-ch = {}
+# ch = {}
 
 hierarchies = {}
 
@@ -71,8 +66,6 @@ vpm = None
 
 # ERB 2006-10-15 I want this function to return true if an auxiliary is
 # defined, even if it's not needed for negation or questions.
-
-
 
 ####def irule_name(type_name):
 ####  return re.sub('\s+', '_', type_name)
@@ -101,7 +94,7 @@ vpm = None
 # customize_punctuation(grammar_path)
 #   Determine which punctuation characters to ignore in parsing
 
-def customize_punctuation(grammar_path):
+def customize_punctuation(ch, grammar_path):
     '''sets up repp preprocessing for lkb according to one of
        three choices on the questionnaire.  '''
     # TODO: pet.set output needs to be updated for
@@ -178,7 +171,7 @@ def customize_punctuation(grammar_path):
 # customize_test_sentences(grammar_path)
 #   Create the script file entries for the user's test sentences.
 
-def customize_test_sentences(grammar_path):
+def customize_test_sentences(ch, grammar_path):
     try:
         b = open(os.path.join(grammar_path, 'lkb/script'), 'r')
         lines = b.readlines()
@@ -209,7 +202,7 @@ def customize_test_sentences(grammar_path):
     except:
         pass
 
-def customize_itsdb(grammar_path):
+def customize_itsdb(ch, grammar_path):
     if 'sentence' not in ch:
         return
 
@@ -238,7 +231,7 @@ def customize_itsdb(grammar_path):
     tsdb.write(matrix_skeleton, 'item', records, schema['item'])
 
 
-def customize_script(grammar_path):
+def customize_script(ch, grammar_path):
     try:
         b = open(os.path.join(grammar_path, 'lkb/script'), 'r')
         lines = b.readlines()
@@ -259,7 +252,7 @@ def customize_script(grammar_path):
 # customize_pettdl()
 #
 
-def customize_pettdl(grammar_path):
+def customize_pettdl(ch, grammar_path):
     try:
         p_in = open(os.path.join(get_matrix_core_path(), 'pet.tdl'), 'r')
         lines = p_in.readlines()
@@ -284,7 +277,7 @@ def customize_pettdl(grammar_path):
 # customize_acetdl()
 #
 
-def customize_acetdl(grammar_path):
+def customize_acetdl(ch, grammar_path):
     myl = ch.get('language').lower()
     ace_config = os.path.join(grammar_path, 'ace', 'config.tdl')
     replace_strings = {'mylanguage': os.path.join('..', myl + '-pet.tdl')}
@@ -297,7 +290,7 @@ def customize_acetdl(grammar_path):
 # customize_roots()
 #   Create the file roots.tdl
 
-def customize_roots():
+def customize_roots(ch):
     comment = \
         'A sample start symbol: Accept fully-saturated verbal\n' + \
         'projections only; if a grammar makes use of the head-subject and\n' + \
@@ -457,15 +450,19 @@ def customize_matrix(path, arch_type, destination=None, force_dest=False):
     # if no destination dir is specified, just use the choices file's dir
     destination = destination or os.path.dirname(path)
 
-    global ch
-    ch = ChoicesFile(path)
+    # ch = ChoicesFile(path)
+    with open(path, 'r') as f:
+        ch = Choices.loads_dsl(f.read())
 
-    language = ch['language']
+    # from pprint import pprint
+    # pprint(ch._root)
+
+    language = ch['general.language']
 
     if force_dest:
         grammar_path = destination
     else:
-        grammar_path = get_grammar_path(ch.get('iso-code', language).lower(),
+        grammar_path = get_grammar_path(ch.get('general.iso-code', language).lower(),
                                         language.lower(), destination)
 
     # delete any existing contents at grammar path
@@ -477,16 +474,15 @@ def customize_matrix(path, arch_type, destination=None, force_dest=False):
     # Use the following command when python2.6 is available
     #shutil.copytree('matrix-core', grammar_path,
     #                ignore=shutil.ignore_patterns('.svn'))
-    IGNORE = open(os.devnull, 'w')
-    try:
-        call(['rsync', '-a', '--exclude=.svn',
-              get_matrix_core_path() + os.path.sep, grammar_path],
-             stdout=IGNORE, stderr=IGNORE)
-    except OSError as er:
-        print("OS Error. Most likely rsync is not installed.")
-        print(er.message)
-        sys.exit(1)
-    IGNORE.close()
+    with open(os.devnull, 'w') as IGNORE:
+        try:
+            call(['rsync', '-a', '--exclude=.svn',
+                  get_matrix_core_path() + os.path.sep, grammar_path],
+                 stdout=IGNORE, stderr=IGNORE)
+        except OSError as er:
+            print("OS Error. Most likely rsync is not installed.")
+            print(er.message)
+            sys.exit(1)
 
     # include a copy of choices (named 'choices' to avoid collisions)
     shutil.copy(path, os.path.join(grammar_path, 'choices'))
@@ -520,11 +516,10 @@ def customize_matrix(path, arch_type, destination=None, force_dest=False):
 
     # date/time
     try:
-        f = open('datestamp', 'r')
-        matrix_dt = f.readlines()[0].strip()
-        f.close()
+        with open('datestamp', 'r') as f:
+            matrix_dt = next(f).strip()
     except:
-        matrix_dt= 'unknown time'
+        matrix_dt = 'unknown time'
 
     current_dt = datetime.datetime.utcnow()
     tdl_dt = current_dt.strftime('%a %b %d %H:%M:%S UTC %Y')
@@ -533,12 +528,12 @@ def customize_matrix(path, arch_type, destination=None, force_dest=False):
     # Put the current date/time in my_language.tdl...
     mylang.add_literal(
         ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;\n' +
-        ';;; Grammar of ' + ch.get('language') + '\n' +
+        ';;; Grammar of ' + language + '\n' +
         ';;; created at:\n' +
         ';;;     ' + tdl_dt + '\n' +
         ';;; based on Matrix customization system version of:\n' +
         ';;;     ' + matrix_dt + '\n' +
-        ';;;\n' + format_comment_block(ch.get('comment')) + '\n' +
+        ';;;\n' + format_comment_block(ch.get('general.comment', '')) + '\n' +
         ';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;')
 
     # Put the date/time of the Matrix version in Version.lsp (along
@@ -548,7 +543,7 @@ def customize_matrix(path, arch_type, destination=None, force_dest=False):
 
     version_lsp.add_literal('(in-package :common-lisp-user)\n\n' +
                             '(defparameter *grammar-version* \"' +
-                            ch.get('language') + ' (' + lisp_dt + ')\")')
+                            language + ' (' + lisp_dt + ')\")')
 
     # Initialize various type hierarchies
     case.init_case_hierarchy(ch, hierarchies)
@@ -586,7 +581,7 @@ def customize_matrix(path, arch_type, destination=None, force_dest=False):
     argument_optionality.customize_arg_op(mylang, ch, rules, hierarchies)
     direct_inverse.customize_direct_inverse(ch, mylang, hierarchies)
     case.customize_case(mylang, ch, hierarchies)
-    #argument_optionality.customize_arg_op(ch, mylang)
+
     # after all structures have been customized, customize inflection,
     # but provide the methods the components above have for their own
     # contributions to the lexical rules
@@ -625,14 +620,14 @@ def customize_matrix(path, arch_type, destination=None, force_dest=False):
     coordination.customize_coordination(mylang, ch, lexicon, rules, irules)
     yes_no_questions.customize_yesno_questions(mylang, ch, rules, lrules, hierarchies)
     clausalmods.customize_clausalmods(mylang, ch, lexicon, rules, roots, trigger)
-    clausalcomps.customize_clausalcomps(mylang,ch,lexicon,rules)
-    customize_punctuation(grammar_path)
-    customize_test_sentences(grammar_path)
-    customize_itsdb(grammar_path)
-    customize_script(grammar_path)
-    customize_pettdl(grammar_path)
-    customize_acetdl(grammar_path)
-    customize_roots()
+    clausalcomps.customize_clausalcomps(mylang, ch, lexicon, rules)
+    customize_punctuation(ch, grammar_path)
+    customize_test_sentences(ch, grammar_path)
+    customize_itsdb(ch, grammar_path)
+    customize_script(ch, grammar_path)
+    customize_pettdl(ch, grammar_path)
+    customize_acetdl(ch, grammar_path)
+    customize_roots(ch)
     customize_vpm(ch, vpm, hierarchies)
 
     # Save the output files

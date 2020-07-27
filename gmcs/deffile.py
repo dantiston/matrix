@@ -12,28 +12,28 @@
 ######################################################################
 # imports
 
-import os
+import cgi
 import cgitb
 import glob
+import gzip
+import os
 import re
 import tarfile
-import gzip
 import zipfile
-import cgi
-
-from gmcs import choices
-from gmcs.choices import ChoicesFile
-from gmcs.utils import tokenize_def, get_name
-from gmcs import generate
-from gmcs.validate import ValidationMessage
 
 from collections import defaultdict
+
+from gmcs import choices
+from gmcs import generate
+from gmcs.choices import ChoicesFile
+from gmcs.utils import tokenize_def, get_name
+from gmcs.validate import ValidationMessage
 
 ######################################################################
 # HTML blocks, used to create web pages
 
 def dummy():
-    pass # let emacs know the indentation is 2 spaces 
+    pass # let emacs know the indentation is 2 spaces
 
 HTTP_header = 'Content-type: text/html;charset=UTF-8'
 
@@ -542,8 +542,8 @@ class MatrixDefFile:
     # use in links on html navigation menu
     sections = { 'general':'General Information',
                  'word-order':'Word Order', 'number':'Number',
-                 'person':'Person', 'gender':'Gender', 'case':'Case', 
-                 'adnom-poss':'Adnominal Possession', 'direct-inverse':'Direct-inverse', 
+                 'person':'Person', 'gender':'Gender', 'case':'Case',
+                 'adnom-poss':'Adnominal Possession', 'direct-inverse':'Direct-inverse',
                  'tense-aspect-mood':'Tense, Aspect and Mood', 'evidentials': 'Evidentials',
                  'other-features':'Other Features', 'sentential-negation':'Sentential Negation',
                  'coordination':'Coordination', 'matrix-yes-no':'Matrix Yes/No Questions',
@@ -561,7 +561,7 @@ class MatrixDefFile:
                  'word-order':'WordOrder', 'number':'Number',
                  'person':'Person', 'gender':'Gender', 'case':'Case',
                  'adnom-poss':'AdnominalPossession',
-                 'direct-inverse':'DirectInverse', 'tense-aspect-mood':'TenseAspectMood', 
+                 'direct-inverse':'DirectInverse', 'tense-aspect-mood':'TenseAspectMood',
                  'evidentials': 'Evidentials',
                  'other-features':'OtherFeatures', 'sentential-negation':'SententialNegation',
                  'coordination':'Coordination', 'matrix-yes-no':'YesNoQ',
