@@ -111,55 +111,54 @@ def coord_strat_features(num, nm, mixed_strat):
 def customize_feature_resolution(mylang, ch, ap):
     mylang.add_literal(';;; Feature Resolution Rules')
 
-    if ap.get('feat'):
-        for feat in ap.get('feat'):
-            # figure some stuff out about the feature
-            v = feat.get('name')
+    for feat in ap.get('feat', ()):
+        # figure some stuff out about the feature
+        v = feat.get('name')
 
-            featname = 'GEND' if v == 'gender' \
-                else 'PER' if v == 'person' \
-                else 'NUM' if v == 'number' \
-                else 'PERNUM' if v == 'pernum' \
-                else 'CASE' if v == 'case' \
-                else v.upper()
+        featname = 'GEND' if v == 'gender' \
+            else 'PER' if v == 'person' \
+            else 'NUM' if v == 'number' \
+            else 'PERNUM' if v == 'pernum' \
+            else 'CASE' if v == 'case' \
+            else v.upper()
 
-            path = 'SYNSEM.LOCAL.CONT.HOOK.INDEX.PNG.'  # this is default path, but it might change for custom features, also for case
+        path = 'SYNSEM.LOCAL.CONT.HOOK.INDEX.PNG.'  # this is default path, but it might change for custom features, also for case
 
-            # if this is a custom feature, check whether it is semantic or syntactic
-            if v.upper() == featname and (v != 'case' and v!= 'pernum'):
-                for feature in ch.get('feature', []):  # find the right custom feature in the list...
-                    feat = feature.get('name', '')
-                    type = feature.get('type', '')  # ...and check the type
-                    if feat == v:
-                        if type == 'head':
-                            path = 'SYNSEM.LOCAL.CAT.HEAD.'
+        # if this is a custom feature, check whether it is semantic or syntactic
+        if v.upper() == featname and (v != 'case' and v!= 'pernum'):
+            for feature in ch.get('feature', ()):  # find the right custom feature in the list...
+                feat = feature.get('name', '')
+                type = feature.get('type', '')  # ...and check the type
+                if feat == v:
+                    if type == 'head':
+                        path = 'SYNSEM.LOCAL.CAT.HEAD.'
 
-            if v == 'case':
-                path = 'SYNSEM.LOCAL.CAT.HEAD.' # special path for case
-                mylang.add('bare-np-phrase := [ SYNSEM.LOCAL.CAT.HEAD.CASE #case,'  # TODO is there any reason I can't use this for fr as well?
-                           'HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.CASE #case ].')
-                mylang.add('pass-up-png-coord-rule := bottom-coord-phrase & \
-              [  SYNSEM.LOCAL.CAT.HEAD.CASE #case,'
-                           'NONCONJ-DTR.SYNSEM.LOCAL.CAT.HEAD.CASE #case ].')
+        if v == 'case':
+            path = 'SYNSEM.LOCAL.CAT.HEAD.' # special path for case
+            mylang.add('bare-np-phrase := [ SYNSEM.LOCAL.CAT.HEAD.CASE #case,'  # TODO is there any reason I can't use this for fr as well?
+                       'HEAD-DTR.SYNSEM.LOCAL.CAT.HEAD.CASE #case ].')
+            mylang.add('pass-up-png-coord-rule := bottom-coord-phrase & \
+          [  SYNSEM.LOCAL.CAT.HEAD.CASE #case,'
+                       'NONCONJ-DTR.SYNSEM.LOCAL.CAT.HEAD.CASE #case ].')
 
-            # now go through the rules and add them to the grammar
-            for rule in feat.get('rule'):
-                ch1 = rule.get('left') if rule.get('left') else 'any'
-                ch2 = rule.get('right') if rule.get('right') else 'any'
-                par = rule.get('par') if rule.get('par') else 'any' # the rule should always have a parent, but just in case
+        # now go through the rules and add them to the grammar
+        for rule in feat.get('rule', ()):
+            ch1 = rule.get('left') if rule.get('left') else 'any'
+            ch2 = rule.get('right') if rule.get('right') else 'any'
+            par = rule.get('par') if rule.get('par') else 'any' # the rule should always have a parent, but just in case
 
-                if "," in ch1:
-                    ch1_list = ch1.split(", ")
-                    if ch2 == "nonmatching":
-                        for ch1 in ch1_list:
-                            for ch2 in ch1_list:
-                                if ch1 != ch2:
-                                    write_coord_rule(ch1, ch2, par, path, featname, mylang)
-                    else: # ch1 is a list but ch2 is some more normal value
-                        for ch1 in ch1_list:
-                            write_coord_rule(ch1, ch2, par, path, featname, mylang)
-                else: # ch1 is not a list
-                    write_coord_rule(ch1, ch2, par, path, featname, mylang)
+            if "," in ch1:
+                ch1_list = ch1.split(", ")
+                if ch2 == "nonmatching":
+                    for ch1 in ch1_list:
+                        for ch2 in ch1_list:
+                            if ch1 != ch2:
+                                write_coord_rule(ch1, ch2, par, path, featname, mylang)
+                else: # ch1 is a list but ch2 is some more normal value
+                    for ch1 in ch1_list:
+                        write_coord_rule(ch1, ch2, par, path, featname, mylang)
+            else: # ch1 is not a list
+                write_coord_rule(ch1, ch2, par, path, featname, mylang)
 
 
 
@@ -193,55 +192,54 @@ def write_coord_rule(ch1, ch2, par, path, featname, mylang):
 
 def get_feature_resolution_names(ap):
     resrules = []
-    if ap.get('feat'):
-        for feat in ap.get('feat'):
-            v = feat.get('name')
+    for feat in ap.get('feat', ()):
+        v = feat.get('name')
 
-            featname = 'gend' if v == 'gender' \
-                else 'per' if v == 'person' \
-                else 'num' if v == 'number' \
-                else 'pernum' if v == 'pernum' \
-                else v.lower()
+        featname = 'gend' if v == 'gender' \
+            else 'per' if v == 'person' \
+            else 'num' if v == 'number' \
+            else 'pernum' if v == 'pernum' \
+            else v.lower()
 
-            templist = []
-            for rule in feat.get('rule'):
-                ch1 = rule.get('left') if rule.get('left') else 'any'
-                ch2 = rule.get('right') if rule.get('right') else 'any'
-                par = rule.get('par') if rule.get('par') else 'any'
+        templist = []
+        for rule in feat.get('rule'):
+            ch1 = rule.get('left') if rule.get('left') else 'any'
+            ch2 = rule.get('right') if rule.get('right') else 'any'
+            par = rule.get('par') if rule.get('par') else 'any'
 
-                # if ch1 or ch2 is "same", that's fine, no changes needed.
+            # if ch1 or ch2 is "same", that's fine, no changes needed.
 
-                if "," in ch1:
-                    ch1_list = ch1.split(", ")
-                    if ch2 == "nonmatching":
-                        for ch1 in ch1_list:
-                            for ch2 in ch1_list:
-                                if ch1 != ch2:
-                                    nm = '-' + ch1 + '-' + ch2 + '-' + par
-                                    st = ch1 + '-' + ch2 + '-' + par + '-' + featname + '-coord-rule & '
-                                    templist += [(nm, st)]
-                    else:  # ch1 is a list but ch2 is some more normal value
-                        for ch1 in ch1_list:
-                            nm = '-' + ch1 + '-' + ch2 + '-' + par
-                            st = ch1 + '-' + ch2 + '-' + par + '-' + featname + '-coord-rule & '
-                            templist += [(nm, st)]
-                else:  # ch1 is not a list
-                    nm = '-' + ch1 + '-' + ch2 + '-' + par
-                    st = ch1 + '-' + ch2 + '-' + par + '-' + featname + '-coord-rule & '
-                    templist += [(nm, st)]
-
+            if "," in ch1:
+                ch1_list = ch1.split(", ")
+                if ch2 == "nonmatching":
+                    for ch1 in ch1_list:
+                        for ch2 in ch1_list:
+                            if ch1 != ch2:
+                                nm = '-' + ch1 + '-' + ch2 + '-' + par
+                                st = ch1 + '-' + ch2 + '-' + par + '-' + featname + '-coord-rule & '
+                                templist += [(nm, st)]
+                else:  # ch1 is a list but ch2 is some more normal value
+                    for ch1 in ch1_list:
+                        nm = '-' + ch1 + '-' + ch2 + '-' + par
+                        st = ch1 + '-' + ch2 + '-' + par + '-' + featname + '-coord-rule & '
+                        templist += [(nm, st)]
+            else:  # ch1 is not a list
+                nm = '-' + ch1 + '-' + ch2 + '-' + par
+                st = ch1 + '-' + ch2 + '-' + par + '-' + featname + '-coord-rule & '
+                templist += [(nm, st)]
 
 
-            # add the rules to resrules
-            newlist = []
-            if resrules:  # if we have rules already, iterate through them and combine with all the new ones
-                for rule in resrules:
-                    for temp in templist:
-                        newlist += [(rule[0] + temp[0], rule[1] + temp[1])]
-                resrules = newlist
-            else:
-                resrules = templist
-        return resrules
+
+        # add the rules to resrules
+        newlist = []
+        if resrules:  # if we have rules already, iterate through them and combine with all the new ones
+            for rule in resrules:
+                for temp in templist:
+                    newlist += [(rule[0] + temp[0], rule[1] + temp[1])]
+            resrules = newlist
+        else:
+            resrules = templist
+    return resrules
 
 
 def customize_conj_wo(mylang, ch, agr, csap):
@@ -341,7 +339,7 @@ def customize_conjunct_agreement(mylang, ch, agr, csap, cs):
     mylang.add('r := dir.', '', True)
 
     # do we have a mixed strategy language? if so, what's the target on the fr pattern?
-    for csap in cs.get('csap'):
+    for csap in cs.get('csap', ()):
         if csap.get('pat').startswith('fr'):
             mylang.add('res := dir.', '', True)
             mixed_strat_target = csap.get('target')
@@ -430,7 +428,7 @@ def customize_coordination(mylang, ch, lexicon, rules, irules):
     """
     mylang.set_section('coord')
 
-    for cs in ch.get('cs'):
+    for cs in ch.get('cs', ()):
         csnum = str(cs.iter_num())
 
         mark = cs.get('mark')
@@ -510,7 +508,7 @@ def customize_coordination(mylang, ch, lexicon, rules, irules):
             else False
 
         # make a list of the agreement rules for this coord strat
-        if cs.get('csap'):
+        if 'csap' in cs:
             agrrules = []
             for csap in cs.get('csap'):  # iterate through the agreement patterns used
                 agrrules += customize_agreement_pattern(mylang, ch, csap, cs)
