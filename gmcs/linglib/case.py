@@ -1,6 +1,8 @@
+from delphin_choices import info
+
+from gmcs.lib import TDLHierarchy
 from gmcs.utils import TDLencode
 from gmcs.utils import orth_encode
-from gmcs.lib import TDLHierarchy
 from gmcs.utils import get_name
 
 
@@ -204,7 +206,7 @@ def customize_case_adpositions(mylang, lexicon, trigger, ch):
     # features = ch.features()
     to_cfv = []
 
-    if ch.has_adp_case():
+    if info.has_adp_case(ch):
         comment = \
             ';;; Case-marking adpositions\n' + \
             ';;; Case marking adpositions are constrained not to\n' + \
@@ -349,7 +351,7 @@ def add_lexrules(ch):
                 feature_names.add(feat['name'])
         if 'case' in feature_names:
             for c in case_names(ch):
-                if ch.has_adp_case(c[0]):
+                if info.has_adp_case(ch, c[0]):
                     idx = ch[pc.full_key + '_lrt'].next_iter_num()
                     lrt_key = pc.full_key + '_lrt' + str(idx)
                     ch[lrt_key + '_name'] = get_name(pc) + '-synth-' + c[0]
@@ -384,7 +386,7 @@ def customize_verb_case(mylang, ch):
 
     # OZ: This currently also adds clausal types.
 
-    for p in ch.patterns():
+    for p in info.patterns(ch):
         rule_pattern = p[2]
         p = p[0].split(',')  # split off ',dirinv', if present
         dir_inv = ''
@@ -400,9 +402,9 @@ def customize_verb_case(mylang, ch):
                 if p[0] == 'trans':
                     a_case = ''
                     o_case = ''
-                    a_head = ch.case_head()
+                    a_head = info.case_head(ch)
                     if not clausal:
-                        o_head = ch.case_head()
+                        o_head = info.case_head(ch)
                     else:
                         o_head = ''
                 else:
@@ -476,7 +478,7 @@ def customize_verb_case(mylang, ch):
             else:  # intransitive or clausal with constrained subject
                 if c[0] == 'intrans':
                     s_case = ''
-                    s_head = ch.case_head()
+                    s_head = info.case_head(ch)
                 else:
                     s_case = canon_to_abbr(c[0], cases)
                     s_head = ch.case_head(c[0])

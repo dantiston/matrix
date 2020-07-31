@@ -3,6 +3,7 @@
 
 import os
 import re
+
 from gmcs.utils import TDLencode
 from gmcs.choices import ChoicesFile
 from gmcs.choices import FormData
@@ -81,8 +82,8 @@ def process_tb_entry(tbentry,lexclasses,stemtag,
                 match += 1
 
         if match == len(tvps):
-            #            if choices['imported-entry']:
-            #                n = choices['imported-entry'].next_iter_num()
+            #            if choices.get('imported-entry', ()):
+            #                n = choices.get('imported-entry', ()).next_iter_num()
             #            else:
             #                n = 1
             prefix = 'imported-entry' + str(n)
@@ -106,7 +107,7 @@ def process_tb_entry(tbentry,lexclasses,stemtag,
 
 
 def get_affix_from_entry(tbentry,idtag,stemtag,affixes,affix_strings):
-    ''' 
+    '''
     Given a toolbox entry see if it is an entry for a bistem
     affix, If so, find the orthography of the affix and store it in
     the affix_strings dictionary.
@@ -223,7 +224,7 @@ def import_toolbox_lexicon(choicesfile):
                             tbentry = {}
                         tbentry[words[0]] = ' '.join(words[1:])
                 insert_affixes(form_data, affix_strings, form_data_entries)
-                # FIXME:  Put a break statement here so that we 
+                # FIXME:  Put a break statement here so that we
                 # don't keep reading the file if we've found all the
                 # affixes (i.e., if affixes == []).
 
@@ -236,7 +237,7 @@ def import_toolbox_lexicon(choicesfile):
 #    choices['version'] = str(choices.current_version())
 #    fout.write(str(choices))
 #    fout.write('Toolbox entries processed: ' + str(tbentries))
-#    fout.write('Total entries imported: ' + str(choices['imported-entry'].next_iter_num() - 1))
+#    fout.write('Total entries imported: ' + str(choices.get('imported-entry', ()).next_iter_num() - 1))
 
 def integrate_imported_entries(choices):
     '''
@@ -248,7 +249,7 @@ def integrate_imported_entries(choices):
     on lexicon-related choices.
     '''
 
-    for imported_entry in choices['imported-entry']:
+    for imported_entry in choices.get('imported-entry', ()):
         lextype = imported_entry['lextype']
         orth = imported_entry['orth']
         pred = imported_entry['pred']
@@ -277,4 +278,3 @@ def integrate_imported_entries(choices):
     # and then come back some time later).  Also, the printed version
     # should probably include the section = lines, right?
     choices.delete('imported-entry')
-

@@ -15,7 +15,7 @@ def customize_clausalmods(mylang, ch, lexicon, rules, roots, trigger):
         return None
     add_head_compement_rules(mylang, rules, ch)
 
-    for cms in ch.get('cms'):
+    for cms in ch.get('cms', ()):
         subord = cms.get('subordinator')
         subtype = cms.get('subordinator-type')
 
@@ -188,14 +188,14 @@ def create_head_subordinator_lexical_subtypes(mylang, lexicon, ch, cms):
             while constraints != []:
                 mylang.add(type + ' := [ ' + constraints.pop() + ' ].')
         #add each subordinator to the lexicon
-        for freemorph in cms.get('freemorph'):
+        for freemorph in cms.get('freemorph', ()):
             add_to_lexicon(freemorph, type, '', lexicon)
 
      # for pair subordinators, add each of the constraints enumerated above to the lexical type
     # (with the appropriate subertype based on whether the clausal mod is nominalized). A separate
     # lexical type is required for each pair, so that the SUBPAIR feature can be constrained
     elif cms.get('subordinator') == 'pair':
-        for morphpair in cms.get('morphpair'):
+        for morphpair in cms.get('morphpair', ()):
             pred = morphpair.get('subordpred')
             value = shortform_pred(pred)
             lextype = [value] + lextype
@@ -218,7 +218,7 @@ def create_head_subordinator_lexical_subtypes(mylang, lexicon, ch, cms):
                 while constraints != []:
                     mylang.add(type + ' := [ ' + constraints.pop() + ' ].')
             #add each subordinator to lexicon
-            for morphpair in cms.get('morphpair'):
+            for morphpair in cms.get('morphpair', ()):
                 add_to_lexicon(morphpair, type, 'subord', lexicon)
 
 def create_adverb_subordinator_lexical_subtypes(mylang, lexicon, trigger, cms):
@@ -249,7 +249,7 @@ def create_adverb_subordinator_lexical_subtypes(mylang, lexicon, trigger, cms):
     # each free adverb subordinator gets it's own lexical type with a special SUBORDINATED value so that the non-branching
     #rule can select it
     if cms.get('subordinator') == 'free':
-        for adverb in cms.get('freemorph'):
+        for adverb in cms.get('freemorph', ()):
             constraints = saved_constraints
             lextype = saved_lextype
             pred = adverb.get('pred')
@@ -286,7 +286,7 @@ def create_adverb_subordinator_lexical_subtypes(mylang, lexicon, trigger, cms):
     # each adverb gets it's own lexical type with a special SUBORDINATED value so that the non-branching
     # rule can select it and so that the SUBPAIR feature can be added
     elif cms.get('subordinator') == 'pair':
-        for adverb in cms.get('morphpair'):
+        for adverb in cms.get('morphpair', ()):
             constraints = saved_constraints
             lextype = saved_lextype
             pred = adverb.get('subordpred')
@@ -396,7 +396,7 @@ def add_non_branching_rules(mylang, rules, cms, ch):
         morpheme = 'morphpair'
         predication = 'subordpred'
     # then add a rule for each subordinator
-    for adverb in cms.get(morpheme):
+    for adverb in cms.get(morpheme, ()):
         pred = adverb.get(predication)
         value = shortform_pred(pred)
         type = value + '-modifying-clause-phrase'
@@ -443,11 +443,11 @@ def add_subordinators_matrix_pair_to_lexicon(mylang, lexicon, cms, ch):
                                       LARG #mod ] !> ],\
                 LKEYS.KEYREL.ARG1 #h1 ]].')
     #if the subordinated feature is introduced by any of the strategies, we need to set it to none for this type
-    for strategy in ch.get('cms'):
+    for strategy in ch.get('cms', ()):
         if strategy.get('subordinator-type') == 'adverb':
             mylang.set_section('subordlex')
             mylang.add('subord-pair-matrix-lex-item := [ SYNSEM.SUBORDINATED none ].')
-    for adverb in cms.get('morphpair'):
+    for adverb in cms.get('morphpair', ()):
         lextype = []
         constraints = []
         advpos = cms.get('matrix-subposition')
@@ -516,7 +516,7 @@ def add_morphological_subord_rel(mylang, cms, ch, rules):
     # a semantic nominalized predication
     if nominalized == 'yes':
         mylang.set_section('phrases')
-        for ns in ch.get('ns'):
+        for ns in ch.get('ns', ()):
             if ns.get('name') == nom_strategy:
                 nmzRel = ns.get('nmzRel')
         if nmzRel == 'no':
@@ -644,12 +644,12 @@ def create_subordinated_feature(mylang, roots, cms, ch):
     mylang.add('xsubord := *top*.')
     mylang.add('none := xsubord.')
     if cms.get('subordinator') == 'free':
-        for adverb in cms.get('freemorph'):
+        for adverb in cms.get('freemorph', ()):
             pred = adverb.get('pred')
             value = shortform_pred(pred)
             mylang.add(value + ' := xsubord.')
     elif cms.get('subordinator') == 'pair':
-        for adverb in cms.get('morphpair'):
+        for adverb in cms.get('morphpair', ()):
             pred = adverb.get('subordpred')
             value = shortform_pred(pred)
             mylang.add(value + ' := xsubord.')
@@ -689,8 +689,8 @@ def create_subordinated_feature(mylang, roots, cms, ch):
     mylang.add('cont-change-only-lex-rule :+ same-subordinated-lex-rule.')
     mylang.add('cat-change-with-ccont-lex-rule :+ same-subordinated-lex-rule.')
     mylang.add('add-only-rule :+ same-subordinated-lex-rule.')
-    #KPH- removed because subordinator adverbs are blocked from the matrix clause 
-    #by the MC feature. I think this is an artifact from before that was properly      
+    #KPH- removed because subordinator adverbs are blocked from the matrix clause
+    #by the MC feature. I think this is an artifact from before that was properly
     #constrained
     #roots.add('root := [ SYNSEM.SUBORDINATED none ].')
 
@@ -752,7 +752,7 @@ def has_subpairs(ch):
     Returns true if the grammar will have subordinator pairs and false otherwise
     """
     subpair = False
-    for cms in ch.get('cms'):
+    for cms in ch.get('cms', ()):
         if cms.get('subordinator') == 'pair':
             subpair = True
     return subpair
@@ -764,7 +764,7 @@ def add_head_compement_rules(mylang, rules, ch):
     mylang.set_section('addenda')
     mylang.add('head :+ [ INIT bool ].')
     subpos = []
-    for cms in ch.get('cms'):
+    for cms in ch.get('cms', ()):
         if cms.get('subordinator-type') == 'head':
             subpos.append(cms.get('subposition'))
     wo = ch.get('word-order')
@@ -803,7 +803,7 @@ def add_morphological_constraints(lextype, constraints, cms, type):
     Loop through morphologial constraints and add them to the the constraints
     list at the appropriate path.
     """
-    for feat in cms.get('feat'):
+    for feat in cms.get('feat', ()):
         if feat.get('name') != 'nominalization':
             lextype.append(feat.get('value'))
             if feat.get('name') == 'mood' or feat.get('name') == 'aspect':
@@ -840,11 +840,11 @@ def is_nominalized(cms, ch):
     nominalized = 'no'
     nom_strategy = ''
     nmzRel = ''
-    for feat in cms.get('feat'):
+    for feat in cms.get('feat', ()):
         if feat.get('name') == 'nominalization':
             nominalized = 'yes'
             nom_strategy = feat.get('value')
-    for ns in ch.get('ns'):
+    for ns in ch.get('ns', ()):
         if ns.get('name') == nom_strategy:
             nmzRel = ns.get('nmzRel')
 
@@ -879,14 +879,14 @@ def get_subord_stemids(ch, stemids):
     A function called by insert_ids() in lexical_items.py to
     check for name-space-collisions
     """
-    for cms in ch.get('cms'):
+    for cms in ch.get('cms', ()):
         for freemorph in cms.get('freemorph'):
             orth = freemorph.get('orth')
-            if orth in list(stemids.keys()):
+            if orth in stemids:
                 stemids[orth] += 1
             else:
                 stemids[orth] = 1
-        for morphpair in cms.get('morphpair'):
+        for morphpair in cms.get('morphpair', ()):
             subordorth = morphpair.get('subordorth')
             matrixorth = morphpair.get('matrixorth')
             if subordorth in list(stemids.keys()):
@@ -905,8 +905,8 @@ def add_subord_name(ch, stemids, stemidcounters):
     create a "name" for each subordinator in choices, preventing
     name-space-collisions
     """
-    for cms in ch.get('cms'):
-        for freemorph in cms.get('freemorph'):
+    for cms in ch.get('cms', ()):
+        for freemorph in cms.get('freemorph', ()):
             orth = freemorph.get('orth')
             if stemids[orth] == 1:
                 ch[freemorph.full_key + '_name'] = orth
@@ -916,7 +916,7 @@ def add_subord_name(ch, stemids, stemidcounters):
             else:
                 stemidcounters[orth] += 1
                 ch[freemorph.full_key + '_name'] = orth + '_' + str(stemidcounters[orth])
-        for morphpair in cms.get('morphpair'):
+        for morphpair in cms.get('morphpair', ()):
             subordorth = morphpair.get('subordorth')
             matrixorth = morphpair.get('matrixorth')
             #first look at the subordinator
@@ -937,4 +937,3 @@ def add_subord_name(ch, stemids, stemidcounters):
             else:
                 stemidcounters[subordorth] += 1
                 ch[morphpair.full_key + '_matrixname'] = matrixorth + '_' + str(stemidcounters[matrixorth])
-
