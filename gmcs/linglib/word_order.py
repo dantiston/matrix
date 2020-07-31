@@ -11,7 +11,7 @@ from gmcs.linglib.clausalcomps import extraposed_comps
 
 def customize_word_order(mylang, ch, rules):
 
-    wo = ch.get('word-order')
+    wo = ch.get('word-order.word-order')
 
     mylang.set_section('phrases')
 
@@ -123,10 +123,9 @@ def customize_major_constituent_order(wo, mylang, ch, rules):
     # languages, the standard analysis needs to be adapted to a LIGHT +
     # constraint on the hs-rule.
     # OZ 2017-12-21 We also need low subject attachment for OVS languages with extraposed clausal complements.
-    auxcomp = ch.get('aux-comp')
     if (wo in ['vso', 'osv']) or (wo == 'ovs'
                                         and 'comps' in ch and extraposed_comps(ch)):
-        if ch.get('has-aux') == 'yes' and auxcomp == 'vp':
+        if ch.get('word-order.has-aux') == 'yes' and ch.get('word-order.aux-comp') == 'vp':
             mylang.add(hs + '-phrase := [ HEAD-DTR.SYNSEM.LIGHT + ].')
         else:
             mylang.add(hc + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.SUBJ < > ].')
@@ -201,7 +200,7 @@ def customize_major_constituent_order(wo, mylang, ch, rules):
         # ASF 2008-11-18, if free wo lgge has aux and aux precedes verb,
         # the enforced attachment must apply in the other direction.
 
-        if ch.get('has-aux') == 'yes' and  ch.get('aux-comp-order') == 'before':
+        if ch.get('word-order.has-aux') == 'yes' and  ch.get('word-order.aux-comp-order') == 'before':
             mylang.add('head-final-head-nexus := head-final & \
                 [ SYNSEM.ATTACH lmod,\
                   HEAD-DTR.SYNSEM.ATTACH notmod-or-lmod ].')
@@ -246,7 +245,7 @@ def customize_major_constituent_order(wo, mylang, ch, rules):
                 [ SYNSEM.LOCAL.CAT.MC na & #mc, \
                   HEAD-DTR.SYNSEM.LOCAL.CAT.MC #mc ].')
         # OZ 2017-11-13 [ MC bool ] is to allow v2 order in subordinate clauses, like in Wabmbaya.
-        if not ch.get('subord-word-order') or ch.get('subord-word-order') == 'same':
+        if not ch.get('word-order.subord-word-order') or ch.get('word-order.subord-word-order') == 'same':
             mylang.add('head-final-head-nexus := head-final & \
                   [ SYNSEM.LOCAL.CAT.MC bool, \
                     HEAD-DTR.SYNSEM.LOCAL.CAT.MC na ].')
@@ -359,12 +358,12 @@ def specialize_word_order(hc,orders, mylang, ch, rules):
     adp = orders['adp']
     aux = orders['aux']
     qpart_order = orders['qpart_order'] #TODO: verify _-delimited key
-    auxcomp = ch.get('aux-comp')
-    wo = ch.get('word-order')
-    auxorder = ch.get('aux-comp-order')
+    auxcomp = ch.get('word-order.aux-comp')
+    wo = ch.get('word-order.word-order')
+    auxorder = ch.get('word-order.aux-comp-order')
     compl_order = orders['compl_order']
 
-    if ch.get('has-aux') == 'yes':
+    if ch.get('word-order.has-aux') == 'yes':
         vcluster = determine_vcluster(auxcomp, auxorder, wo, ch)
     else:
         vcluster = False
@@ -714,15 +713,15 @@ def specialize_word_order(hc,orders, mylang, ch, rules):
 
 def customize_np_word_order(mylang, ch, rules):
 
-    if ch.get('has-dets') == 'yes':
+    if ch.get('word-order.has-dets') == 'yes':
         mylang.add(
             'head-spec-phrase := basic-head-spec-phrase.',
             'Rules for building NPs.  Note that the Matrix uses SPR for\n' +
             'the specifier of nouns and SUBJ for the subject (specifier) of verbs.')
 
-        if ch.get('noun-det-order') == 'noun-det':
+        if ch.get('word-order.noun-det-order') == 'noun-det':
             mylang.add('head-spec-phrase := head-initial.')
-        if ch.get('noun-det-order') == 'det-noun':
+        elif ch.get('word-order.noun-det-order') == 'det-noun':
             mylang.add('head-spec-phrase := head-final.')
 
         rules.add('head-spec := head-spec-phrase.')
@@ -744,8 +743,8 @@ def customize_np_word_order(mylang, ch, rules):
 # as in the matrix clause, no work needs to be done here.
 
 def customize_subord_word_order(mylang,ch,wo,rules):
-    if 'subord-word-order' in ch:
-        if ch.get('subord-word-order') == 'vfinal' and wo == 'v2':
+    if 'word-order.subord-word-order' in ch:
+        if ch.get('word-order.subord-word-order') == 'vfinal' and wo == 'v2':
             mylang.add('subord-phrase := head-final &\n'
                        ' [ SYNSEM.LOCAL.CAT.MC #mc & - ,\n  HEAD-DTR.SYNSEM.LOCAL.CAT.MC #mc ].',
                        'Phrase structure rules for subordinate clauses')
@@ -800,7 +799,7 @@ def determine_consistent_order(wo,hc,ch):
     # ASF: bug fix, adporder is whatever adporder was defined last
     # which excludes the possibility to have both prepositions and adpositions
     adporders = []
-    for adp in ch.get('adp',[]):
+    for adp in ch.get('lexicon.adp', ()):
         adp_order = adp.get('order')
         if not adp_order in adporders:
             adporders.append(adp_order)
@@ -834,19 +833,19 @@ def determine_consistent_order(wo,hc,ch):
     # ASF 2008-12-07 for non-harmonic order and v (not vp) comps,
     # we need a different procedure (see if auxcomp...)
 
-    if ch.get('has-aux') == 'yes':
-        auxcomp = ch.get('aux-comp')
+    if ch.get('word-order.has-aux') == 'yes':
+        auxcomp = ch.get('word-order.aux-comp')
         if wo == 'free':
-            if ch.get('aux-comp-order') == 'before':
+            if ch.get('word-order.aux-comp-order') == 'before':
                 aux = 'free-auxv'
-            elif ch.get('aux-comp-order') == 'after':
+            elif ch.get('word-order.aux-comp-order') == 'after':
                 aux = 'free-vaux'
-        elif hc == 'comp-head' and ch.get('aux-comp-order') == 'before':
+        elif hc == 'comp-head' and ch.get('word-order.aux-comp-order') == 'before':
             if auxcomp == 'v':
                 aux = 'auxv-rule'
             else:
                 aux = 'ov-auxv'
-        elif hc == 'head-comp' and ch.get('aux-comp-order') == 'after':
+        elif hc == 'head-comp' and ch.get('word-order.aux-comp-order') == 'after':
             if auxcomp == 'v':
                 aux = 'vaux-rule'
             else:
@@ -859,31 +858,28 @@ def determine_consistent_order(wo,hc,ch):
     # OZ 2018-02-02 Aparently, there are, for example Dagaare (according to 567 students).
     # So, need different complementizers behave differently (e.g. by using the INIT feature).
 
-    if ch.get('q-part-order'):
+    if ch.get('word-order.q-part-order'):
         if wo == 'free':
-            if ch.get('q-part-order') == 'after':
+            if ch.get('word-order.q-part-order') == 'after':
                 qpart_order = 'free-sq'
-            elif ch.get('q-part-order') == 'before':
+            elif ch.get('word-order.q-part-order') == 'before':
                 qpart_order = 'free-qs'
         elif hc == 'comp-head' and ch.get('q-part-order') == 'before':
             qpart_order = 'ov-qs'
         elif hc == 'head-comp' and ch.get('q-part-order') == 'after':
             qpart_order = 'vo-sq'
 
-    if ch.get('comps'):
-        for ccs in ch.get('comps'):
-            if hc == 'comp-head':
-                if ccs['comp-pos-before']:
-                    compl_order.append('ov-cv')
-                if ccs['comp-pos-after']:
-                    compl_order.append('ov-vc')
-            elif hc == 'head-comp':
-                if ccs['comp-pos-after']:
-                    compl_order.append('vo-vc')
-                if ccs['comp-pos-before']:
-                    compl_order.append('vo-cv')
-            # return what we learned
+    for ccs in ch.get('word-order.comps', ()):
+        if hc == 'comp-head':
+            if ccs['comp-pos-before']:
+                compl_order.append('ov-cv')
+            if ccs['comp-pos-after']:
+                compl_order.append('ov-vc')
+        elif hc == 'head-comp':
+            if ccs['comp-pos-after']:
+                compl_order.append('vo-vc')
+            if ccs['comp-pos-before']:
+                compl_order.append('vo-cv')
 
+    # return what we learned
     return {'adp': adp, 'aux': aux, 'qpart_order': qpart_order, 'compl_order':compl_order} #TODO: verify key
-
-
