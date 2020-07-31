@@ -1,3 +1,6 @@
+
+from delphin_choices import info
+
 from gmcs.lib import TDLHierarchy
 
 ######################################################################
@@ -8,7 +11,7 @@ from gmcs.lib import TDLHierarchy
 def init_person_hierarchy(ch, hierarchies):
     hier = TDLHierarchy('person')
 
-    for p in ch.persons():
+    for p in info.persons(ch):
         for st in p[1].split(';'):
             hier.add(p[0], st)
 
@@ -19,7 +22,7 @@ def init_person_hierarchy(ch, hierarchies):
 def init_number_hierarchy(ch, hierarchies):
     hier = TDLHierarchy('number')
 
-    for n in ch.numbers():
+    for n in info.numbers(ch):
         for st in n[1].split(';'):
             hier.add(n[0], st)
 
@@ -30,7 +33,7 @@ def init_number_hierarchy(ch, hierarchies):
 def init_pernum_hierarchy(ch, hierarchies):
     hier = TDLHierarchy('pernum')
 
-    for pn in ch.pernums():
+    for pn in info.pernums(ch):
         for st in pn[1].split(';'):
             hier.add(pn[0], st)
 
@@ -59,7 +62,7 @@ def customize_person_and_number(mylang, hierarchies):
 def init_gender_hierarchy(ch, hierarchies):
     hier = TDLHierarchy('gender')
 
-    for g in ch.genders():
+    for g in info.genders(ch):
         for st in g[1].split(';'):
             hier.add(g[0], st)
 
@@ -145,7 +148,7 @@ def make_vpm_order(name, h, o):
 def create_vpm_person(ch, vpm):
     literal = ''
     person = []
-    for p in ch.persons():
+    for p in info.persons(ch):
         if p[0] not in person:
             person.append(p[0])
     person.reverse()
@@ -161,7 +164,7 @@ def create_vpm_person(ch, vpm):
 def create_vpm_number(ch, vpm):
     literal = ''
     number = []
-    for n in ch.numbers():
+    for n in info.numbers(ch):
         if n[0] not in number:
             number.append(n[0])
     number.reverse()
@@ -179,18 +182,18 @@ def create_vpm_pernum(ch, vpm):
     literal = ''
 
     # person = []
-    # for p in ch.persons():
+    # for p in info.persons(ch):
     #   if p[0] not in person:
     #     person.append(p[0])
     # person.reverse()
     # number = []
-    # for n in ch.numbers():
+    # for n in info.numbers(ch):
     #   if n[0] not in number:
     #     number.append(n[0])
     # number.reverse()
 
     pernum_key = []
-    for pn in ch.pernums():
+    for pn in info.pernums(ch):
         if pn[0] not in pernum_key: pernum_key.append(pn[0])
     pernum_key.reverse()
 
@@ -217,7 +220,7 @@ def create_vpm_pernum(ch, vpm):
 def create_vpm_gender(ch, vpm):
     literal = ''
     gender = []
-    for g in ch.genders():
+    for g in info.genders(ch):
         if g[0] not in gender:
             gender.append(g[0])
     gender.reverse()
@@ -261,7 +264,7 @@ def create_vpm_others(ch, vpm):
 
 def create_vpm_blocks(ch, vpm, hierarchies):
     create_vpm_others(ch, vpm)
-    if len(ch.persons()) == 0 and len(ch.numbers()) == 0 and len(ch.genders()) == 0:
+    if len(info.persons(ch)) == 0 and len(info.numbers(ch)) == 0 and len(info.genders(ch)) == 0:
         vpm.add_literal('PNG : PNG\n  * <> *')
     else:
         if 'pernum' in hierarchies:
@@ -270,4 +273,3 @@ def create_vpm_blocks(ch, vpm, hierarchies):
             create_vpm_person(ch, vpm)
             create_vpm_number(ch, vpm)
         create_vpm_gender(ch, vpm)
-
