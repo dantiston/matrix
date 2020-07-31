@@ -228,7 +228,7 @@ def customize_nmcs(mylang, ch, rules, roots):
     the main nominalized clause customization routine
     """
     update_lexical_rules(mylang, ch)
-    for ns in ch.get('ns'):
+    for ns in ch.get('ns', ()):
         level = ns.get('level')
         nmzrel = ns.get('nmzRel')
         add_nmz_feature(mylang, ch, roots)
@@ -311,7 +311,7 @@ def add_nonevent_subj_rules(ch, level, mylang, rules):
                 raise Exception('Invalid combination of word order and nominalization choices.')
             mylang.add(typename + '-phrase := ' + NHS_SUPERTYPE + '&' + super + '&' + NHS_DEF)
             if wo in ['svo', 'vos', 'sov'] \
-                    or (wo == 'ovs' and len([cs for cs in ch.get('comps') if cs['clause-pos-extra']]) == 0):
+                    or (wo == 'ovs' and len([cs for cs in ch.get('comps', ()) if cs['clause-pos-extra']]) == 0):
                 mylang.add(typename + '-phrase := [ HEAD-DTR.SYNSEM.LOCAL.CAT.VAL.COMPS < > ].', merge=True)
 
 
@@ -323,11 +323,11 @@ def case_change(arg, ch):
     """
     has_nmz = False
     case_change = False
-    for vpc in ch.get('verb-pc'):
-        for lrt in vpc['lrt']:
+    for vpc in ch.get('verb-pc', ()):
+        for lrt in vpc.get('lrt', ()):
             has_nmz = False
             case_change = False
-            for f in lrt['feat']:
+            for f in lrt.get('feat', ()):
                 if f['name'] == 'nominalization':
                     has_nmz = True
                     if has_nmz and case_change:
@@ -345,7 +345,7 @@ def case_change_lrt(arg, lrt):
     @param lrt:
     @return: True if this lrt specifies case change on arg.
     """
-    for f in lrt['feat']:
+    for f in lrt.get('feat', ()):
         if f['name'] == 'case' and f['head'] == arg:
             return True
     return False
@@ -359,7 +359,7 @@ def get_head_type(arg, lrt, ch):
     @return: string corresponding to the head type, such as "noun" or "adp" or "+np"
     """
     head_type = ''
-    for f in lrt['feat']:
+    for f in lrt('feat', ()):
         if f['name'] == 'case' and f['head'] == arg:
             head_type = ch.case_head(f['value'])
     return head_type
@@ -372,9 +372,9 @@ def get_nmz_lexrules(ch):
     @return: rules (list of tuples (lrt, nominalization_value (e.g. "low")).
     """
     rules = []
-    for vpc in ch['verb-pc']:
-        for lrt in vpc['lrt']:
-            for f in lrt['feat']:
+    for vpc in ch.get('verb-pc', ()):
+        for lrt in vpc.get('lrt', ()):
+            for f in lrt.get('feat', ()):
                 if 'nominalization' in f['name']:
                     rules.append((lrt,f['value']))
     return rules
@@ -387,7 +387,7 @@ def update_lexical_rules(mylang, ch):
     path_subj = 'SYNSEM.LOCAL.CAT.VAL.SUBJ.FIRST.LOCAL.CAT.HEAD'
     path_comps = 'SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT.HEAD'
     for lrt,val in get_nmz_lexrules(ch):
-        for ns in ch.get('ns'):
+        for ns in ch.get('ns', ()):
             if ns.get('name') == val:
                 level = ns.get('level')
                 if level == 'high':
@@ -441,4 +441,3 @@ def add_nmz_feature(mylang, ch, roots):
     			    RCOORD-DTR.SYNSEM.LOCAL.CAT.HEAD.NMZ #nmz ].')
         mylang.add('unary-bottom-coord-rule :+ [ SYNSEM.LOCAL.CAT.HEAD.NMZ #nmz,\
            				    ARGS < [ SYNSEM.LOCAL.CAT.HEAD.NMZ #nmz ] > ].')
-
