@@ -471,7 +471,7 @@ class LexRuleBuilder(object):
 def customize_valence_change(mylang, ch, lexicon, rules, irules, lrules):
     from gmcs.linglib.morphotactics import all_position_classes
     rules = LexRuleBuilder()
-    for pc in ch['verb-pc']:
+    for pc in ch.get('verb-pc', ()):
         pc_key = pc.full_key
         pc_inputs = pc.get('inputs', [])
         idx = pc['lrt'].next_iter_num() if 'lrt' in pc else 1
