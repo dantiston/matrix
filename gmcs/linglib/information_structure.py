@@ -104,7 +104,7 @@ g_types = [ 'basic-head-1st-comp-phrase',
             '']
 
 narrow_focused_phrase = """
-narrow-focused-phrase := head-only & 
+narrow-focused-phrase := head-only &
   [ C-CONT [ HOOK #hook,
              RELS <! !>,
              HCONS <! !>,
@@ -123,7 +123,7 @@ narrow-focused-phrase := head-only &
 """
 
 subj_head_nmc_phrase = """
-subj-head-nmc-phrase := basic-head-subj-nmc-phrase & head-final & 
+subj-head-nmc-phrase := basic-head-subj-nmc-phrase & head-final &
  [ SYNSEM.LOCAL.CAT.MC -,
    HEAD-DTR.SYNSEM.NON-LOCAL.SLASH [ LIST < [ CONT.HOOK.ICONS-KEY $ ] > ] ].
 """
@@ -135,14 +135,14 @@ head-subj-nmc-phrase := basic-head-subj-nmc-phrase & head-initial &
 
 head_subj_phrase_initial = """
 head-subj-phrase := decl-head-subj-phrase & head-initial & narrow-focus &
- [ SYNSEM.L-PERIPH +, 
+ [ SYNSEM.L-PERIPH +,
    HEAD-DTR.SYNSEM [ L-PERIPH +,
                      LOCAL.CONT.HOOK.ICONS-KEY $ ] ].
 """
 
 head_subj_phrase_initial_wo_comps = """
 head-subj-phrase := decl-head-subj-phrase & head-initial & narrow-focus &
- [ SYNSEM.L-PERIPH +, 
+ [ SYNSEM.L-PERIPH +,
    HEAD-DTR.SYNSEM [ L-PERIPH +,
                      LOCAL [ CAT.VAL.COMPS < >,
                              CONT.HOOK.ICONS-KEY $ ] ] ].
@@ -151,7 +151,7 @@ head-subj-phrase := decl-head-subj-phrase & head-initial & narrow-focus &
 
 head_subj_phrase_final = """
 head-subj-phrase := decl-head-subj-phrase & head-initial & narrow-focus &
- [ SYNSEM.R-PERIPH +, 
+ [ SYNSEM.R-PERIPH +,
    HEAD-DTR.SYNSEM [ R-PERIPH na-or--,
                      LOCAL.CAT.VAL.COMPS < > ],
    NON-HEAD-DTR.SYNSEM [ R-PERIPH +,
@@ -159,62 +159,62 @@ head-subj-phrase := decl-head-subj-phrase & head-initial & narrow-focus &
 """
 
 head_comp_nmc_phrase = """
-head-comp-nmc-phrase := basic-head-comp-nmc-phrase & head-initial & 
+head-comp-nmc-phrase := basic-head-comp-nmc-phrase & head-initial &
   [ SYNSEM [ R-PERIPH -
              LOCAL.CAT.VAL.COMPS #comps ],
     HEAD-DTR.SYNSEM [ LOCAL.CAT.VAL.COMPS < #synsem . #comps >,
-		      NON-LOCAL.SLASH [ LIST < [ CONT.HOOK.ICONS-KEY $ ] > ] ], 
+		      NON-LOCAL.SLASH [ LIST < [ CONT.HOOK.ICONS-KEY $ ] > ] ],
     NON-HEAD-DTR.SYNSEM #synsem ].
 """
 
 comp_head_phrase = """
 comp-head-phrase := basic-head-1st-comp-phrase & head-final & narrow-focus &
  [ SYNSEM.R-PERIPH +,
-   HEAD-DTR.SYNSEM [ LIGHT +, 
+   HEAD-DTR.SYNSEM [ LIGHT +,
                      LOCAL.CONT.HOOK.ICONS-KEY $ ] ].
 """
 
 comp_head_nmc_phrase = """
-comp-head-nmc-phrase := basic-head-comp-nmc-phrase & head-final & 
+comp-head-nmc-phrase := basic-head-comp-nmc-phrase & head-final &
   [ SYNSEM [ R-PERIPH -
              LOCAL.CAT.VAL.COMPS #comps ],
     HEAD-DTR.SYNSEM [ LOCAL.CAT.VAL.COMPS < #synsem . #comps >,
-		      NON-LOCAL.SLASH [ LIST < [ CONT.HOOK.ICONS-KEY $ ] > ] ], 
+		      NON-LOCAL.SLASH [ LIST < [ CONT.HOOK.ICONS-KEY $ ] > ] ],
     NON-HEAD-DTR.SYNSEM #synsem ].
 """
 
 head_nf_comp_phrase = """
-head-nf-comp-phrase := head-nf-comp-phrase-super & head-initial & 
+head-nf-comp-phrase := head-nf-comp-phrase-super & head-initial &
  [ HEAD-DTR.SYNSEM.LIGHT +,
    NON-HEAD-DTR.SYNSEM.LOCAL [ CAT.HEAD +np,
-		               CONT.HOOK.ICONS-KEY $ ] ]. 
+		               CONT.HOOK.ICONS-KEY $ ] ].
 """
 
 head_nf_subj_phrase = """
-head-nf-subj-phrase := head-nf-subj-phrase-super & head-initial & 
+head-nf-subj-phrase := head-nf-subj-phrase-super & head-initial &
   [ HEAD-DTR.SYNSEM.LIGHT +,
    NON-HEAD-DTR.SYNSEM.LOCAL [ CAT.HEAD +np,
-		               CONT.HOOK.ICONS-KEY $ ] ]. 
+		               CONT.HOOK.ICONS-KEY $ ] ].
 """
 
 head_nf_comp_phrase_v2 = """
-head-nf-comp-phrase := head-nf-comp-phrase-super & head-initial-head-nexus & 
+head-nf-comp-phrase := head-nf-comp-phrase-super & head-initial-head-nexus &
  [ HEAD-DTR.SYNSEM.LIGHT +,
    NON-HEAD-DTR.SYNSEM.LOCAL [ CAT.HEAD +np,
-		               CONT.HOOK.ICONS-KEY $ ] ]. 
+		               CONT.HOOK.ICONS-KEY $ ] ].
 """
 
 head_nf_subj_phrase_v2 = """
-head-nf-subj-phrase := head-nf-subj-phrase-super & head-initial-head-nexus & 
+head-nf-subj-phrase := head-nf-subj-phrase-super & head-initial-head-nexus &
   [ HEAD-DTR.SYNSEM.LIGHT +,
    NON-HEAD-DTR.SYNSEM.LOCAL [ CAT.HEAD +np,
-		               CONT.HOOK.ICONS-KEY $ ] ]. 
+		               CONT.HOOK.ICONS-KEY $ ] ].
 """
 
 infostr_dislocated_phrase = """
 infostr-dislocated-phrase := narrow-focus &
   [ SYNSEM.LOCAL.CAT [ MC +, VAL.SUBJ < > ],
-    C-CONT [ RELS <! !>, 
+    C-CONT [ RELS <! !>,
              HCONS <! !>,
              ICONS <! info-str & #icons & [ IARG1 #clause, IARG2 #index ] !> ],
     HEAD-DTR.SYNSEM.LOCAL [ CAT [ MC -, HEAD verb ],
@@ -257,18 +257,18 @@ head-nf-subj-phrase-super := basic-head-subj-phrase & declarative-clause & narro
 # [MC -]: deleting it from all nf rules
 nf_comp_head_phrase_old = """
 nf-comp-head-phrase := head-nf-comp-phrase-super & head-final &
- [ SYNSEM.LOCAL.CAT.MC -, 
+ [ SYNSEM.LOCAL.CAT.MC -,
    HEAD-DTR.SYNSEM [ LIGHT +,
          	     LOCAL.CAT [ MC -, VAL.SUBJ < [ ] > ],
    NON-HEAD-DTR.SYNSEM.LOCAL [ CAT.HEAD +np,
-		               CONT.HOOK.ICONS-KEY $ ] ]. 
+		               CONT.HOOK.ICONS-KEY $ ] ].
 """
 
 nf_comp_head_phrase = """
 nf-comp-head-phrase := head-nf-comp-phrase-super & head-final &
  [ HEAD-DTR.SYNSEM.LIGHT +,
    NON-HEAD-DTR.SYNSEM.LOCAL [ CAT.HEAD +np,
-		               CONT.HOOK.ICONS-KEY $ ] ]. 
+		               CONT.HOOK.ICONS-KEY $ ] ].
 """
 
 nf_comp_head_phrase_v2 = """
@@ -277,46 +277,46 @@ nf-comp-head-phrase := head-nf-comp-phrase-super & head-final-head-nexus &
    HEAD-DTR.SYNSEM.LIGHT +,
    NON-HEAD-DTR.SYNSEM [ L-PERIPH +,
                          LOCAL [ CAT.HEAD +np,
-		                 CONT.HOOK.ICONS-KEY $ ] ] ]. 
+		                 CONT.HOOK.ICONS-KEY $ ] ] ].
 """
 
 nf_subj_head_phrase_v2 = """
-nf-subj-head-phrase := head-nf-subj-phrase-super & head-final-head-nexus & 
+nf-subj-head-phrase := head-nf-subj-phrase-super & head-final-head-nexus &
   [ SYNSEM [ L-PERIPH +, INFOSTR-FLAG + ],
     HEAD-DTR.SYNSEM.LIGHT +,
    NON-HEAD-DTR.SYNSEM [ L-PERIPH +,
                          LOCAL [ CAT.HEAD +np,
-		                 CONT.HOOK.ICONS-KEY $ ] ] ]. 
+		                 CONT.HOOK.ICONS-KEY $ ] ] ].
 """
 
 head_nf_subj_phrase_w_comps = """
 head-nf-subj-phrase := head-nf-subj-phrase-super & head-initial &
   [ HEAD-DTR.SYNSEM [ LIGHT +,
-		      LOCAL.CAT.VAL.COMPS.FIRST [ ] ], 
+		      LOCAL.CAT.VAL.COMPS.FIRST [ ] ],
    NON-HEAD-DTR.SYNSEM.LOCAL [ CAT.HEAD +np,
-		               CONT.HOOK.ICONS-KEY $ ] ]. 
+		               CONT.HOOK.ICONS-KEY $ ] ].
 """
 
 nf_subj_head_phrase = """
 nf-subj-head-phrase := head-nf-subj-phrase-super & head-final &
   [ HEAD-DTR.SYNSEM [ LIGHT +,
-		      LOCAL.CAT.VAL.COMPS.FIRST [ ] ], 
+		      LOCAL.CAT.VAL.COMPS.FIRST [ ] ],
    NON-HEAD-DTR.SYNSEM.LOCAL [ CAT.HEAD +np,
-		               CONT.HOOK.ICONS-KEY $ ] ]. 
+		               CONT.HOOK.ICONS-KEY $ ] ].
 """
 
 nf_subj_head_phrase_simple = """
-nf-subj-head-phrase := head-nf-subj-phrase-super & head-final & 
+nf-subj-head-phrase := head-nf-subj-phrase-super & head-final &
   [ HEAD-DTR.SYNSEM.LIGHT +,
     NON-HEAD-DTR.SYNSEM.LOCAL.CONT.HOOK.ICONS-KEY $ ].
 """
 
 nf_comp_head_phrase_aux = """
-nf-comp-head-phrase := head-nf-comp-phrase-super & head-final & 
+nf-comp-head-phrase := head-nf-comp-phrase-super & head-final &
  [ HEAD-DTR.SYNSEM [ LIGHT +,
          	     LOCAL.CAT.HEAD.AUX - ],
    NON-HEAD-DTR.SYNSEM.LOCAL [ CAT.HEAD +np,
-		               CONT.HOOK.ICONS-KEY $ ] ]. 
+		               CONT.HOOK.ICONS-KEY $ ] ].
 """
 
 head_nf_comp_phrase_aux = """
@@ -324,24 +324,24 @@ head-nf-comp-phrase := head-nf-comp-phrase-super & head-initial &
  [ HEAD-DTR.SYNSEM [ LIGHT +,
          	     LOCAL.CAT.HEAD.AUX - ],
    NON-HEAD-DTR.SYNSEM.LOCAL [ CAT.HEAD +np,
-		               CONT.HOOK.ICONS-KEY $ ] ]. 
+		               CONT.HOOK.ICONS-KEY $ ] ].
 """
 
 head_nf_subj_phrase_aux = """
-head-nf-subj-phrase := head-nf-subj-phrase-super & head-initial & 
+head-nf-subj-phrase := head-nf-subj-phrase-super & head-initial &
   [ HEAD-DTR.SYNSEM [ LIGHT +,
                       LOCAL.CAT.HEAD.AUX - ],
    NON-HEAD-DTR.SYNSEM.LOCAL [ CAT.HEAD +np,
-		               CONT.HOOK.ICONS-KEY $ ] ]. 
+		               CONT.HOOK.ICONS-KEY $ ] ].
 """
 
 head_nf_subj_phrase_w_comps_aux = """
-head-nf-subj-phrase := head-nf-subj-phrase-super & head-initial & 
+head-nf-subj-phrase := head-nf-subj-phrase-super & head-initial &
   [ HEAD-DTR.SYNSEM [ LIGHT +,
 		      LOCAL.CAT [ HEAD.AUX -,
-                                  VAL.COMPS.FIRST [ ] ] ], 
+                                  VAL.COMPS.FIRST [ ] ] ],
    NON-HEAD-DTR.SYNSEM.LOCAL [ CAT.HEAD +np,
-		               CONT.HOOK.ICONS-KEY $ ] ]. 
+		               CONT.HOOK.ICONS-KEY $ ] ].
 """
 
 nf_subj_head_phrase_aux = """
@@ -350,11 +350,11 @@ nf-subj-head-phrase := head-nf-subj-phrase-super & head-final &
                       LOCAL.CAT [ HEAD.AUX -,
 				  VAL.COMPS.FIRST [ ] ] ],
    NON-HEAD-DTR.SYNSEM.LOCAL [ CAT.HEAD +np,
-		               CONT.HOOK.ICONS-KEY $ ] ]. 
+		               CONT.HOOK.ICONS-KEY $ ] ].
 """
 
 nf_subj_head_phrase_simple_aux = """
-nf-subj-head-phrase := head-nf-subj-phrase-super & head-final & 
+nf-subj-head-phrase := head-nf-subj-phrase-super & head-final &
   [ HEAD-DTR.SYNSEM [ LIGHT +,
                       LOCAL.CAT.HEAD.AUX - ],
     NON-HEAD-DTR.SYNSEM.LOCAL.CONT.HOOK.ICONS-KEY $ ].
@@ -788,7 +788,7 @@ def customize_information_structure_pos_once(mylang, ch, rules, infostr_type, in
                                           NON-HEAD-DTR.SYNSEM.L-PERIPH - ]."""
             tdl = """periph-comp-head-phrase := basic-head-1st-comp-phrase & head-final-head-nexus &
                 [ SYNSEM.L-PERIPH +,
-                  HEAD-DTR.SYNSEM [ L-PERIPH -, 
+                  HEAD-DTR.SYNSEM [ L-PERIPH -,
                                     LOCAL.CAT.VAL.SUBJ < > ],
                   NON-HEAD-DTR.SYNSEM [ L-PERIPH +,
 					LOCAL.CONT.HOOK.ICONS-KEY $ ] ]."""
@@ -826,7 +826,7 @@ def customize_information_structure_pos_once(mylang, ch, rules, infostr_type, in
 					                    LOCAL.CAT.VAL.SUBJ.FIRST [ ] ] ]."""
             tdl = """head-periph-comp-phrase := basic-head-1st-comp-phrase & head-initial-head-nexus &
                  [ SYNSEM.R-PERIPH +,
-                   HEAD-DTR.SYNSEM.R-PERIPH -, 
+                   HEAD-DTR.SYNSEM.R-PERIPH -,
                    NON-HEAD-DTR.SYNSEM [ R-PERIPH +,
                                          LOCAL.CONT.HOOK.ICONS-KEY $ ] ]."""
             ph_types['head-periph-comp-phrase'] = tdl.replace('$', infostr)
@@ -870,7 +870,7 @@ def customize_information_structure_pos_once(mylang, ch, rules, infostr_type, in
             ph_rules['nf-subj-head-phrase'] = 'nf-subj-head'
             tdl = """head-subj-phrase-2 := basic-head-subj-phrase & declarative-clause & head-initial &
                [ HEAD-DTR.SYNSEM [ INFOSTR-FLAG +,
-                                   LIGHT -,   
+                                   LIGHT -,
                                    LOCAL.CAT.VAL.COMPS < > ],
                  NON-HEAD-DTR.SYNSEM.INFOSTR-FLAG - ]."""
             ph_types['head-subj-phrase-2'] = tdl
@@ -904,18 +904,18 @@ def customize_information_structure_pos_once(mylang, ch, rules, infostr_type, in
 
 
 def customize_information_structure_pos(mylang, ch, rules):
-    pos_type = ch.get('focus-pos').strip() + ';' + ch.get('topic-first').strip()  + ';'
-    pos_type += ch.get('c-focus').strip() + ';' + ch.get('c-focus-pos').strip()
+    pos_type = ch.get('focus-pos', '').strip() + ';' + ch.get('topic-first', '').strip()  + ';'
+    pos_type += ch.get('c-focus', '').strip() + ';' + ch.get('c-focus-pos', '').strip()
     if pos_type in list(g_pos_types.keys()):
         pos = g_pos_types[pos_type][0].strip().split(';')
-        for i in range(0,len(pos)):
+        for i in range(len(pos)):
             infostr = pos[i].strip().split('|')
             if len(infostr) == 2:
                 customize_information_structure_pos_once(mylang, ch, rules, infostr[0].strip(), infostr[1].strip(), g_pos_types[pos_type][i+1])
 
 
 def customize_information_structure_marker(mylang, ch, rules, irules, lexicon, trigger, marker, infostr):
-    if len(ch.get(marker)) < 1:
+    if marker not in ch:
         return
 
     mkg = 'mkg'
@@ -927,7 +927,7 @@ def customize_information_structure_marker(mylang, ch, rules, irules, lexicon, t
         if marker == 'topic-marker' and ch.get('topic-first').strip() != '':
             l_periph = '+'
 
-    for m in ch.get(marker):
+    for m in ch.get(marker, ()):
         _type = m['type'].strip()
         _pos = m['pos'].strip()
         _cat = m['cat'].strip()
@@ -1040,8 +1040,8 @@ def customize_infostr_adpositions(mylang, lexicon, trigger, ch):
     no_case_adp = True
     adporders = []
 
-    for adp in ch.get('adp',[]):
-        for feat in adp.get('feat', []):
+    for adp in ch.get('adp', ()):
+        for feat in adp.get('feat', ()):
             if feat['name'] == 'case' and (feat['value'] == case or case == ''):
                 no_case_adp = False
             if feat['name'] == 'information-structure meaning':
@@ -1060,10 +1060,10 @@ def customize_infostr_adpositions(mylang, lexicon, trigger, ch):
 
     # Lexical entries
     lexicon.add_literal(';;; Information structural adpositions')
-    for adp in ch.get('adp',[]):
+    for adp in ch.get('adp', ()):
         infostr_marking = False
         no_case_adp = True
-        for feat in adp.get('feat', []):
+        for feat in adp.get('feat', ()):
             if feat['name'] == 'case' and (feat['value'] == case or case == ''):
                 no_case_adp = False
             if feat['name'] == 'information-structure meaning':
@@ -1105,7 +1105,7 @@ def customize_infostr_adpositions(mylang, lexicon, trigger, ch):
 
 def customize_information_structure(mylang, ch, rules, irules, lexicon, trigger, hierarchies):
     #if topic is always initial:
-    if ch.get('topic-first').strip() != '':
+    if ch.get('topic-first', '').strip() != '':
         mylang.add_literal('topic-comment :+ [ SYNSEM.L-PERIPH +, NON-HEAD-DTR.SYNSEM.L-PERIPH + ].', '', section='addenda')
 
     customize_information_structure_pos(mylang, ch, rules)
@@ -1113,4 +1113,3 @@ def customize_information_structure(mylang, ch, rules, irules, lexicon, trigger,
     customize_information_structure_marker(mylang, ch, rules, irules, lexicon, trigger, 'topic-marker', 'topic')
     customize_information_structure_marker(mylang, ch, rules, irules, lexicon, trigger, 'c-focus-marker', 'contrast-focus')
     customize_information_structure_marker(mylang, ch, rules, irules, lexicon, trigger, 'c-topic-marker', 'contrast-topic')
-
