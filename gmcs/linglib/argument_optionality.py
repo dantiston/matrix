@@ -66,7 +66,7 @@ def customize_arg_op(mylang, ch, rules, hierarchies):
     mylang.set_section('phrases')
 
     #Create phrase-structure rules for each context
-    for context in ch.get('context'):
+    for context in ch.get('context', ()):
         name = 'context' + str(context.iter_num())
         ptype = name + '-decl-head-opt-subj-phrase'
         features.customize_feature_values(mylang, ch, hierarchies, context, ptype, 'con')
@@ -117,9 +117,9 @@ def add_lexrules(choices):
     for pc in morphotactics.all_position_classes(choices):
         pc_key = pc.full_key
         idx = pc['lrt'].next_iter_num() if 'lrt' in pc else 1
-        for lrt in pc.get('lrt',[]):
-            overt = [f for f in lrt.get('feat',[]) if f['name']=='overt-arg']
-            dropped = [f for f in lrt.get('feat',[]) if f['name']=='dropped-arg']
+        for lrt in pc.get('lrt', ()):
+            overt = [f for f in lrt.get('feat', ()) if f['name']=='overt-arg']
+            dropped = [f for f in lrt.get('feat', ()) if f['name']=='dropped-arg']
             need_lex_rule = need_no_drop_rule('obj-mark', choices) or \
                             need_no_drop_rule('subj-mark', choices)
             # overt-arg morphs should be the index of the next available

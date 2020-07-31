@@ -322,11 +322,11 @@ def customize_case(mylang, ch, hierarchies):
     from gmcs.linglib.lexbase import ALL_LEX_TYPES
     cases = case_names(ch)
     for x in ALL_LEX_TYPES:
-        for lex_type in ch[x]:
+        for lex_type in ch.get(x, ()):
             convert_mixed_case(lex_type, hierarchies, cases)
-        for pc in ch[x + '-pc']:
+        for pc in ch.get(x + '-pc', ()):
             convert_mixed_case(pc, hierarchies, cases)
-            for lrt in pc['lrt']:
+            for lrt in pc.get('lrt', ()):
                 convert_mixed_case(lrt, hierarchies, cases)
     # now output the case hierarchies
     customize_case_type(mylang, hierarchies)

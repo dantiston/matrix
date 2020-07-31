@@ -1,8 +1,11 @@
-import gmcs.linglib.morphotactics
+
+from delphin_choices import info
+
+from gmcs.lib import TDLHierarchy
 from gmcs.linglib import case
+from gmcs.linglib import morphotactics
 from gmcs.linglib.lexbase import ALL_LEX_TYPES
 from gmcs.utils import get_name
-from gmcs.lib import TDLHierarchy
 
 dirinv_geom = 'LOCAL.CAT.HEAD.DIRECTION'
 
@@ -29,7 +32,7 @@ def get_subj_comps_types(j, scale_size, direc, equal):
 ##########################
 
 def customize_direct_inverse(choices, mylang, hierarchies):
-    if not choices.has_dirinv():
+    if not info.has_dirinv(choices):
         return
     write_dir_inv_types(choices, mylang, hierarchies)
     write_dir_inv_lexrule_supertypes(choices, mylang)
@@ -50,9 +53,9 @@ def write_dir_inv_types(choices, mylang, hierarchies):
 
     # Figure out which features are involved in the hierarchy
     names = []  # feature names
-    for scale in choices.get('scale',[]):
-        for feat in scale.get('feat', []):
-            names.append(feat.get('name',''))
+    for scale in choices.get('scale', ()):
+        for feat in scale.get('feat', ()):
+            names.append(feat.get('name', ''))
 
     # Now pass through the scale, creating the direct-inverse hierarchy
     # pairwise
@@ -99,8 +102,8 @@ def write_dir_inv_types(choices, mylang, hierarchies):
         # rest of the scale
         values = {}
 
-        for scale in list(choices.get('scale'))[i:]:
-            for feat in scale.get('feat', []):
+        for scale in list(choices.get('scale', []))[i:]:
+            for feat in scale.get('feat', ()):
                 name = feat.get('name','')
                 if name not in values:
                     values[name] = set()
@@ -172,7 +175,7 @@ def add_lexrules(choices):
     equal = choices.get('scale-equal')
 
     for lexprefix in ALL_LEX_TYPES:
-        for lex in choices[lexprefix]:
+        for lex in choices.get(lexprefix, ()):
             p = lex.full_key
             n = get_name(lex)
             if p in ALL_LEX_TYPES: # What does this do and when would it execute?
@@ -233,7 +236,7 @@ def add_lexrules(choices):
 
 def reassign_inputs(choices, inp_key, pc_key):
     for lexprefix in ALL_LEX_TYPES:
-        for pc in choices[lexprefix + '-pc']:
+        for pc in choices.get(lexprefix + '-pc', ()):
             if pc.full_key == pc_key: continue
             if inp_key in pc['inputs'].split(', '):
                 choices[pc.full_key + '_inputs'] = \
