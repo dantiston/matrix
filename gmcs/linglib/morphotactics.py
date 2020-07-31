@@ -49,7 +49,7 @@ _supertypes = {}
 def all_position_classes(choices):
     """ Yield each position class defined in the choices file. """
     for lt in ALL_LEX_TYPES:
-        for pc in choices[lt + '-pc']:
+        for pc in choices.get(lt + '-pc', ()):
             yield pc
 
 def defined_lexrule_sts(lrt,pc):
@@ -59,7 +59,7 @@ def defined_lexrule_sts(lrt,pc):
     """
     sts = lrt.split_value('supertypes')
     to_return = []
-    for lrt in pc['lrt']:
+    for lrt in pc.get('lrt', ()):
         if lrt.full_key in sts:
             to_return.append(lrt.full_key)
     return to_return
@@ -230,7 +230,7 @@ def pc_lrt_merge(cur_pc, pc):
 def create_lexical_rule_types(cur_pc, pc):
     lrt_parents = {}
     # TJT 2014-08-21 Check incorporated stems too
-    all_lrts = (pc.get('lrt',[]), pc.get('is-lrt',[]))
+    all_lrts = (pc.get('lrt', ()), pc.get('is-lrt', ()))
     for lrts in all_lrts:
         for j, lrt in enumerate(lrts):
             mtx_supertypes = set()
@@ -252,7 +252,7 @@ def create_lexical_rule_types(cur_pc, pc):
 def create_lexical_rule_type(lrt, mtx_supertypes, cur_pc):
     new_lrt = LexicalRuleType(lrt.full_key, get_name(lrt))
     _id_key_tbl[new_lrt.identifier()] = lrt.full_key
-    for feat in lrt.get('feat'):
+    for feat in lrt.get('feat', ()):
         if feat['name'] == 'evidential':
             new_lrt.evidential = feat['value']
         # EKN 2018-02-17 Add info about possessive lrts:
@@ -267,12 +267,12 @@ def create_lexical_rule_type(lrt, mtx_supertypes, cur_pc):
                 new_lrt.possessive='nonpossessive'
                 new_lrt.poss_strat_num = feat['name'][-1]
             # This'll mark the lrt as a possessive type of
-            # some kind, though it won't actually be used 
+            # some kind, though it won't actually be used
             # to add any tdl here. It'll just prevent this
             # lrt from getting a default supertype added.
             elif feat['value']=='plus':
                 new_lrt.possessive='pron'
-        # EKN 2018-02-17 Add info about lrts for possessum marking 
+        # EKN 2018-02-17 Add info about lrts for possessum marking
         # that accompanies pronoun possessors:
         elif '_possessum' in feat['name']: #TODO: improve feature name and retrieval
             num = feat['name'].split('_')[0][-1]
@@ -550,7 +550,7 @@ def percolate_supertypes(pc):
                     # evidential semantics must be able to add a predicate
                     # in CCONT
                     x.supertypes.add('cont-change-only-lex-rule')
-                # EKN 2017-12-18 Possessive lexical rules have too much variation to 
+                # EKN 2017-12-18 Possessive lexical rules have too much variation to
                 # add any supertype but lex-rule, but adding this causes inheritance issues.
                 # So no supertypes for possessive rules are added here; instead, supertypes
                 # are handled by write_possessive_behavior(). If any other lrt shares a pc
@@ -600,21 +600,21 @@ def get_infostr_constraint(k, cur):
 
 def get_infostr_constraints(choices):
     for i, pc in enumerate(all_position_classes(choices)):
-        for j, lrt in enumerate(pc.get('lrt')):
+        for j, lrt in enumerate(pc.get('lrt', ())):
             _supertypes[lrt.full_key] = lrt.split_value('supertypes')
             for st in _supertypes[lrt.full_key]:
                 if st not in _nonleaves:
                     _nonleaves.append(st)
             if lrt.full_key not in _infostr_head:
                 _infostr_head[lrt.full_key] = []
-            for feat in lrt.get('feat'):
+            for feat in lrt.get('feat', ()):
                 if feat['name'] == "information-structure meaning":
                     if lrt.full_key not in _infostr_lrt:
                         _infostr_lrt.append(lrt.full_key)
                     if feat.get('head') in ['subj', 'obj', 'verb']:
                         _infostr_head[lrt.full_key].append(feat.get('head'))
     for i, pc in enumerate(all_position_classes(choices)):
-        for j, lrt in enumerate(pc.get('lrt')):
+        for j, lrt in enumerate(pc.get('lrt', ())):
             get_infostr_constraint(lrt.full_key, lrt.full_key)
 
 
@@ -838,7 +838,7 @@ def write_evidential_behavior(lrt, mylang, choices, pc_evidential):
         prev_section = mylang.section
         mylang.set_section('lexrules')
         mylang.add(EVIDENTIAL_LEX_RULE)
-        infl_evid_def = lrt.evidential + '''-evidential-lex-rule := evidential-lex-rule & 
+        infl_evid_def = lrt.evidential + '''-evidential-lex-rule := evidential-lex-rule &
         [ C-CONT.RELS <! [ PRED "ev_''' + lrt.evidential + '''_rel" ] !> ].
         '''
         mylang.add(infl_evid_def)
@@ -851,9 +851,9 @@ def write_possessive_behavior(pc,lrt,mylang,choices):
     ##############################################
     # FULL NP POSSESSIVE PHRASES:              ###
     ##############################################
-    POSSESSOR_LEX_RULE_DEFN = ''' := 
+    POSSESSOR_LEX_RULE_DEFN = ''' :=
              [ SYNSEM.LOCAL.CAT.HEAD noun ].'''
-    POSSESSUM_LEX_RULE_DEFN = ''' := 
+    POSSESSUM_LEX_RULE_DEFN = ''' :=
              [ SYNSEM.LOCAL.CAT.HEAD noun ].'''
     NON_POSS_LEX_RULE_DEFN = ''' := add-only-no-ccont-rule &
              [ SYNSEM.LOCAL.CAT [ HEAD noun & [ POSSESSOR nonpossessive ],\
@@ -870,7 +870,7 @@ def write_possessive_behavior(pc,lrt,mylang,choices):
         nonpossessive_rule_name='nonpossessive-lex-rule-'+lrt.poss_strat_num
         mylang.add(nonpossessive_rule_name+NON_POSS_LEX_RULE_DEFN,section='lexrules')
         lrt.supertypes.add(nonpossessive_rule_name)
-    # If a non-possessive rule is in the same pc as a possessive rule, make 
+    # If a non-possessive rule is in the same pc as a possessive rule, make
     # sure it isn't missing supertypes. Note: to keep this simple, validating
     # against all but 'generic' lrts:
     elif lrt.possessive==None and pc.has_possessive():
@@ -979,15 +979,12 @@ def validate(choices, vr):
         switching = pc.get('switching',False)
         pc_switching_inputs = set()
         if pc.get('switching',''):
-            inputs = pc.get('inputs',[]).split(', ')
-            if isinstance(inputs, str):
-                pc_switching_inputs.add(inputs)
-            else: # assume list
-                pc_switching_inputs.update(inputs)
-        for lrt in pc.get('lrt', []):
+            inputs = pc.get('inputs', '').split(', ')
+            pc_switching_inputs.update(inputs)
+        for lrt in pc.get('lrt', ()):
             lrt_validation(lrt, vr, index_feats, choices, inputs=pc_switching_inputs, switching=switching)
         # TJT 2014-08-21: Validate incorporated stems
-        for lrt in pc.get('is-lrt', []):
+        for lrt in pc.get('is-lrt', ()):
             lrt_validation(lrt, vr, index_feats, choices, incorp=True, inputs=pc_switching_inputs, switching=switching)
     cycle_validation(choices, vr)
 
@@ -1119,12 +1116,12 @@ def lrt_validation(lrt, vr, index_feats, choices, incorp=False, inputs=set(), sw
             if not vchop.get('predname'):
                 vr.warn(vchop.full_key+'_predname','The added predicate should have a name specified.')
 
-    # EKN 2018-01-09: Check that only one possessive strategy or 
+    # EKN 2018-01-09: Check that only one possessive strategy or
     # possessive pronoun is selected per LRT
     poss_strats={}
     poss_prons={}
     other_feats={}
-    for feat in lrt.get('feat'):
+    for feat in lrt.get('feat', ()):
         if 'poss-strat' in feat.get('name'):
             poss_strats[feat.full_key]=feat.get('name')
         elif 'poss-pron' in feat.get('name'):
@@ -1146,10 +1143,10 @@ def lrt_validation(lrt, vr, index_feats, choices, incorp=False, inputs=set(), sw
         for feat_key in poss_strats:
             vr.err(feat_key+'_name',
                'A given rule can only be marked for one possessive behavior.')
-    # EKN 2018-01-09: Check that only PNG features are 
+    # EKN 2018-01-09: Check that only PNG features are
     # added as agreement features to possessive strategies
     png_feats=set(['person','number','gender','pernum'])
-    for feat in choices.get('feature'):
+    for feat in choices.get('feature', ()):
         if feat.get('type')!='type':
             png_feats.add(feat.get('name'))
     for feat_key in other_feats:
@@ -1168,15 +1165,15 @@ def lrt_validation(lrt, vr, index_feats, choices, incorp=False, inputs=set(), sw
                      'nonpossessive lexical rule type.'
             vr.warn(pc_id+'_obligatory', mess)
         # The head of poss-stratN or poss-pronN features should be 'itself'
-        for feat in lrt.get('feat'):
-            if 'poss-' in feat.get('name'): 
+        for feat in lrt.get('feat', ()):
+            if 'poss-' in feat.get('name'):
                 if feat.get('head')=='possessor' or feat.get('head')=='possessum':
                     mess='A feature should only be marked as specified on the possessor '+\
                          'or the possessum if it is an agreement feature. '+feat.get('name')+\
                          ' is not an agreement feature.'
                     vr.err(feat.full_key+'_head',mess)
     else:
-        for feat in lrt.get('feat'):
+        for feat in lrt.get('feat', ()):
             # The head of noun features should be 'itself' unless it's a possessive form
             if 'noun' in lrt.full_key.split('_')[0]:
                 if feat.get('head')=='possessor' or feat.get('head')=='possessum':
@@ -1329,7 +1326,7 @@ def hierarchy_validation(choices, pc, vr):
         if sts:
             lrtsts[lrt.full_key] = sts
         feats[lrt.full_key] = {}
-        for f in lrt.get('feat'):
+        for f in lrt.get('feat', ()):
             feats[lrt.full_key][f.get('head') + " " + f.get('name')] = f.get('value')
 
     # now to figure out inherited features, check for cycles, check for hierarchy issues

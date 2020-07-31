@@ -237,7 +237,7 @@ def customize_case_adpositions(mylang, lexicon, trigger, ch):
                                   POSSESSUM nonpossessive ], \
                              ARG-ST < [ LOCAL.CAT.HEAD.CASE real-case ] > ].')
 
-        if ch.has_mixed_case():
+        if info.has_mixed_case(ch):
             mylang.add('+np :+ [ CASE-MARKED bool ].', section='addenda')
             mylang.add(
                 'case-marking-adp-lex := \
@@ -341,7 +341,7 @@ def convert_mixed_case(item, hierarchies, cases):
 
 def add_lexrules(ch):
     # only need to add rules for mixed_case
-    if not ch.has_mixed_case():
+    if not info.has_mixed_case(ch):
         return
     for pc in ch['noun-pc']:
         # TJT 2014-09-08: changing to set comprehension for speed
@@ -447,8 +447,8 @@ def customize_verb_case(mylang, ch):
                     mylang.add(typedef)
 
                 # constrain CASE-MARKING of the agent/subject, if appropriate
-                if a_case and ch.has_mixed_case() and \
-                        not ch.has_optadp_case(a_case):
+                if a_case and info.has_mixed_case(ch) and \
+                        not info.has_optadp_case(ch, a_case):
                     typedef = \
                         t_type + ' := \
           [ SYNSEM.LOCAL.CAT.VAL.SUBJ < [ LOCAL.CAT.HEAD.CASE-MARKED + ] > ].'
@@ -469,8 +469,8 @@ def customize_verb_case(mylang, ch):
                     mylang.add(typedef)
 
                 # constrain CASE-MARKING of the patient/object, if appropriate
-                if o_case and ch.has_mixed_case() and \
-                        not ch.has_optadp_case(o_case):
+                if o_case and info.has_mixed_case(ch) and \
+                        not info.has_optadp_case(ch, o_case):
                     typedef = \
                         t_type + ' := \
           [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD.CASE-MARKED + ] > ].'
@@ -515,8 +515,8 @@ def customize_verb_case(mylang, ch):
                     mylang.add(typedef)
 
                 # constrain CASE-MARKING of the subject, if appropriate
-                if s_case and ch.has_mixed_case() and \
-                        not ch.has_optadp_case(s_case):
+                if s_case and info.has_mixed_case(ch) and \
+                        not info.has_optadp_case(ch, s_case):
                     typedef = \
                         i_type + ' := \
           [ SYNSEM.LOCAL.CAT.VAL.SUBJ < [ LOCAL.CAT.HEAD.CASE-MARKED + ] > ].'

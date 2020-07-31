@@ -49,7 +49,7 @@ def write_dir_inv_types(choices, mylang, hierarchies):
         mylang.add('lex-rule :+ [ SC-ARGS #1, DTR.SC-ARGS #1 ].', section='addenda')
 
     cases = case.case_names(choices)
-    features = choices.features()
+    features = info.features(choices)
 
     # Figure out which features are involved in the hierarchy
     names = []  # feature names
@@ -170,8 +170,8 @@ def write_dir_inv_lexrule_supertypes(choices, mylang):
                                             COMPS < #1 > ] ].')
 
 def add_lexrules(choices):
-    features = choices.features()
-    scale_size = len(choices['scale'])
+    features = info.features(choices)
+    scale_size = len(choices.get('scale', ()))
     equal = choices.get('scale-equal')
 
     for lexprefix in ALL_LEX_TYPES:

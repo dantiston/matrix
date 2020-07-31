@@ -8,15 +8,15 @@ from functools import partial
 # currently only intransitive and strict transitive
 def added_argnum_for_vchop(vchop):
     position = vchop.get('argpos','post').lower() # default to post
-    inputs = vchop.get('inputs','').split(',') 
+    inputs = vchop.get('inputs','').split(',')
     transitive = 'trans' in inputs or (len(inputs) == 1 and inputs[0] == '') # default to transitive
     numargs = 3 if transitive else 2
     argnum = numargs - (1 if (transitive and position == 'pre') else 0)
     return (argnum, numargs)
-    
+
 
 ####  RULE NAME GENERATORS ####
- 
+
 # These functions return the name the rule generator will use
 def subj_rem_op_lex_rule_name(transitive):
     tr_itr = 'tr' if transitive else 'itr'
@@ -43,7 +43,7 @@ def added_arg_head_lex_rule_name(added_arg, total_args, head_constraint):
             head = 'pp'
     return 'added-arg{0}of{1}-{2}-head-lex-rule'.format(added_arg, total_args, head)
 
-def causative_lex_rule_name(demoted_argnum, transitive):    
+def causative_lex_rule_name(demoted_argnum, transitive):
     return 'causative-to-arg{0}-{1}-op-lex-rule'.format(demoted_argnum,
                                                         'tr' if transitive else 'itr')
 #    if transitive:
@@ -86,8 +86,8 @@ SUBJ_REM_OP_ITR_RULE_TEMPLATE = '''{0} := subj-change-only-lex-rule & no-ccont-l
 SUBJ_REM_OP_TR_RULE_TEMPLATE = '''{0} := subj-and-comps-change-only-lex-rule &
   [ SYNSEM [ LOCAL.CAT.VAL [ SUBJ < [ LOCAL [ CONT.HOOK.INDEX #sind,
                                               CAT [ HEAD [ MOD #mod,
-                                                           KEYS #keys ], 
-                                                    VAL #val ] ], 
+                                                           KEYS #keys ],
+                                                    VAL #val ] ],
                                       NON-LOCAL #nl ] >,
                              COMPS #rest ] ],
     C-CONT.HOOK.XARG #sind,
@@ -95,7 +95,7 @@ SUBJ_REM_OP_TR_RULE_TEMPLATE = '''{0} := subj-and-comps-change-only-lex-rule &
                                  COMPS [ FIRST [ LOCAL [ CONT.HOOK.INDEX #sind,
                                                          CAT [ HEAD [ MOD #mod,
                                                                     KEYS #keys ],
-                                                              VAL #val ] ], 
+                                                              VAL #val ] ],
                                                  NON-LOCAL #nl ],
                                          REST #rest ] ] ] ].'''
 
@@ -144,7 +144,7 @@ def subj_dem_op_lex_rule(demoted_argnum, total_args):
     rulevars = {}
     # if the daughter is ditransitive (= has two COMPS) then we need
     # to copy up the one not being demoted.
-    other_arg = ['#oarg'] if total_args == 3 else [] 
+    other_arg = ['#oarg'] if total_args == 3 else []
     hook = ['[ {hook} ]']
     hook_path = 'LOCAL.CONT.HOOK.INDEX #sidx'
     # ok here if only 2 args; adding [] doesn't do anything to the list
@@ -170,7 +170,7 @@ def obj_prom_op_lex_rule(promoted_argnum, total_args):
     rulevars = {}
     ## if the daughter is ditransitive (= has two COMPS) then we need
     ## to copy up the one not being promoted.
-    other_arg = ['#oarg'] if total_args == 3 else [] 
+    other_arg = ['#oarg'] if total_args == 3 else []
     hook = ['[ {hook} ]']
     hook_path = 'LOCAL.CONT.HOOK.INDEX #sidx'
     # ok here if only 2 args; adding [] doesn't do anything to the list
@@ -273,7 +273,7 @@ SCOPAL_REL_LEX_RULE = '''scopal-rel-lex-rule := lex-rule &
                               LARG #scoped ] !> ],
     SYNSEM.LOCAL.CAT.VAL.SUBJ < [ LOCAL.CONT.HOOK.INDEX #arg1 ] >,
     DTR.SYNSEM.LOCAL [ CAT.VAL.SUBJ < [ LOCAL.CONT.HOOK.INDEX #arg2 ] >,
-                       CONT.HOOK.LTOP #scoped ] ].'''          
+                       CONT.HOOK.LTOP #scoped ] ].'''
 
 def scopal_rel_lex_rule_gen():
     return SCOPAL_REL_LEX_RULE
@@ -284,7 +284,7 @@ def causative_lex_rule_gen(demoted_argnum, transitive=True):
     if transitive:
         # argnum 2 -> erst. SUBJ is prepend -> erst. COMP append/insert(1)
         # argnum 3 -> erst. SUBJ is append -> erst. COMP prepend/insert(0)
-        compslist.insert(3 - demoted_argnum, '#comp')       
+        compslist.insert(3 - demoted_argnum, '#comp')
     rulevars['rulename'] = gen_rulename('subj-add', demoted_argnum, transitive)
     rulevars['osubj'] = OSUBJ_ARG_FRAG_MIN
     rulevars['comps'] = ', '.join(compslist)
@@ -353,32 +353,32 @@ def added_arg_head_lex_rule(argnum, numargs, head):
 #        constraint = '  [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ LOCAL.CAT.HEAD {} ], [ ] > ].'.format(head_type)
 #    elif argnum == 3:
 #        constraint = '  [ SYNSEM.LOCAL.CAT.VAL.COMPS < [ ], [ LOCAL.CAT.HEAD {} ] > ].'.format(head_type)
-    
+
     return rulename + ' := lex-rule &\n' + constraint
-    
+
 
 
 
 ADDED_ARG_APPLICATIVE_FRAGMENT = ''' [ LOCAL [ CAT [ VAL [ SPR < >,
                                                            COMPS < > ] ],
                                                CONT.HOOK.INDEX #nind ] ]'''
-                            
-# Generates the valence-specific applicative LR supertype.     
-# Inherits from the valence-specific non-local rule and the generic applicative rule.   
+
+# Generates the valence-specific applicative LR supertype.
+# Inherits from the valence-specific non-local rule and the generic applicative rule.
 def added_arg_applicative_lex_rule(added_arg, total_args):
     rulevars = {}
     compslist = []
     for i in range(2, total_args+1):
         if i == added_arg:
             compslist.append(ADDED_ARG_APPLICATIVE_FRAGMENT)
-        else: 
+        else:
             compslist.append('#ocomp')
     rulevars['comps'] = ', '.join(compslist)
     rulevars['dtr-comps'] = '#ocomp' if total_args > 2 else ''
     rulevars['rulename'] = lexrule_name('added-arg-applicative', added_arg, total_args)
     rulevars['basic-applicative-rule'] = lexrule_name('basic-applicative')
     rulevars['added-arg-non-local-rule'] = lexrule_name('added-arg-non-local', added_arg, total_args)
-                 
+
     rule = '''{rulename} := {basic-applicative-rule} & {added-arg-non-local-rule} &
   [ SYNSEM.LOCAL.CAT.VAL.COMPS < {comps} >,
     C-CONT [ RELS <! [ ARG2 #nind ] !> ],
@@ -430,7 +430,7 @@ def gen_rulebody(rule_type, *args):
 
 
 # Small helper classes to get proper set semantics:
-# We want to create a set of all the generated rules, but we only want 
+# We want to create a set of all the generated rules, but we only want
 #class FnWrapper(object):
 #    def __init__(self, label, fn, *args):
 #        self.label = label
@@ -505,13 +505,13 @@ def customize_valence_change(mylang, ch, lexicon, rules, irules, lrules):
 
 
 def add_lexrules(ch):
-    for pc in ch['verb-pc']:
+    for pc in ch.get('verb-pc', ()):
         pc_key = pc.full_key
         for lrt in pc.get('lrt', []):
             # have to do this rewriting here so that features library sees it
             # if a feature is specified as on the added object ('newobj') then
             # the actual head value is different depending on the position of the added
-            # argument in the COMPS list. 
+            # argument in the COMPS list.
             # pre: obj = obj2, newobj = obj
             # post: obj = obj, newobj = obj2
             ops_to_fixup = ['subj-add', 'obj-add', 'subj-dem', 'obj-prom']
@@ -526,10 +526,3 @@ def add_lexrules(ch):
                             feat['head'] = 'obj'
                         elif feat.get('head','') == 'obj':
                             feat['head'] = 'obj2'
-
-            
-
-                    
-
-
-                
