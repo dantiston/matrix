@@ -65,11 +65,11 @@ def customize_punctuation(ch, grammar_path):
 
     default_splits_str = ' \\t!"#$%&\'()\*\+,-\./:;<=>?@\[\]\^_`{|}~\\\\'
 
-    if ch.get('punctuation-chars') == 'keep-all':
+    if ch.get('general.punctuation-chars') == 'keep-all':
         # in this case, we just split on [ \t], and that's
         # what vanilla.rpp already does, so we're done
         return
-    elif ch.get('punctuation-chars') == 'discard-all':
+    elif ch.get('general.punctuation-chars') == 'discard-all':
         # in this case, "all" punctuation (from the default list)
         # should be split on and dropped
         # to do this we have to build a regex for the : line of
@@ -87,7 +87,7 @@ def customize_punctuation(ch, grammar_path):
         # keep list with the hyphen on the keep list is the new default
         # here we split on the default list (like discard-all),
         # but *minus* whatevers on the keep list
-        chars = list(ch['punctuation-chars-list'])
+        chars = list(ch.get('general.punctuation-chars-list', ''))
         if not chars:
             chars = [ '-','=',':' ]
         filename = os.path.join(grammar_path, 'repp', 'vanilla.rpp')
@@ -124,9 +124,9 @@ def customize_test_sentences(ch, grammar_path):
                 if l == ';;; Modules: Default sentences':
                     s.write('(if (eq (length *last-parses*) 1)\n')
                     s.write('   (setf *last-parses* \'(')
-                    if 'sentence' not in ch:
+                    if 'test-sentences.sentence' not in ch:
                         s.write('""')
-                    for sentence in ch.get('sentence',[]):
+                    for sentence in ch.get('test-sentences.sentence', ()):
                         s.write('"' + sentence.get('orth','') + '" ')
                         # 2017-12-13 OZ: Adding two lines below.
                         # # Shouldn't the start be printed in test_sentences
@@ -212,7 +212,7 @@ def customize_pettdl(ch, grammar_path):
 #
 
 def customize_acetdl(ch, grammar_path):
-    myl = ch.get('language').lower()
+    myl = ch.get('general.language').lower()
     ace_config = os.path.join(grammar_path, 'ace', 'config.tdl')
     replace_strings = {'mylanguage': os.path.join('..', myl + '-pet.tdl')}
     with open(ace_config, 'r', encoding='utf-8') as a_in:
@@ -257,13 +257,11 @@ def customize_roots(ch):
 
     # TJT 2014-08-16 set root condition to the proper head including
     # adjective if language contains stative predicate adjectives
-    has_stative_predicate_adjectives = False
-    for (key, value) in ch.walk():
-        if "predcop" in key.lower():
-            if ch.get(key).lower() in ("imp", "opt"):
-                has_stative_predicate_adjectives = True
-                break
-    has_question_particles = bool(ch.get('q-part'))
+    has_stative_predicate_adjectives = any(
+        adj.get("predcop", '') in ("imp", "opt")
+        for adj in ch.get('lexicon.adj', ())
+    )
+    has_question_particles = bool(ch.get('q-part', ''))
 
     if has_question_particles and has_stative_predicate_adjectives:
         roots.add('root := [ SYNSEM.LOCAL.CAT.HEAD +vjc ].')
