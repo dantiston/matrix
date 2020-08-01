@@ -32,7 +32,7 @@ def get_subj_comps_types(j, scale_size, direc, equal):
 ##########################
 
 def customize_direct_inverse(choices, mylang, hierarchies):
-    if not info.has_dirinv(choices):
+    if 'scale' not in choices:
         return
     write_dir_inv_types(choices, mylang, hierarchies)
     write_dir_inv_lexrule_supertypes(choices, mylang)

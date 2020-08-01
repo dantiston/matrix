@@ -98,11 +98,11 @@ def customize_feature_values(mylang, ch, hierarchies, ch_dict, type_name, pos, f
         # it sets a boolean flag (poss_lrt or poss_pron_lrt),
         # which is subsequently used to correctly adjust the
         # feature geometry.
-    
-        # Bool to id possessive affix lrts when this fn called by 
+
+        # Bool to id possessive affix lrts when this fn called by
         # process_cfv_list(), which is called in customize.py
         # and not in adnominal_possession.py
-        poss_lrt=False 
+        poss_lrt=False
         # Bool to id poss-pron affix lrts
         poss_pron_lrt=False
         possessum_pron_aff=False
@@ -200,9 +200,9 @@ def customize_feature_values(mylang, ch, hierarchies, ch_dict, type_name, pos, f
                 # EKN 2018-01-19: Add the closing brackets for the possessive
                 # pronoun's feature path
                 if poss_pron_lrt:
-                    value=value+'] !>'                    
+                    value=value+'] !>'
                 if pos=='possessum-spec-mark':
-                    value=value+'] >'                    
+                    value=value+'] >'
                 tdlfile.add(type_name +
                     ' := [ ' + geom + ' ' + value + ' ].',
                     merge=True)

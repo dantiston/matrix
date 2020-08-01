@@ -11,7 +11,7 @@ from gmcs.linglib import lexbase
 ######################################################################
 
 # Constants (specific to this module)
-COMPS = 'comps' # choice name for clausal complement strategies
+COMPS = 'clausal-comp.comps' # choice name for clausal complement strategies
 COMP = 'comp' # reserved head name for complementizers; should be a constant on some other page?
               # Also, the name for the choice for complementizer of a clausal complement strategy.
 EXTRA = 'clause-pos-extra' # Choice name for extraposed complement
@@ -63,7 +63,7 @@ def customize_clausalcomps(mylang,ch,lexicon,rules):
 def add_complementizers_to_lexicon(lexicon,ch):
     lexicon.add_literal(';;; Complementizers')
     have_comp = False
-    for comp_strategy in ch[COMPS]:
+    for comp_strategy in ch.get(COMPS, ()):
         id = comp_strategy.full_key
         stype = id + '-' + COMP_LEX_ITEM
         #TODO: Perhaps turn complementizers into full-blown
@@ -85,7 +85,7 @@ def add_types_to_grammar(mylang,ch,rules,have_complementizer):
     wo = ch.get(constants.WORD_ORDER)
     init = use_init(ch, mylang, wo)
     extra = extra_needed(ch,mylang)
-    for cs in ch.get(COMPS):
+    for cs in ch.get(COMPS, ()):
         clausalverb = find_clausalverb_typename(ch,cs)
         customize_clausal_verb(clausalverb,mylang,ch,cs,extra)
         typename = add_complementizer_subtype(cs, mylang,ch,extra) if cs[COMP] else None
@@ -425,7 +425,7 @@ def determine_clausal_verb_comp_head(cs):
 
 
 def find_clausalverb_typename(ch,cs):
-    for v in ch.get(constants.VERB):
+    for v in ch.get(constants.VERB, ()):
         if v.get(constants.VALENCE).endswith(cs.full_key):
             name = get_name(v) + '-verb-lex' if not get_name(v).endswith('-verb-lex') else get_name(v)
             return name
@@ -638,7 +638,7 @@ def update_verb_lextype(ch,verb, vtype):
     suffix = ''
     head = ''
     val = verb.get(constants.VALENCE)
-    for ccs in ch.get(COMPS):
+    for ccs in ch.get(COMPS, ()):
         if val.endswith(ccs.full_key):
             suffix = val
             head = determine_clausal_verb_comp_head(ccs)
@@ -659,10 +659,10 @@ def nonempty_nmz(cs,ch):
     return False
 
 def extraposed_comps(ch):
-    return len([css for css in ch.get('comps') if css['clause-pos-extra']]) > 0
+    return len([css for css in ch.get(COMPS, ()) if css['clause-pos-extra']]) > 0
 
 def nominalized_comps(ch):
-    for ccs in ch.get(COMPS):
+    for ccs in ch.get(COMPS, ()):
         for f in ccs['feat']:
             if f['name'] == 'nominalization':
                 return True
@@ -672,14 +672,14 @@ def validate(ch,vr):
         pass
     matches = {}
     wo = ch.get(constants.WORD_ORDER)
-    for v in ch.get('verb'):
+    for v in ch.get('lexicon.verb', ()):
         if get_name(v) == 'clausal':
             vr.err(v.full_key + '_name', "The word 'clausal' is reserved; please use another name.")
-    for ccs in ch.get(COMPS):
+    for ccs in ch.get(COMPS, ()):
         if wo in ['free','v2']:
             vr.warn(ccs.full_key + '_'+ SAME,WO_WARNING)
         matches[ccs.full_key] = None
-        for vb in ch.get('verb'):
+        for vb in ch.get('verb', ()):
             val = vb['valence']
             if val.endswith(ccs.full_key):
                 matches[ccs.full_key] = vb.full_key
@@ -711,8 +711,7 @@ def validate(ch,vr):
                    'Please choose whether the complementizer is obligatory or optional.')
 
 def find_in_other_features(name,ch):
-    for f in ch.get('feature'):
-        if f['name'] == name:
+    for f in ch.get('other-features.feature'):
+        if f.get('name', '') == name:
             return f
     return None
-

@@ -178,7 +178,7 @@ def customize_script(ch, grammar_path):
             for l in lines:
                 l = l.strip()
                 if l == ';;; Modules: LOAD my_language.tdl':
-                    myl = ch.get('language').lower() + '.tdl'
+                    myl = ch.get('general.language').lower() + '.tdl'
                     s.write('   (lkb-pathname (parent-directory) "' + myl + '")\n')
                 else:
                     s.write(l + '\n')
@@ -193,7 +193,7 @@ def customize_pettdl(ch, grammar_path):
     try:
         with open(os.path.join(get_matrix_core_path(), 'pet.tdl'), 'r', encoding='utf-8') as p_in:
             lines = p_in.readlines()
-        myl = ch.get('language').lower()
+        myl = ch.get('general.language').lower()
         with open(os.path.join(grammar_path, myl + '-pet.tdl'), 'w', encoding='utf-8') as p_out:
             for l in lines:
                 l = l.strip()

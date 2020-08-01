@@ -38,19 +38,19 @@ def case_names(ch):
         user.append(ch[f'case.{cm}-a-case-name'])
         canon.append('o_case')
         user.append(ch[f'case.{cm}-o-case-name'])
-    elif cm in ['split-s']:
+    elif cm == 'split-s':
         canon.append('a_case')
         user.append(ch[f'case.{cm}-a-case-name'])
         canon.append('o_case')
         user.append(ch[f'case.{cm}-o-case-name'])
-    elif cm in ['fluid-s']:
+    elif cm == 'fluid-s':
         canon.append('a_case+o_case')
         user.append('fluid')
         canon.append('a_case')
         user.append(ch[f'case.{cm}-a-case-name'])
         canon.append('o_case')
         user.append(ch[f'case.{cm}-o-case-name'])
-    elif cm in ['split-n', 'split-v']:
+    elif cm in ('split-n', 'split-v'):
         canon.append('nom')
         user.append(ch[f'case.{cm}-nom-case-name'])
         canon.append('acc')
@@ -59,7 +59,7 @@ def case_names(ch):
         user.append(ch[f'case.{cm}-erg-case-name'])
         canon.append('abs')
         user.append(ch[f'case.{cm}-abs-case-name'])
-    elif cm in ['focus']:
+    elif cm == 'focus':
         canon.append('focus')
         user.append(ch[f'case.{cm}-focus-case-name'])
         canon.append('a_case')
@@ -103,7 +103,7 @@ def name_to_abbr(name, cases):
 
 
 def init_case_hierarchy(ch, hierarchies):
-    cm = ch.get('case-marking')
+    cm = ch.get('case.case-marking')
     cases = case_names(ch)
 
     hier = TDLHierarchy('case')
@@ -386,7 +386,7 @@ def customize_verb_case(mylang, ch):
 
     # OZ: This currently also adds clausal types.
 
-    for p in info.patterns(ch):
+    for p in info.case_patterns(ch):
         rule_pattern = p[2]
         p = p[0].split(',')  # split off ',dirinv', if present
         dir_inv = ''

@@ -20,7 +20,7 @@ YES = 'yes' # Choice convention for selected radio button
 ORTH = 'orth' # Choice convention for orthographies associated with stems and affixes.
 ### Section names ###
 
-WORD_ORDER = 'word-order' # Choices section associated with word order subpage
+WORD_ORDER = 'word-order.word-order' # Choices section associated with word order subpage
 VERB = 'verb' # Section containing verb lexical items
 VALENCE = 'valence' # Valence attributes of a verb lexical item
 

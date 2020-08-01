@@ -460,11 +460,17 @@ your installation root directory as iso.tab to enable iso validation:
                  for c in '!"&\'()*+,−./\;<>?@[]^`{|}~。！？…．　○●◎＊☆★◇◆'
                  if c not in chars]
     char_re = re.compile(r'(' + r'|'.join(non_chars) + r')')
-    for (key, val) in ch.walk():
-        if key.endswith('orth') and not key.startswith('sentence'):
-            if char_re.search(val):
-                vr.warn(key, 'String contains an unparsable punctuation character.' + \
-                        ' Please see the General subpage.')
+    error = 'String contains an unparsable punctuation character. ' +\
+            'Please see the General subpage.'
+    for type in ch.get('lexicon', ()):
+        for stem in type.get('stem', ()):
+            if char_re.search(stem.get('orth', '')):
+                vr.warn(key, error)
+    for type in ch.get('morphology', ()):
+        for lrt in type.get('lrt', ()):
+            for lri in lrt.get('lri', ()):
+                if char_re.search(lri.get('orth', '')):
+                    vr.warn(key, error)
 
 ######################################################################
 # validate_person(ch, vr)
@@ -1587,7 +1593,7 @@ def validate_adnominal_possession(ch, vr):
         if not strat.get('mark-loc'):
             mess='You must indicate where possessive markings appear.'
             vr.err(strat.full_key+'_mark-loc',mess)
-        # Require input for possessor-marking 
+        # Require input for possessor-marking
         if strat.get('mark-loc')=='possessor' or strat.get('mark-loc')=='both':
             if not strat.get('possessor-type'):
                 mess='You must indicate what form the possessor marking takes.'
@@ -1621,7 +1627,7 @@ def validate_adnominal_possession(ch, vr):
                            vr.err(form.full_key+'_agr-orth',mess)
                         for feat in form.get('feat'):
                            if not feat.get('name'):
-                              mess='You must give the name of this feature.'   
+                              mess='You must give the name of this feature.'
                               vr.err(feat.full_key+'_name',mess)
                            # Limit agr features to PNG
                            elif feat.get('name') not in png_feats:
@@ -1629,10 +1635,10 @@ def validate_adnominal_possession(ch, vr):
                                    'is only supported for person, number, and gender.'
                                vr.err(feat.full_key+'_name',mess)
                            if not feat.get('value'):
-                              mess='You must give the value of this feature.'   
+                              mess='You must give the value of this feature.'
                               vr.err(feat.full_key+'_value',mess)
 
-        # Require input for possessum-marking 
+        # Require input for possessum-marking
         if strat.get('mark-loc')=='possessum' or strat.get('mark-loc')=='both':
             if not strat.get('possessum-type'):
                 mess='You must indicate what form the possessum marking takes.'
@@ -1669,7 +1675,7 @@ def validate_adnominal_possession(ch, vr):
 #                         'and the possessor is not supported.'
 #                    vr.err(strat.full_key+'_possessum-agr',mess)
 
-                    
+
 #                    for form in strat.get('possessum-form'):
 #                        if not form.get('name'):
 #                           mess='You must give a name for this form.'
@@ -1679,7 +1685,7 @@ def validate_adnominal_possession(ch, vr):
 #                           vr.err(form.full_key+'_agr-orth',mess)
 #                        for feat in form.get('feat'):
 #                           if not feat.get('name'):
-#                              mess='You must give the name of this feature.'   
+#                              mess='You must give the name of this feature.'
 #                              vr.err(feat.full_key+'_name',mess)
 #                           # Limit agr features to PNG
 #                           elif feat.get('name') not in png_feats:
@@ -1687,7 +1693,7 @@ def validate_adnominal_possession(ch, vr):
 #                                   'is only supported for person, number, and gender.'
 #                               vr.err(feat.full_key+'_name',mess)
 #                           if not feat.get('value'):
-#                              mess='You must give the value of this feature.'   
+#                              mess='You must give the value of this feature.'
 #                              vr.err(feat.full_key+'_value',mess)
     for pron in ch.get('poss-pron'):
         # Require basic input for all possessive pronouns
@@ -1761,8 +1767,8 @@ def validate_adnominal_possession(ch, vr):
 #                    mess='Agreement between a possessum-marking word or clitic '+\
 #                         'and the possessor is not supported.'
 #                    vr.err(pron.full_key+'_possessum-agr',mess)
-            
-        
+
+
 def validate(ch, extra = False):
     """
     Validate the ChoicesFile ch.  Return a ValidationResult that
@@ -1833,5 +1839,3 @@ if __name__ == "__main__":
                 column += len(w) + 1
         print()
     print()
-
-

@@ -124,7 +124,7 @@ def customize_bipartite_stems(ch):
     parts appear together.
     """
     # For each verb type
-    for verb in ch.get('verb', ()):
+    for verb in ch.get('lexicon.verb', ()):
 
         # Check whether there are bipartite stems
         bistems = verb.get('bistem', ())
@@ -133,9 +133,10 @@ def customize_bipartite_stems(ch):
 
             pcname = verb.get('bipartitepc')
             pc = None
-            for vpc in ch.get('verb-pc', ()):
+            for vpc in ch.get('morphology.verb-pc', ()):
                 if vpc.full_key == pcname:
                     pc = vpc
+                    break
 
             # Make dictionary with affixes as keys and lists
             # of stems as values.  This will let us find out if
@@ -173,16 +174,16 @@ def customize_bipartite_stems(ch):
                     ch[stemid + '_require1_others'] = next_lrt_str
 
 def customize_verbs(mylang, ch, lexicon, hierarchies):
-    negmod = ch.get('neg-mod')
-    negadv = ch.get('neg-adv')
-    wo = ch.get('word-order')
-    auxcomp = ch.get('aux-comp')
-    auxorder = ch.get('aux-comp-order')
+    negmod = ch.get('sentential-negation.neg-mod')
+    negadv = ch.get('sentential-negation.neg-adv')
+    wo = ch.get('word-order.word-order')
+    auxcomp = ch.get('word-order.aux-comp')
+    auxorder = ch.get('word-order.aux-comp-order')
     # Do we need to constrain HC-LIGHT on verbs, to distinguish V from VP?
-    hclight = (negadv == 'ind-adv' and negmod == 'v')
+    hclight = negadv == 'ind-adv' and negmod == 'v'
     hclightallverbs = False
 
-    if ch.get('has-aux') == 'yes':
+    if ch.get('word-order.has-aux') == 'yes':
         vc = determine_vcluster(auxcomp, auxorder, wo, ch) #TODO: OZ 11-30-2017 Reconcile this with my VC stuff in word_order.py
         if wo == 'vso' or wo == 'osv':
             wo = 'req-hcl-vp'
@@ -196,7 +197,7 @@ def customize_verbs(mylang, ch, lexicon, hierarchies):
         vc = False
 
     if wo == 'req-hcl-vp':
-        wo = ch.get('word-order')
+        wo = ch.get('word-order.word-order')
 
     # Lexical types for verbs
     # I'm adding the constraint to associate XARG with the
@@ -216,15 +217,15 @@ def customize_verbs(mylang, ch, lexicon, hierarchies):
     # Neither mainverbs or auxs should start out as modifiers (for now)
     # Assigning constraint to verb-lex
 
-    if ch.get('has-aux') == 'yes':
+    if ch.get('word-order.has-aux') == 'yes':
         mylang.add('head :+ [ AUX bool ].', section='addenda')
         #mainorverbtype = 'main-verb-lex'
 
         # we need to know whether the auxiliaries form a vcluster
 
-        auxcomp = ch.get('aux-comp')
-        wo = ch.get('word-order')
-        auxorder = ch.get('aux-comp-order')
+        # auxcomp = ch.get('word-order.aux-comp')
+        # wo = ch.get('word-order')
+        # auxorder = ch.get('word-order.aux-comp-order')
         vcluster = determine_vcluster(auxcomp, auxorder, wo, ch)
 
         typedef = \
@@ -298,8 +299,8 @@ def customize_verbs(mylang, ch, lexicon, hierarchies):
 
     # EKN 03-02-2018 Add [ CASE real-case ] to all args of verbs iff
     # the language has case and possessives:
-    poss = True if ch.get('poss-strat') or ch.get('poss-pron') else False
-    case_on = True if ch.get('case-marking')!='none' else False
+    poss = True if ch.get('adnom-poss.poss-strat') or ch.get('adnom-poss.poss-pron') else False
+    case_on = True if ch.get('case.case-marking') != 'none' else False
     if poss and case_on:
         real_case='[ LOCAL.CAT.HEAD.CASE real-case ]'
         mylang.add('intransitive-verb-lex := [ ARG-ST < '+real_case+' > ].')
@@ -314,14 +315,14 @@ def customize_verbs(mylang, ch, lexicon, hierarchies):
 
     # Now create the lexical entries for all the defined verb types
     cases = case.case_names(ch)
-    for verb in ch.get('verb', ()):
+    for verb in ch.get('lexicon.verb', ()):
         create_verb_lex_type(cases, ch, hierarchies, lexicon, mylang, verb)
 
 
 
 
 def create_verb_lex_type(cases, ch, hierarchies, lexicon, mylang, verb):
-    stypes = verb.get('supertypes').split(', ')
+    stypes = verb.get('supertypes', '').split(', ')
     stype_names = [verb_id(ch[st]) for st in stypes if st != '']
     vtype = verb_id(verb)
     construct_supertype_names(cases, ch, stype_names, verb)
@@ -400,7 +401,7 @@ def construct_supertype_names(cases, ch, stype_names, verb):
 
 # Returns the verb type for lexical/main verbs.
 def main_or_verb(ch):
-    if ch.get('has-aux') == 'yes':
+    if ch.get('word-order.has-aux') == 'yes':
         return 'main-verb-lex'
     else:
         return 'verb-lex'
@@ -409,7 +410,7 @@ def main_or_verb(ch):
 def customize_determiners(mylang, ch, lexicon, hierarchies):
 
     # Lexical type for determiners, if the language has any:
-    if ch.get('has-dets') == 'yes':
+    if ch.get('word-order.has-dets') == 'yes':
         comment = \
             ';;; Determiners\n' + \
             ';;; SPEC is non-empty, and already specified by basic-determiner-lex.'
@@ -429,7 +430,7 @@ def customize_determiners(mylang, ch, lexicon, hierarchies):
     if 'det' in ch:
         lexicon.add_literal(';;; Determiners')
 
-    for det in ch.get('det', ()):
+    for det in ch.get('lexicon.det', ()):
         stype = 'determiner-lex'
         dtype = det_id(det)
 
@@ -460,8 +461,8 @@ def customize_determiners(mylang, ch, lexicon, hierarchies):
 def customize_misc_lex(ch, lexicon, trigger):
 
     # Question particle
-    if ch.get('q-part'):
-        orth = ch.get('q-part-orth')
+    if ch.get('matrix-yes-no.q-part'):
+        orth = ch.get('matrix-yes-no.q-part-orth')
         orthstr = orth_encode(orth)
         typedef = \
             TDLencode(orth) + ' := qpart-lex-item & \
@@ -481,7 +482,7 @@ def customize_nouns(mylang, ch, lexicon, hierarchies):
     seen = {'obl':False, 'opt':False, 'imp':False}
     seenCount = 0
 
-    for noun in ch.get('noun', ()):
+    for noun in ch.get('lexicon.noun', ()):
         det = noun.get('det')
         if not det == '' and not seen[det]:
             seen[det] = True
@@ -544,17 +545,17 @@ def customize_nouns(mylang, ch, lexicon, hierarchies):
     # take dets, but won't trigger 'imp' below. Adding a check
     # for them specifically:
     poss_prons=False
-    for pron in ch.get('poss-pron', ()):
+    for pron in ch.get('adnom-poss.poss-pron', ()):
         if pron.get('type')!='affix':
             poss_prons=True
-    if (seen['imp'] or poss_prons) and ch.get('has-dets') == 'yes':
+    if (seen['imp'] or poss_prons) and ch.get('word-order.has-dets') == 'yes':
         mylang.add(
             'head-spec-phrase := [ NON-HEAD-DTR.SYNSEM.OPT - ].',
             'Nouns which cannot take specifiers mark their SPR requirement\n' +
             'as OPT +.  Making the non-head daughter OPT - in this rule\n' +
             'keeps such nouns out.')
 
-    if ch.get('case-marking') != 'none':
+    if ch.get('case.case-marking', '') != 'none':
         if not info.has_adp_case(ch):
             mylang.add('noun :+ [ CASE case ].', section='addenda')
 
@@ -564,8 +565,8 @@ def customize_nouns(mylang, ch, lexicon, hierarchies):
     # make a hash of nountypes --> lists of children so that we
     # can stopdet on children
     children = defaultdict(dict)
-    for noun in ch.get('noun',[]):
-        for p in noun.get('supertypes').split(', '):
+    for noun in ch.get('lexicon.noun', ()):
+        for p in noun.get('supertypes', '').split(', '):
             children[p][noun.full_key] = 1
 
     # make and populate a dictionary of stopdets, to avoid vacuous det supertypes
@@ -600,7 +601,7 @@ def customize_nouns(mylang, ch, lexicon, hierarchies):
         if noun.full_key in stopdets:
             det = ''
 
-        stypes = noun.get('supertypes').split(', ')
+        stypes = noun.get('supertypes', '').split(', ')
         stype_names = [noun_id(ch[st]) for st in stypes if st != '']
 
         #if singlentype or det == 'opt':
@@ -631,7 +632,7 @@ def customize_nouns(mylang, ch, lexicon, hierarchies):
 def customize_adjs(mylang, ch, lexicon, hierarchies, rules):
 
     # Add basic adjective definition
-    if ch.get('adj', ()):
+    if ch.get('lexicon.adj', ()):
         mylang.add("adj-lex := basic-intersective-adjective-lex.")
 
     # Check which rules need to be added to rules.tdl
@@ -653,9 +654,9 @@ def customize_adjs(mylang, ch, lexicon, hierarchies, rules):
                "none": "adj-lex" }
 
     # Go through adjective position classes...
-    for adj_pc in ch.get('adj-pc', ()):
+    for adj_pc in ch.get('morphology.adj-pc', ()):
         # check if any have "any adj" as input
-        if not adj_types['any_adj'] and 'adj' in adj_pc.get('inputs',[]).split(', '):
+        if not adj_types['any_adj'] and 'adj' in adj_pc.get('inputs', '').split(', '):
             adj_types['any_adj'] = True
         # Additional checks for switching adjectives
         switching = adj_pc.get('switching',False)
@@ -690,7 +691,7 @@ def customize_adjs(mylang, ch, lexicon, hierarchies, rules):
                         adj_types['stative_lex'] = True
 
     # Add the lextypes to mylanguage.tdl
-    for adj in ch.get('adj', ()):
+    for adj in ch.get('lexicon.adj', ()):
         # Reset values
         lst, posthead, subj, pred, adj_constraints, modunique = '', '', '', '', '', ''
         root = False
@@ -762,7 +763,7 @@ def customize_adjs(mylang, ch, lexicon, hierarchies, rules):
                             raise ValueError(def_error % (supertype, supertype_predcop, adj.get('name',''), predcop))
 
         ## Calculate supertypes
-        stypes = adj.get('supertypes').split(', ')
+        stypes = adj.get('supertypes', '').split(', ')
         stype_names = []
         if '' in stypes: # Found root
             root = True
@@ -941,7 +942,7 @@ def customize_adjs(mylang, ch, lexicon, hierarchies, rules):
     # Add the lexical entries to lexicon.tdl
     lexicon.add_literal(';;; Adjectives')
 
-    for adj in ch.get('adj', ()):
+    for adj in ch.get('lexicon.adj', ()):
         atype = adj_id(adj)
 
         # Automatically generate feature values based on choices
@@ -956,7 +957,7 @@ def customize_adjs(mylang, ch, lexicon, hierarchies, rules):
 # TJT 2014-05-05
 def customize_cops(mylang, ch, lexicon, hierarchies, trigger):
 
-    if ch.get('cop',False):
+    if 'lexicon.cop' in ch:
         # Add PRD
         mylang.add('head :+ [ PRD bool ].', section='addenda')
 
@@ -989,11 +990,11 @@ def customize_cops(mylang, ch, lexicon, hierarchies, trigger):
                   [ SYNSEM.LOCAL.CAT.VAL.COMPS.FIRST.LOCAL.CAT.HEAD adj ].''' % LEXICAL_SUPERTYPES['cop'],
                    comment=comment)
 
-        for cop in ch.get('cop', ()):
+        for cop in ch.get('lexicon.cop', ()):
             ctype = cop_id(cop)
 
             ## Calculate supertypes
-            stypes = cop.get('supertypes').split(', ')
+            stypes = cop.get('supertypes', '').split(', ')
             stype_def = ''
             if '' in stypes: # Found root
                 stype_def = 'adj-comp-copula-verb-lex & ' # Change for new complement types
@@ -1044,7 +1045,7 @@ def customize_lexicon(mylang, ch, lexicon, trigger, hierarchies, rules):
     mylang.set_section('verblex')
     customize_verbs(mylang, ch, lexicon, hierarchies)
 
-    if ch.get('has-aux') == 'yes':
+    if ch.get('word-order.has-aux') == 'yes':
         mylang.set_section('auxlex')
         auxiliaries.customize_auxiliaries(mylang, ch, lexicon, trigger, hierarchies)
 
@@ -1061,13 +1062,13 @@ def update_lex_items_vcluster(ch, mylang):
     mylang.add('cat :+ [ VC bool ].', merge=True, section='addenda')
     mylang.add('noun-lex := [ SYNSEM.LOCAL.CAT.VC - ].', merge=True, section='nounlex')
     mylang.add('verb-lex := [ SYNSEM.LOCAL.CAT.VC + ].', merge=True, section='verblex')
-    if 'cms' in ch:
-        for cms in ch.get('cms', ()):
+    if 'clausalmods.cms' in ch:
+        for cms in ch.get('clausalmods.cms', ()):
             if cms.get('subordinator-type') == 'adverb':
                 mylang.add('adverb-subord-lex-item := [ SYNSEM.LOCAL.CAT.VC - ].', merge=True, section='subordlex')
             if cms.get('subordinator-type') == 'head':
                 mylang.add('adposition-subord-lex-item := [ SYNSEM.LOCAL.CAT.VC - ].', merge=True, section='subordlex')
-    if 'comps' in ch:
+    if 'clausal-comp.comps' in ch:
         mylang.add('complementizer-lex-item := [ SYNSEM.LOCAL.CAT.VC - ].', merge=True, section='complex')
-    if 'has-adj' in ch:
+    if 'lexicon.adj' in ch:
         mylang.add('adj-lex := [ SYNSEM.LOCAL.CAT.VC - ].', merge=True, section='adjlex')
