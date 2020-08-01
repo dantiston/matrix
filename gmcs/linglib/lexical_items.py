@@ -164,14 +164,14 @@ def customize_bipartite_stems(ch):
                     iternum = '1'
 
                 # Create lexical rules types and instances for each affix
-                next_lrt_str = pc.full_key + '_lrt' + iternum
-                ch[next_lrt_str + '_require1_others'] = ', '.join(avpairs[aff])
-                ch[next_lrt_str + '_lri1_orth'] = aff
-                ch[next_lrt_str + '_lri1_inflecting'] = 'yes'
+                next_lrt_str = pc.full_key + '.lrt' + iternum
+                ch[next_lrt_str + '.require1_others'] = ', '.join(avpairs[aff])
+                ch[next_lrt_str + '.lri1.orth'] = aff
+                ch[next_lrt_str + '.lri1.inflecting'] = 'yes'
 
                 # Add requires constrains on stems
                 for stemid in avpairs[aff]:
-                    ch[stemid + '_require1_others'] = next_lrt_str
+                    ch[stemid + '.require1.others'] = next_lrt_str
 
 def customize_verbs(mylang, ch, lexicon, hierarchies):
     negmod = ch.get('sentential-negation.neg-mod')
