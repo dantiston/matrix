@@ -650,9 +650,9 @@ def update_verb_lextype(ch,verb, vtype):
     return vtype,head
 
 def nonempty_nmz(cs,ch):
-    for f in cs['feat']:
+    for f in cs.get('feat', ()):
         if f['name'] == 'nominalization':
-            for ns in ch['ns']:
+            for ns in ch.get('ns', ()):
                 if ns['name'] == f['value']:
                     if ns['nmzRel'] == 'yes' or ns['level'] in ['mid','low']:
                         return True
@@ -663,9 +663,10 @@ def extraposed_comps(ch):
 
 def nominalized_comps(ch):
     for ccs in ch.get(COMPS, ()):
-        for f in ccs['feat']:
+        for f in ccs.get('feat', ()):
             if f['name'] == 'nominalization':
                 return True
+    return False
 
 def validate(ch,vr):
     if not ch.get(COMPS):

@@ -1,3 +1,5 @@
+from delphin_choices import info
+
 from gmcs.linglib import case
 
 ######################################################################
@@ -14,7 +16,7 @@ def process_cfv_list(mylang, ch, hierarchies, to_cfv, tdlfile=None):
 def customize_feature_values(mylang, ch, hierarchies, ch_dict, type_name, pos, features=None, cases=None, tdlfile=None):
 
     if not features:
-        features = ch.features()
+        features = info.features(ch)
     if not cases:
         cases = case.case_names(ch)
     if not tdlfile:
@@ -76,7 +78,7 @@ def customize_feature_values(mylang, ch, hierarchies, ch_dict, type_name, pos, f
         'comp': 'LOCAL.CAT.VAL.COMPS.FIRST.', # COMP for copulas
     }
 
-    for feat in ch_dict.get(iter_feat,[]):
+    for feat in ch_dict.get(iter_feat, ()):
         n = feat.get('name','')
         v = feat.get('value','').split(', ')
 
@@ -107,7 +109,7 @@ def customize_feature_values(mylang, ch, hierarchies, ch_dict, type_name, pos, f
         poss_pron_lrt=False
         possessum_pron_aff=False
         agreeing_element=''
-        for feature in ch_dict.get('feat'): # EKN TODO: choose a better var name than 'feature'
+        for feature in ch_dict.get('feat', ()): # EKN TODO: choose a better var name than 'feature'
             feat_name=feature.get('name')
             if 'poss-strat' in feat_name:
                 poss_lrt=True
@@ -206,7 +208,7 @@ def customize_feature_values(mylang, ch, hierarchies, ch_dict, type_name, pos, f
                 tdlfile.add(type_name +
                     ' := [ ' + geom + ' ' + value + ' ].',
                     merge=True)
-                if n == 'case' and ch.has_mixed_case():
+                if n == 'case' and info.has_mixed_case(ch):
                     val = '-' if '-synth-' + value in type_name else '+'
                     tdlfile.add(type_name +
                       ' := [ ' + geom + '-MARKED ' + val + ' ].',

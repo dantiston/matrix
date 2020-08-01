@@ -57,10 +57,10 @@ def insert_ids(ch):
     postypes = ALL_LEX_TYPES
 
     for postype in postypes:
-        for pos in ch.get(postype, ()):
+        for pos in ch.get(f'lexicon.{postype}', ()):
             # For ordinary stems, use the stem orthography itself
             # as the basis of the identifier.
-            for stem in pos.get('stem'):
+            for stem in pos.get('stem', ()):
                 orth = stem.get('orth')
                 if orth in list(stemids.keys()):
                     stemids[orth] += 1
@@ -69,7 +69,7 @@ def insert_ids(ch):
             # For bistems, build the identifier out of the orthography
             # plus the affix, but store these in the same dictionary
             # to account for possible name-space collisions.
-            for bistem in pos.get('bistem'):
+            for bistem in pos.get('bistem', ()):
                 aff = bistem.get('aff')
                 orth = bistem.get('orth')
                 id = orth + '+' + aff
@@ -87,27 +87,27 @@ def insert_ids(ch):
     # to the choices file object.
 
     for postype in postypes:
-        for pos in ch.get(postype, ()):
-            for stem in pos.get('stem'):
+        for pos in ch.get(f'lexicon.{postype}', ()):
+            for stem in pos.get('stem', ()):
                 orth = stem.get('orth')
                 if stemids[orth] == 1:
-                    ch[stem.full_key + '_name'] = orth
+                    ch[stem.full_key + '.name'] = orth
                 elif orth not in stemidcounters:
                     stemidcounters[orth] = 1
-                    ch[stem.full_key + '_name'] = orth + '_1'
+                    ch[stem.full_key + '.name'] = orth + '_1'
                 else:
                     stemidcounters[orth] += 1
-                    ch[stem.full_key + '_name'] = orth + '_' + str(stemidcounters[orth])
-            for bistem in pos.get('bistem'):
+                    ch[stem.full_key + '.name'] = orth + '_' + str(stemidcounters[orth])
+            for bistem in pos.get('bistem', ()):
                 orth = bistem.get('orth') + '+' + bistem.get('aff')
                 if stemids[orth] == 1:
-                    ch[bistem.full_key + '_name'] = orth
+                    ch[bistem.full_key + '.name'] = orth
                 elif orth not in stemidcounters:
                     stemidcounters[orth] = 1
-                    ch[bistem.full_key + '_name'] = orth + '_1'
+                    ch[bistem.full_key + '.name'] = orth + '_1'
                 else:
                     stemidcounters[orth] += 1
-                    ch[bistem.full_key + '_name'] = orth + '_' + str(stemidcounters[orth])
+                    ch[bistem.full_key + '.name'] = orth + '_' + str(stemidcounters[orth])
     ## KPH Do the same for subordinators and complementizers
     add_subord_name(ch, stemids, stemidcounters)
 
@@ -337,16 +337,16 @@ def create_verb_lex_type(cases, ch, hierarchies, lexicon, mylang, verb):
                    , merge=True)
     features.customize_feature_values(mylang, ch, hierarchies, verb, vtype, 'verb', None, cases)
 
-    stems = verb.get('stem', [])
-    stems.extend(verb.get('bistem', []))
+    stems = verb.get('stem', ())
+    stems.extend(verb.get('bistem', ()))
     for stem in stems:
         add_stem_to_lexicon(lexicon, stem, vtype)
 
 
 def add_stem_to_lexicon(lexicon, stem, vtype):
-    orthstr = orth_encode(stem.get('orth'))
-    pred = stem.get('pred')
-    name = stem.get('name')
+    orthstr = orth_encode(stem.get('orth', ''))
+    pred = stem.get('pred', '')
+    name = stem.get('name', '')
     typedef = \
         TDLencode(name) + ' := ' + vtype + ' & \
                     [ STEM < "' + orthstr + '" >, \

@@ -49,7 +49,7 @@ _supertypes = {}
 def all_position_classes(choices):
     """ Yield each position class defined in the choices file. """
     for lt in ALL_LEX_TYPES:
-        for pc in choices.get(lt + '-pc', ()):
+        for pc in choices.get(f'morphology.{lt}-pc', ()):
             yield pc
 
 def defined_lexrule_sts(lrt,pc):
@@ -184,6 +184,7 @@ def position_class_hierarchy(choices):
     # We can't set parents until we have created all MN objects.
     pc_inputs = {}
     # Now create the actual position classes
+    print("position_class_hierarchy")
     for i, pc in enumerate(all_position_classes(choices)):
         # these PCs are ChoiceDicts
         if len(pc.get('inputs', '')) > 0:
@@ -228,6 +229,7 @@ def pc_lrt_merge(cur_pc, pc):
         cur_pc.identifier_suffix = 'lex-rule'
 
 def create_lexical_rule_types(cur_pc, pc):
+    print("hello world!")
     lrt_parents = {}
     # TJT 2014-08-21 Check incorporated stems too
     all_lrts = (pc.get('lrt', ()), pc.get('is-lrt', ()))
@@ -239,8 +241,10 @@ def create_lexical_rule_types(cur_pc, pc):
                 mtx_supertypes = set(lrt.split_value('supertypes')).difference(
                     lrt_parents.get(lrt.full_key,set()))
             # default name uses name of PC with _lrtX
+            print(lrt)
             if 'name' not in lrt:
                 lrt['name'] = cur_pc.name + lrt.full_key.replace(cur_pc.key, '', 1)
+            print(lrt)
             cur_lrt = create_lexical_rule_type(lrt, mtx_supertypes, cur_pc)
             # the ordering should only mess up if there are 100+ lrts
             cur_lrt.tdl_order = cur_pc.tdl_order + (0.01 * j)

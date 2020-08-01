@@ -19,12 +19,12 @@ def lexical_type_hierarchy(choices, lexical_supertype):
                              get_lt_name(lexical_supertype, choices)))
     lts_to_add = [lexical_supertype]
     if lexical_supertype == 'verb':
-        if choices['has-aux'] == 'yes':
+        if choices['word-order.has-aux'] == 'yes':
             lth.add_node(LexicalType('aux', get_lt_name('aux', choices),
                                      parents={'verb':lth.nodes['verb']}))
             lth.add_node(LexicalType('mverb', get_lt_name('mverb', choices),
                                      parents={'verb':lth.nodes['verb']}))
-            lts_to_add += ['aux']
+            lts_to_add.append('aux')
         st = get_lexical_supertype('iverb', choices)
         lth.add_node(LexicalType('iverb', get_lt_name('iverb', choices),
                                  parents={st:lth.nodes[st]}))
@@ -32,7 +32,7 @@ def lexical_type_hierarchy(choices, lexical_supertype):
         lth.add_node(LexicalType('tverb', get_lt_name('tverb', choices),
                                  parents={st:lth.nodes[st]}))
     for lst in lts_to_add:
-        for lt in choices[lst]:
+        for lt in choices.get(f'lexicon.{lst}', ()):
             st = get_lexical_supertype(lt.full_key, choices)
             lth.add_node(LexicalType(lt.full_key, get_lt_name(lt.full_key, choices),
                                      parents={st:lth.nodes[st]}))
@@ -51,7 +51,7 @@ def lexical_type_hierarchy(choices, lexical_supertype):
 
 def get_lexical_supertype(lt_key, choices):
     lexical_category = lt_key.rstrip('0123456789')
-    if lexical_category in ('iverb','tverb') and choices['has-aux'] == 'yes':
+    if lexical_category in ('iverb','tverb') and choices['word-order.has-aux'] == 'yes':
         return 'mverb'
     elif lexical_category in ('aux','mverb','iverb','tverb'):
         return 'verb'
@@ -98,12 +98,12 @@ def used_lexical_supertypes(choices):
     """
     # TJT 2014-09-08: Changing this to set comprehension and adding "cop"
     # TJT 2014-12-19: Changing back to loop for older versions of python
-    used = set([item for item in ('noun','aux','adj','det','cop') if item in choices])
+    used = set([item for item in ('noun','aux','adj','det','cop') if f'lexicon.{item}' in choices])
     if 'verb' in choices:
         used.add('verb')
         used.update([case.interpret_verb_valence(v['valence'])
                      for v in choices['verb']])
-        if choices['has-aux'] == 'yes':
+        if choices['word-order.has-aux'] == 'yes':
             used.add('mverb')
     return used
 
@@ -174,7 +174,7 @@ def get_lt_name(key, choices):
 def validate_lexicon(ch, vr):
 
     # Did they specify enough lexical entries?
-    if 'noun' not in ch:
+    if 'lexicon.noun' not in ch:
         mess = 'You should create at least one noun class.'
         vr.warn('noun1_stem1_orth', mess)
 
@@ -221,7 +221,7 @@ def validate_lexicon(ch, vr):
     feats = {}
     inherited_feats = {}
 
-    for noun in ch.get('noun'):
+    for noun in ch.get('lexicon.noun', ()):
         sts = noun.get('supertypes').split(', ')
         undefined_sts = [x for x in sts if x not in ch]
         if undefined_sts:
@@ -231,14 +231,14 @@ def validate_lexicon(ch, vr):
         ntsts[noun.full_key] = sts
         feats[noun.full_key] = {}
         for f in noun.get('feat'):
-            feats[noun.full_key][f.get('name')]=f.get('value')
+            feats[noun.full_key][f.get('name')] = f.get('value')
 
     # now we can figure out inherited features and write them down
     # also, print warnings about feature conflicts
     # also, figure out the det question for types with stems
     # also, every noun type needs a path to the root
 
-    for n in ch.get('noun'):
+    for n in ch.get('lexicon.noun', ()):
         st_anc = [] # used to make sure we don't have an lkb err as
         # described in comments above
         root = False
@@ -403,16 +403,16 @@ def validate_lexicon(ch, vr):
     vtsts = {}
     feats = {}
     inherited_feats = {}
-    for v in ch.get('verb'):
+    for v in ch.get('lexicon.verb', ()):
         vtsts[v.full_key] = v.get('supertypes').split(', ')
         feats[v.full_key] = {}
-        for f in v.get('feat'):
+        for f in v.get('feat', ()):
             feats[v.full_key][f.get('name')]=f.get('value')
 
     seenTrans = False
     seenIntrans = False
 
-    for v in ch.get('verb'):
+    for v in ch.get('lexicon.verb', ()):
         st_anc = [] # used to make sure we don't have an lkb err as
         # described in comments above
         root = False
@@ -506,7 +506,7 @@ def validate_lexicon(ch, vr):
 
         # now check val
         # only care if it has stems
-        s = v.get('stem', [])
+        s = v.get('stem', ())
         if len(s) != 0:
             if not val:
                 mess = 'You must specify the argument structure of each verb you '+ \
@@ -522,7 +522,7 @@ def validate_lexicon(ch, vr):
                    'position class for the affix part of the stems.'
             vr.err(v.full_key + '_bipartitepc', mess)
 
-        for stem in v.get('stem', []):
+        for stem in v.get('stem', ()):
             orth = stem.get('orth')
             pred = stem.get('pred')
 
@@ -560,9 +560,9 @@ def validate_lexicon(ch, vr):
     # Adjectives TJT 2014-08-25
     # First, gather switching adjective position classes' inputs
     adj_pc_switching_inputs = defaultdict(list)
-    for adj_pc in ch.get('adj-pc',[]):
+    for adj_pc in ch.get('morphology.adj-pc', ()):
         if adj_pc.get('switching',''):
-            inputs = adj_pc.get('inputs',[]).split(', ')
+            inputs = adj_pc.get('inputs', '').split(', ')
             if isinstance(inputs, str):
                 adj_pc_switching_inputs[inputs].append(adj_pc)
             else:
@@ -574,7 +574,7 @@ def validate_lexicon(ch, vr):
     # and their input lexical types
     for adj in adj_pc_switching_inputs:
         for pc in adj_pc_switching_inputs.get(adj):
-            if not (ch.get(adj, ChoiceDict()).get('mod','') == 'none' or ch.get(adj, ChoiceDict()).get('predcop','') == 'opt'):
+            if not (ch.get(f'lexicon.{adj}', {}).get('mod','') == 'none' or ch.get(f'lexicon.{adj}', {}).get('predcop','') == 'opt'):
                 vr.err(pc.full_key+'_name',
                        'This position class was created to enable behavior on ' + \
                        'an adjectival lexical type on the Lexicon page which is ' + \
@@ -582,7 +582,7 @@ def validate_lexicon(ch, vr):
                        'should either delete this position class or double check ' + \
                        'your types on the Lexicon page.')
 
-    for adj in ch.get('adj',[]):
+    for adj in ch.get('lexicon.adj', ()):
         mode = adj.get('mod','')
 
         # Name can't have illegal characters
@@ -745,7 +745,7 @@ def validate_lexicon(ch, vr):
         for supertype in supertypes:
             supertype_def = ch.get(supertype,False)
             if not supertype_def: continue
-            for feature in supertype_def.get('feat',[]):
+            for feature in supertype_def.get('feat', ()):
                 inherited_feats[feature.get('name')]['value'] = feature.get('value')
                 head = feature.get('head')
                 inherited_feats[feature.get('name')]['specified on'] = name_map[head] if head in name_map else head
@@ -767,20 +767,20 @@ def validate_lexicon(ch, vr):
 
     # Auxiliaries
     aux_defined = 'aux' in ch
-    if ch.get('has-aux') != 'yes':
+    if ch.get('word-order.has-aux') != 'yes':
         if aux_defined:
             mess = 'You have indicated that your language has no auxiliaries ' + \
                    'but have entered an auxiliary on the Lexicon page.'
             vr.err('has-aux', mess)
 
-    if ch.get('has-aux') == 'yes':
+    else: # if ch.get('word-order.has-aux') == 'yes':
         if not aux_defined:
             mess = 'You have indicated that your language has auxiliaries. ' + \
                    'You must define at least one auxiliary type.'
             vr.err('auxlabel', mess)
 
-    comp = ch.get('aux-comp')
-    for aux in ch.get('aux'):
+    comp = ch.get('word-order.aux-comp')
+    for aux in ch.get('lexicon.aux'):
         sem = aux.get('sem')
         pred = aux.get('pred')
         subj = aux.get('subj')
@@ -843,7 +843,7 @@ def validate_lexicon(ch, vr):
 
     # TODO: Copulas: TJT 2014-08-25
     # Copulas
-    for cop in ch.get('cop',[]):
+    for cop in ch.get('lexicon.cop', ()):
         # Names can't have illegal characters
         name = cop.get('name',False)
         if name:
@@ -911,7 +911,7 @@ def validate_lexicon(ch, vr):
         #        for feat in supertype_features:
 
     # Determiners
-    for det in ch.get('det',[]):
+    for det in ch.get('lexicon.det',[]):
         for stem in det.get('stem', []):
             if not stem.get('orth'):
                 mess = 'You must specify a spelling for each determiner you define.'
@@ -922,7 +922,7 @@ def validate_lexicon(ch, vr):
                 vr.err(stem.full_key + '_pred', mess)
 
     # Adpositions
-    for adp in ch.get('adp'):
+    for adp in ch.get('lexicon.adp'):
         if 'feat' not in adp:
             mess = 'You should specify a value for at least one feature (e.g., CASE).'
             vr.warn(adp.full_key + '_feat1_name', mess)
@@ -960,7 +960,7 @@ def validate_lexicon(ch, vr):
     # TJT 2014-09-02: Adding adj and cop
     # TJT 2014-09-08: Changing to ALL_LEX_TYPES here to support future development
     for lextype in ALL_LEX_TYPES + ('adp',):
-        for lt in ch.get(lextype):
+        for lt in ch.get(f'lexicon.{lextype}', ()):
             for feat in lt.get('feat', []):
                 if not feat.get('name'):
                     mess = 'You must choose which feature you are specifying.'
@@ -998,8 +998,7 @@ def validate_lexicon(ch, vr):
                                    'Please select "the %s" to use this feature.' % predicate
                             vr.err(feat.full_key + '_head', mess)
 
-                if not ch.has_dirinv() and feat.get('head') in ['higher', 'lower']:
+                if not 'scale' in ch and feat.get('head') in ('higher', 'lower'):
                     mess = 'That choice is not available in languages ' + \
                            'without a direct-inverse scale.'
                     vr.err(feat.full_key + '_head', mess)
-
