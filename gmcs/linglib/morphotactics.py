@@ -49,24 +49,19 @@ _supertypes = {}
 def all_position_classes(choices):
     """ Yield each position class defined in the choices file. """
     for lt in ALL_LEX_TYPES:
-        for pc in choices.get(f'morphology.{lt}-pc', ()):
-            yield pc
+        yield from choices.get(f'morphology.{lt}-pc', ())
 
 def defined_lexrule_sts(lrt,pc):
     """
     Return the list of lexical rule supertypes, filtering out ones
     not defined in the pc (likely Matrix types)
     """
-    sts = lrt.split_value('supertypes')
+    sts = lrt.get('supertypes', ())
     to_return = []
     for lrt in pc.get('lrt', ()):
         if lrt.full_key in sts:
             to_return.append(lrt.full_key)
     return to_return
-#  for st in lrt.split_value('supertypes'):
-#    print st in [[l.full_key] for l in pc['lrt']]
-#return [st for st in lrt.split_value('supertypes') if st in [[l.full_key] for l in pc['lrt']]]
-#return [st for st in lrt.split_value('supertypes') if st in pc['lrt']]
 
 def disjunctive_typename(mns):
     """
@@ -184,11 +179,10 @@ def position_class_hierarchy(choices):
     # We can't set parents until we have created all MN objects.
     pc_inputs = {}
     # Now create the actual position classes
-    print("position_class_hierarchy")
     for i, pc in enumerate(all_position_classes(choices)):
         # these PCs are ChoiceDicts
-        if len(pc.get('inputs', '')) > 0:
-            pc_inputs[pc.full_key] = set(pc.get('inputs').split(', '))
+        if len(pc.get('inputs', ())) > 0:
+            pc_inputs[pc.full_key] = set(pc.get('inputs'))
         cur_pc = pch.add_node(PositionClass(pc.full_key, get_name(pc),
                                             order=pc.get('order')))
         cur_pc.tdl_order = i
@@ -238,13 +232,11 @@ def create_lexical_rule_types(cur_pc, pc):
             mtx_supertypes = set()
             if 'supertypes' in lrt:
                 lrt_parents[lrt.full_key] = set(defined_lexrule_sts(lrt,pc))
-                mtx_supertypes = set(lrt.split_value('supertypes')).difference(
-                    lrt_parents.get(lrt.full_key,set()))
+                mtx_supertypes = set(lrt.get('supertypes', ())).difference(
+                    lrt_parents.get(lrt.full_key, set()))
             # default name uses name of PC with _lrtX
-            print(lrt)
             if 'name' not in lrt:
                 lrt['name'] = cur_pc.name + lrt.full_key.replace(cur_pc.key, '', 1)
-            print(lrt)
             cur_lrt = create_lexical_rule_type(lrt, mtx_supertypes, cur_pc)
             # the ordering should only mess up if there are 100+ lrts
             cur_lrt.tdl_order = cur_pc.tdl_order + (0.01 * j)
