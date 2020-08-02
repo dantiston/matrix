@@ -553,7 +553,7 @@ def validate(choices, vr):
                    'You may not specify additional cases ' +
                    'if your language has no case marking.')
 
-    if 'scale' in choices and not choices.get('scale-equal'):
+    if 'direct-inverse.scale' in choices and 'direct-inverse.scale-equal' not in choices:
         vr.err('scale-equal',
                'If you define a direct-inverse scale, ' +
                'you must say what direction the verb is ' +

@@ -28,7 +28,7 @@ def customize_arg_op(mylang, ch, rules, hierarchies):
     """ Create the lexical types, lexical, rules and phrase structure
         rules to allow argument dropping"""
 
-    if 'scale' in ch and (ch.get('subj-drop')or ch.get('obj-drop')):
+    if 'direct-inverse.scale' in ch and (ch.get('subj-drop') or ch.get('obj-drop')):
         mylang.add('dir-inv-scale := unexpressed-reg.')
 
     mylang.set_section('verblex')

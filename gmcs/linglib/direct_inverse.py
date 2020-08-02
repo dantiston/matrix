@@ -32,7 +32,7 @@ def get_subj_comps_types(j, scale_size, direc, equal):
 ##########################
 
 def customize_direct_inverse(choices, mylang, hierarchies):
-    if 'scale' not in choices:
+    if 'direct-inverse.scale' not in choices:
         return
     write_dir_inv_types(choices, mylang, hierarchies)
     write_dir_inv_lexrule_supertypes(choices, mylang)
@@ -44,7 +44,7 @@ def write_dir_inv_types(choices, mylang, hierarchies):
     hier.add('inv', 'direction')
     hier.save(mylang)
 
-    if choices.has_SCARGS():
+    if info.has_SCARGS(choices):
         mylang.add('word-or-lexrule :+ [ SC-ARGS list ].', section='addenda')
         mylang.add('lex-rule :+ [ SC-ARGS #1, DTR.SC-ARGS #1 ].', section='addenda')
 
@@ -53,7 +53,7 @@ def write_dir_inv_types(choices, mylang, hierarchies):
 
     # Figure out which features are involved in the hierarchy
     names = []  # feature names
-    for scale in choices.get('scale', ()):
+    for scale in choices.get('direct-inverse.scale', ()):
         for feat in scale.get('feat', ()):
             names.append(feat.get('name', ''))
 
@@ -64,13 +64,13 @@ def write_dir_inv_types(choices, mylang, hierarchies):
     supertype = 'dir-inv-scale'
     mylang.add(supertype + ' := canonical-synsem.')
 
-    scale_len = len(choices.get('scale',''))
+    scale_len = len(choices.get('direct-inverse.scale', ()))
 
     for i in range(1, scale_len):
         values = {}  # for each feature, a set of values
 
         # get the features on the first scale entry in this range
-        for feat in choices.get('scale')[i].get('feat', []):
+        for feat in choices.get('direct-inverse.scale')[i].get('feat', []):
             name = feat.get('name','')
             if name not in values:
                 values[name] = set()
@@ -102,7 +102,7 @@ def write_dir_inv_types(choices, mylang, hierarchies):
         # rest of the scale
         values = {}
 
-        for scale in list(choices.get('scale', []))[i:]:
+        for scale in list(choices.get('direct-inverse.scale', []))[i:]:
             for feat in scale.get('feat', ()):
                 name = feat.get('name','')
                 if name not in values:
@@ -171,7 +171,7 @@ def write_dir_inv_lexrule_supertypes(choices, mylang):
 
 def add_lexrules(choices):
     features = info.features(choices)
-    scale_size = len(choices.get('scale', ()))
+    scale_size = len(choices.get('direct-inverse.scale', ()))
     equal = choices.get('scale-equal')
 
     for lexprefix in ALL_LEX_TYPES:
@@ -236,8 +236,8 @@ def add_lexrules(choices):
 
 def reassign_inputs(choices, inp_key, pc_key):
     for lexprefix in ALL_LEX_TYPES:
-        for pc in choices.get(lexprefix + '-pc', ()):
+        for pc in choices.get(f'morphology.{lexprefix}-pc', ()):
             if pc.full_key == pc_key: continue
-            if inp_key in pc['inputs'].split(', '):
-                choices[pc.full_key + '_inputs'] = \
-                    pc['inputs'].replace(inp_key, pc_key)
+            inputs = pc.get('inputs', ())
+            if inp_key in inputs:
+                pc['inputs'] = [i if i != inp_key else pc_key for i in inputs]

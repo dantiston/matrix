@@ -1062,7 +1062,7 @@ def lrt_validation(lrt, vr, index_feats, choices, incorp=False, inputs=set(), sw
             if 'head' not in feat:
                 vr.err(feat.full_key + '_head',
                        'You must choose where the feature is specified.')
-            elif feat['head'] in ['higher', 'lower'] and not choices.get('scale'):
+            elif feat['head'] in ('higher', 'lower') and 'direct-inverse.scale' not in choices:
                 vr.err(feat.full_key + '_head',
                        'To use higher/lower ranked NP, please define a scale on the direct-inverse page.')
             elif feat['head'] == 'verb' and feat.get('name','') in index_feats:

@@ -998,7 +998,7 @@ def validate_lexicon(ch, vr):
                                    'Please select "the %s" to use this feature.' % predicate
                             vr.err(feat.full_key + '_head', mess)
 
-                if not 'scale' in ch and feat.get('head') in ('higher', 'lower'):
+                if not 'direct-inverse.scale' in ch and feat.get('head') in ('higher', 'lower'):
                     mess = 'That choice is not available in languages ' + \
                            'without a direct-inverse scale.'
                     vr.err(feat.full_key + '_head', mess)

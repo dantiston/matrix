@@ -8,15 +8,16 @@ import sys
 import re
 import os
 
-from gmcs import tdl
-from gmcs.choices import ChoicesFile
-from gmcs.utils import get_name
+from delphin_choices.choices import Choices
+from delphin_choices import info
 
-import gmcs.linglib.case
-import gmcs.linglib.morphotactics
-import gmcs.linglib.negation
-import gmcs.linglib.lexicon
-import gmcs.linglib.clausalcomps
+from gmcs import tdl
+from gmcs.linglib import case
+from gmcs.linglib import clausalcomps
+from gmcs.linglib import lexicon
+from gmcs.linglib import morphotactics
+from gmcs.linglib import negation
+from gmcs.utils import get_name
 
 
 ######################################################################
@@ -173,11 +174,10 @@ def validate_names(ch, vr):
     # read matrix types and head types from file
     try:
         filename = 'matrix-types'
-        f = open(filename, 'r')
-        for t in f.readlines():
-            type_name = t.strip()
-            reserved_types[type_name] = True
-        f.close()
+        with open(filename, 'r') as f:
+            for t in f:
+                type_name = t.strip()
+                reserved_types[type_name] = True
     except IOError:
         pass
 
@@ -188,45 +188,46 @@ def validate_names(ch, vr):
     # if called for by current choices, add reserved types for:
     # case, direction, person, number, pernum, gender, tense, aspect,
     # situation, mood, form, nominalization, and trans/intrans verb types.
-    if ch.get('case-marking', None) is not None:
+    if ch.get('case.case-marking', None) is not None:
         reserved_types['case'] = True
 
-    if ch.get('scale', []):
+    if ch.get('direct-inverse.scale', ()):
         reserved_types['direction'] = True
         reserved_types['dir'] = True
         reserved_types['inv'] = True
 
-    if ch.pernums():
+    if info.pernums(ch):
         reserved_types['pernum'] = True
-        persons = [p[0] for p in ch.persons()]
-        numbers = [n[0] for n in ch.numbers()]
-        for pernum in ch.pernums():
+        persons = [p[0] for p in info.persons(ch)]
+        numbers = [n[0] for n in info.numbers(ch)]
+        for pernum in info.pernums(ch):
             if pernum[0] not in persons + numbers:
                 reserved_types[pernum[0]] = True
     else:
-        if ch.persons():
+        persons = info.persons(ch)
+        if persons:
             reserved_types['person'] = True
-            for person in ch.persons():
+            for person in persons:
                 reserved_types[person[0]] = True
-        if ch.numbers():
+        if info.numbers(ch):
             reserved_types['number'] = True
 
     if 'gender' in ch:
         reserved_types['gender'] = True
 
-    if ch.tenses():
+    if info.tenses(ch):
         reserved_types['tense'] = True
 
-    if ch.aspects():
+    if info.aspects(ch):
         reserved_types['aspect'] = True
 
-    if ch.situations():
+    if info.situations(ch):
         reserved_types['situation'] = True
 
-    if ch.moods():
+    if info.moods(ch):
         reserved_types['mood'] = True
 
-    if ch.forms():
+    if info.forms(ch):
         reserved_types['form'] = True
         reserved_types['finite'] = True
         reserved_types['nonfinite'] = True
@@ -234,7 +235,7 @@ def validate_names(ch, vr):
     if 'ns' in ch:
         reserved_types['nominalization'] = True
 
-    for pattern in ch.patterns():
+    for pattern in info.patterns(ch):
         p = pattern[0].split(',')
         dir_inv = ''
         if len(p) > 1:
@@ -268,72 +269,72 @@ def validate_names(ch, vr):
         if vn in ch:
             user_types += [[ch[vn], vn]]
 
-    for case in ch.get('case', []):
-        user_types += [[case.get('name'), case.full_key + '_name']]
+    for case in ch.get('case.case', ()):
+        user_types += [[case.get('name'), case.full_key + '.name']]
 
-    for number in ch.get('number', []):
-        user_types += [[number.get('name'), number.full_key + '_name']]
+    for number in ch.get('number.number', ()):
+        user_types += [[number.get('name'), number.full_key + '.name']]
 
-    for gender in ch.get('gender', []):
-        user_types += [[gender.get('name'), gender.full_key + '_name']]
+    for gender in ch.get('gender.gender', ()):
+        user_types += [[gender.get('name'), gender.full_key + '.name']]
 
-    for feature in ch.get('feature', []):
-        user_types += [[feature.get('name'), feature.full_key + '_name']]
-        for value in feature.get('value', []):
-            user_types += [[value.get('name'), value.full_key + '_name']]
+    for feature in ch.get('other-features.feature', ()):
+        user_types += [[feature.get('name'), feature.full_key + '.name']]
+        for value in feature.get('value', ()):
+            user_types += [[value.get('name'), value.full_key + '.name']]
 
     for tense in ['past', 'present', 'future', 'nonpast', 'nonfuture']:
-        if tense in ch:
+        if f'tense-aspect-mood.{tense}' in ch:
             user_types += [[tense, tense]]
-            for st in ch.get(tense + '-subtype', []):
-                user_types += [[st.get('name'), st.full_key + '_name']]
+            for st in ch.get(f'tense-aspect-mood.{tense}-subtype', ()):
+                user_types += [[st.get('name'), st.full_key + '.name']]
 
-    for tense in ch.get('tense', []):
-        user_types += [[tense.get('name'), tense.full_key + '_name']]
+    for tense in ch.get('tense-aspect-mood.tense', []):
+        user_types += [[tense.get('name'), tense.full_key + '.name']]
 
-    for aspect in ch.get('aspect', []):
-        user_types += [[aspect.get('name'), aspect.full_key + '_name']]
+    for aspect in ch.get('tense-aspect-mood.aspect', []):
+        user_types += [[aspect.get('name'), aspect.full_key + '.name']]
 
-    for situation in ch.get('situation', []):
-        user_types += [[situation.get('name'), situation.full_key + '_name']]
+    for situation in ch.get('tense-aspect-mood.situation', []):
+        user_types += [[situation.get('name'), situation.full_key + '.name']]
 
-    for mood in ch.get('mood', []):
-        user_types += [[mood.get('name'), mood.full_key + '_name']]
+    for mood in ch.get('tense-aspect-mood.mood', []):
+        user_types += [[mood.get('name'), mood.full_key + '.name']]
 
-    for sf in ch.get('form-subtype', []):
-        user_types += [[sf.get('name'), sf.full_key + '_name']]
+    for sf in ch.get('other-features.form-subtype', []):
+        user_types += [[sf.get('name'), sf.full_key + '.name']]
 
-    for noun in ch.get('noun', []):
+    for noun in ch.get('lexicon.noun', []):
         user_types += [[get_name(noun) + '-noun-lex',
-                        noun.full_key + '_name']]
+                        noun.full_key + '.name']]
 
-    for det in ch.get('det', []):
+    for det in ch.get('lexicon.det', []):
         user_types += [[get_name(det) + '-determiner-lex',
-                        det.full_key + '_name']]
+                        det.full_key + '.name']]
 
-    for verb in ch.get('verb', []):
+    for verb in ch.get('lexicon.verb', []):
         user_types += [[get_name(verb) + '-verb-lex',
-                        verb.full_key + '_name']]
+                        verb.full_key + '.name']]
         user_types += [[get_name(verb) + '-dir-inv-lex-rule',
-                        verb.full_key + '_name']]
+                        verb.full_key + '.name']]
         user_types += [[get_name(verb) + '-dir-lex-rule',
-                        verb.full_key + '_name']]
+                        verb.full_key + '.name']]
         user_types += [[get_name(verb) + '-inv-lex-rule',
-                        verb.full_key + '_name']]
+                        verb.full_key + '.name']]
 
     # TJT 2014-08-25: Adding adj + cop; changing to tuple for speed
     for pcprefix in ('noun', 'verb', 'det', 'aux', 'adj', 'cop'):
-        for pc in ch.get(pcprefix + '-pc', []):
+        for pc in ch.get(f'morphology.{pcprefix}-pc', ()):
             user_types += [[get_name(pc) + '-lex-rule',
-                            pc.full_key + '_name']]
+                            pc.full_key + '.name']]
             user_types += [[get_name(pc) + '-rule-dtr',
-                            pc.full_key + '_name']]
-            for lrt in pc.get('lrt', []):
+                            pc.full_key + '.name']]
+            for lrt in pc.get('lrt', ()):
                 user_types += [[get_name(lrt) + '-lex-rule',
-                                lrt.full_key + '_name']]
+                                lrt.full_key + '.name']]
 
     for ns in ch.get('ns'):
-        user_types += [[ns.get('name'), ns.full_key + '_name']]
+        user_types += [[ns.get('name'), ns.full_key + '.name']]
 
     # Cull entries in user_types where there's no type name (and assume
     # these will be caught by other validation).  This could happen, for
@@ -396,7 +397,7 @@ def validate_names(ch, vr):
 #   Validate the user's choices about general information
 
 def validate_general(ch, vr):
-    lang = ch.get('language')
+    lang = ch.get('general.language')
 
     if not lang:
         vr.err('language', 'You must specify the name of your language')
@@ -410,7 +411,7 @@ def validate_general(ch, vr):
         if bad_lang:
             vr.err('language', 'The language name contains an illegal character')
 
-    iso = ch.get('iso-code')
+    iso = ch.get('general.iso-code')
     if len(iso) != 3:
         vr.warn('iso-code', 'ISO-639 codes should be three letter sequences.')
     else:
@@ -434,16 +435,16 @@ def validate_general(ch, vr):
 your installation root directory as iso.tab to enable iso validation:
 \n$ wget https://iso639-3.sil.org/sites/iso639-3/files/downloads/iso-639-3.tab -O iso.tab\n''')
 
-    if not ch.get('archive'):
+    if not ch.get('general.archive'):
         vr.warn('archive',
                 'Please answer whether you will allow ' +
                 'your answers to be retained.')
 
-    if not ch.get('punctuation-chars'):
+    if not ch.get('general.punctuation-chars'):
         vr.warn('punctuation-chars',
                 'Please provide an answer about tokenization and punctuation ' + \
                 'characters.')
-    chars = ch.get('punctuation-chars-list','')
+    chars = ch.get('general.punctuation-chars-list','')
     if chars:
         if ' ' in chars:
             vr.err('punctuation-chars',
@@ -477,8 +478,8 @@ your installation root directory as iso.tab to enable iso validation:
 #   Validate the user's choices about person
 
 def validate_person(ch, vr):
-    person = ch.get('person')
-    fp = ch.get('first-person')
+    person = ch.get('person.person')
+    fp = ch.get('person.first-person')
 
     if not person:
         vr.err('person',
@@ -501,7 +502,7 @@ def validate_person(ch, vr):
 #   Validate the user's choices about number
 
 def validate_number(ch, vr):
-    for number in ch.get('number'):
+    for number in ch.get('number.number'):
         if 'name' not in number:
             vr.err(number.full_key + '_name',
                    'You must specify a name for each number you define.')
@@ -512,7 +513,7 @@ def validate_number(ch, vr):
 #   Validate the user's choices about gender
 
 def validate_gender(ch, vr):
-    for gender in ch.get('gender'):
+    for gender in ch.get('gender.gender'):
         if 'name' not in gender:
             vr.err(gender.full_key + '_name',
                    'You must specify a name for each gender you define.')
@@ -523,7 +524,7 @@ def validate_gender(ch, vr):
 #   Validate the user's choices about other features
 
 def validate_other_features(ch, vr):
-    for feature in ch.get('feature'):
+    for feature in ch.get('other-features.feature'):
         if 'name' not in feature:
             vr.err(feature.full_key + '_name',
                    'You must specify a name for each feature.')
@@ -552,7 +553,7 @@ def validate_other_features(ch, vr):
                     vr.err(feature.full_key + '_new',
                            'You must add a value if you check [define a new value type].')
 
-        for value in feature.get('value', []):
+        for value in feature.get('value', ()):
             if 'name' not in value:
                 vr.err(value.full_key + '_name',
                        'You must specify a name for each value you define.')
@@ -566,7 +567,7 @@ def validate_other_features(ch, vr):
 # validate_information_structure_msg(ch, vr, marker, _type, msg)
 #   Leave an error msg for information structural affixes
 def validate_information_structure_msg(ch, vr, marker, _type, msg):
-    for m in ch.get(marker):
+    for m in ch.get(f'info-str.{marker}'):
         if m['type'].strip() == _type:
             vr.err(m.full_key + '_type', msg)
 
@@ -575,9 +576,9 @@ def validate_information_structure_msg(ch, vr, marker, _type, msg):
 #   Validate the user's choices about information structure for each value
 def validate_information_structure_affix(ch, marker, values):
     for cat in ['noun-pc', 'verb-pc']:
-        for pc in ch.get(cat):
-            for lrt in pc.get('lrt', []):
-                for feat in lrt.get('feat', []):
+        for pc in ch.get(f'morphology.{cat}'):
+            for lrt in pc.get('lrt', ()):
+                for feat in lrt.get('feat', ()):
                     if feat['name'] == 'information-structure meaning' and feat['value'] in values:
                         return True
     return False
@@ -586,8 +587,8 @@ def validate_information_structure_affix(ch, marker, values):
 # validate_information_structure_adp(ch, marker, values)
 #   Validate the user's choices about information structure for each value
 def validate_information_structure_adp(ch, marker, values):
-    for adp in ch.get('adp'):
-        for feat in adp.get('feat', []):
+    for adp in ch.get('adp', ()):
+        for feat in adp.get('feat', ()):
             if feat['name'] == 'information-structure meaning' and feat['value'] in values:
                 return True
     return False
@@ -606,7 +607,7 @@ def validate_information_structure(ch, vr):
 
     infostr_markers = []
     for marker in list(infostr_values.keys()):
-        for m in ch.get(marker):
+        for m in ch.get(f'info-str.{marker}'):
             if m['type'].strip() == 'affix' and marker not in infostr_markers:
                 infostr_markers.append(marker)
                 break
@@ -616,7 +617,7 @@ def validate_information_structure(ch, vr):
 
     infostr_markers = []
     for marker in list(infostr_values.keys()):
-        for m in ch.get(marker):
+        for m in ch.get(f'info-str.{marker}'):
             if m['type'].strip() == 'adp' and marker not in infostr_markers:
                 infostr_markers.append(marker)
                 break
@@ -627,33 +628,33 @@ def validate_information_structure(ch, vr):
 
 
     for marker in list(infostr_values.keys()):
-        for m in ch.get(marker):
+        for m in ch.get(f'info-str.{marker}'):
             if m['type'].strip() in ['affix', 'adp']:
                 if m['pos'].strip() != '' or m['cat'].strip() != '' or m['orth'].strip() != '':
                     vr.err(m.full_key + '_type', 'You must either check a modifier or delete the choices following a modifier.')
 
 
-    if ch.get('word-order') == 'free':
+    if ch.get('word-order.word-order') == 'free':
         warning_msg = 'Information structural modules for free word order languages are under development. If positions are multiply checked, your grammar may have some overgeneration.'
-        if ch.get('focus-pos') != '' and ch.get('topic-first') != '':
-            if ch.get('focus-pos') != 'clause-initial':
+        if ch.get('info-str.focus-pos') and ch.get('info-str.topic-first'):
+            if ch.get('info-str.focus-pos') != 'clause-initial':
                 vr.warn('focus-pos', warning_msg)
 
-        if ch.get('focus-pos') != '' and ch.get('c-focus-pos') != '':
-            if ch.get('focus-pos') != ch.get('c-focus-pos') != '':
+        if ch.get('info-str.focus-pos') and ch.get('info-str.c-focus-pos'):
+            if ch.get('info-str.focus-pos') != ch.get('info-str.c-focus-pos'):
                 vr.warn('focus-pos', warning_msg)
 
-        if ch.get('c-focus-pos') != '' and ch.get('topic-first') != '':
-            if ch.get('c-focus-pos') != 'clause-initial':
+        if ch.get('info-str.c-focus-pos') and ch.get('info-str.topic-first'):
+            if ch.get('info-str.c-focus-pos') != 'clause-initial':
                 vr.warn('topic-first', warning_msg)
 
 
-    if ch.get('topic-first') != '' and ch.get('topic-marker') != '':
+    if ch.get('info-str.topic-first') and ch.get('info-str.topic-marker'):
         vr.warn('topic-first', 'You may need some additional constraint(s) on sentence positioning of topic-marked constituents.')
 
-    if ch.get('focus-pos') == '' and ch.get('c-focus') != '':
+    if ch.get('info-str.focus-pos') and ch.get('info-str.c-focus'):
         vr.err('c-focus', 'You must check a specific position for focus above.')
-    if ch.get('c-focus') != '' and ch.get('c-focus-pos') != '':
+    if ch.get('info-str.c-focus') and ch.get('info-str.c-focus-pos'):
         vr.err('c-focus', 'Your description is inconsistent. You must either check this or choose a specific position below.')
 
 
@@ -672,26 +673,26 @@ def validate_information_structure(ch, vr):
 
 def validate_word_order(ch, vr):
     # General word order
-    if (not ch.get('word-order')):
+    if (not ch.get('word-order.word-order')):
         vr.err('word-order',
                'You must specify a choice for the basic word order.')
 
     # Things to do with determiners
-    if (not ch.get('has-dets')):
+    if (not ch.get('word-order.has-dets')):
         vr.err('has-dets',
                'You must specify whether your language has determiners.')
 
-    if ((ch.get('has-dets') == 'yes') and (not ch.get('noun-det-order'))):
+    if ((ch.get('word-order.has-dets') == 'yes') and (not ch.get('word-order.noun-det-order'))):
         vr.err('noun-det-order',
                'If your language has determiners, ' +
                'you must specify their order with respect to nouns.')
 
-    if (ch.get('noun-det-order') and (not ch.get('has-dets'))):
+    if (ch.get('word-order.noun-det-order') and (not ch.get('word-order.has-dets'))):
         vr.err('has-dets',
                'You specified an order of nouns and dets, ' +
                'but not whether your language has determiners at all.')
 
-    if 'det' in ch and ch.get('has-dets') == 'no':
+    if 'det' in ch and ch.get('word-order.has-dets') == 'no':
         vr.err('has-dets',
                'You specified lexical entries for determiners, ' +
                'but said your language has none.')
@@ -704,33 +705,33 @@ def validate_word_order(ch, vr):
 
 
     #Things to do with auxiliaries
-    if (not ch.get('has-aux')):
+    if (not ch.get('word-order.has-aux')):
         vr.err('has-aux',
                'You must specify whether your language has auxiliary verbs.')
 
-    if ((ch.get('has-aux') == 'yes') and (not ch.get('aux-comp-order'))):
+    if ((ch.get('word-order.has-aux') == 'yes') and (not ch.get('word-order.aux-comp-order'))):
         vr.err('aux-comp-order',
                'If your language has auxiliaries, you must specify their order ' +
                'with respect to their complements.')
 
-    if (ch.get('aux-comp-order') and (not ch.get('has-aux'))):
+    if (ch.get('word-order.aux-comp-order') and (not ch.get('word-order.has-aux'))):
         vr.err('has-aux',
                'You specified an order for auxiliaries and their complements, ' +
                'but not whether your language has auxiliaries at all.')
 
-    if ((ch.get('has-aux') == 'yes') and (not ch.get('aux-comp'))):
+    if ((ch.get('word-order.has-aux') == 'yes') and (not ch.get('word-order.aux-comp'))):
         vr.err('aux-comp',
                'If your language has auxiliaries, you must specify ' +
                'whether they take s, vp, or v complements.')
 
-    wo = ch.get('word-order')
-    co = ch.get('aux-comp-order')
-    ac = ch.get('aux-comp')
+    wo = ch.get('word-order.word-order')
+    co = ch.get('word-order.aux-comp-order')
+    ac = ch.get('word-order.aux-comp')
 
     # Added check on whether question on more than one auxiliary is answered.
     # mwg: Antske says this check should only happen if wo is free
-    if (wo == 'free' and (ch.get('has-aux') == 'yes') \
-                and (not ch.get('multiple-aux'))):
+    if (wo == 'free' and (ch.get('word-order.has-aux') == 'yes') \
+                and (not ch.get('word-order.multiple-aux'))):
         vr.err('multiple-aux',
                'If your language has free word order and auxiliaries, you must ' +
                'specify whether a clause may contain more than one of them.')
@@ -745,13 +746,13 @@ def validate_word_order(ch, vr):
 
     #OZ 2017-11-13 Validate subordinate clauses word order.
 
-    if (ch.get('subord-word-order')):
-        if not (wo == 'v2' or ch.get('subord-word-order') == 'same'):
+    if (ch.get('word-order.subord-word-order')):
+        if not (wo == 'v2' or ch.get('word-order.subord-word-order') == 'same'):
             vr.err('subord-word-order',
                    'V-final subordinate word order is ' +
                    'only supported with V2 matrix order.')
-        elif wo == 'v2' and ch.get('subord-word-order') == 'vfinal' \
-                and ch.get('has-aux') == 'yes' and ch.get('aux-comp') != 'v':
+        elif wo == 'v2' and ch.get('word-order.subord-word-order') == 'vfinal' \
+                and ch.get('word-order.has-aux') == 'yes' and ch.get('word-order.aux-comp') != 'v':
             vr.err('aux-comp','The only supported choice for auxiliary complement '
                    'type for v2/vfinal word order combination is V.')
 
@@ -762,8 +763,8 @@ def validate_word_order(ch, vr):
 
 def validate_coordination(ch, vr):
     used_patterns = set() # used later to check which aps were used in a cs
-    for cs in ch.get('cs'):
-        csnum = str(cs.iter_num())
+    for cs in ch.get('coordination.cs'):
+        csnum = cs.full_key
 
         cs_n =     cs.get('n')
         cs_np =    cs.get('np')
@@ -824,8 +825,8 @@ def validate_coordination(ch, vr):
         # first, quickly check whether a cs has an ap but not for all arguments
         subj = False
         obj = False
-        for csap in cs.get('csap'):
-            target = csap.get('target')
+        for csap in cs.get('csap', ()):
+            target = csap.get('target', ())
             if target == 'all':
                 subj = True
                 obj = True
@@ -850,7 +851,7 @@ def validate_coordination(ch, vr):
             used_patterns.add(csap.get('pat')) # used to check for unused aps later
 
             # ap named in a cs must exist
-            if not ch.get(csap.get('pat')):
+            if not ch.get(f'coordination.{csap.get("pat")}', ()):
                 mess = 'You have set this coordination strategy to use an agreement pattern that ' \
                        'doesn\'t exist.'
                 vr.err(csap.full_key+"_pat", mess)
@@ -886,7 +887,7 @@ def validate_coordination(ch, vr):
                     vr.err(csap.full_key+"_pat", mess)
 
     # feature resolution validation
-    for fr in ch.get('fr'):
+    for fr in ch.get('coordination.fr'):
         feats = set()
         features = ch.features()
 
@@ -1005,12 +1006,12 @@ def validate_coordination(ch, vr):
 #   Validate the user's choices about matrix yes/no questions.
 
 def validate_yesno_questions(ch, vr):
-    qinvverb = ch.get('q-inv-verb')
-    qpartorder = ch.get('q-part-order')
-    qpartorth = ch.get('q-part-orth')
-    qinfltype = ch.get('q-infl-type')
+    qinvverb = ch.get('matrix-yes-no.q-inv-verb')
+    qpartorder = ch.get('matrix-yes-no.q-part-order')
+    qpartorth = ch.get('matrix-yes-no.q-part-orth')
+    qinfltype = ch.get('matrix-yes-no.q-infl-type')
 
-    if ch.get('q-part'):
+    if ch.get('matrix-yes-no.q-part'):
         if not qpartorder:
             mess = 'If you chose the question particle strategy ' + \
                    'for yes-no questions, you must specify ' + \
@@ -1022,7 +1023,7 @@ def validate_yesno_questions(ch, vr):
                    'the form of the question particle.'
             vr.err('q-part-orth', mess)
 
-    if ch.get('q-inv'):
+    if ch.get('matrix-yes-no.q-inv'):
         #    if qinvverb != 'aux' and qinvverb != 'main' and qinvverb != 'main-aux':
         #      mess = 'There is something wrong with the verb type (main/aux) for inverted questions.  Please contact developers.'
         #      vr.err('q-inv-verb', mess)
@@ -1031,25 +1032,24 @@ def validate_yesno_questions(ch, vr):
                    'for yes-no questions, you must specify ' + \
                    'which types of verbs invert.'
             vr.err('q-inv-verb', mess)
-        if ch.get('word-order') == 'v-final' or \
-                        ch.get('word-order') == 'v-initial' or \
-                        ch.get('word-order') == 'free':
+        wo = ch.get('word-order.word-order')
+        if wo in ('v-final', 'v-initial', 'free'):
             mess = 'Subject-verb inversion strategy for yes-no questions ' + \
                    'is not supported for V-final, V-initial, or ' + \
                    'free word order languages.  If you believe you have ' + \
                    'a counterexample to this, please contact us.'
             vr.err('q-inv', mess)
         if ((qinvverb == 'aux' or qinvverb == 'aux-main') and
-                    ch.get('has-aux') != 'yes'):
+                    ch.get('word-order.has-aux') != 'yes'):
             mess = 'You have not indicated on the word order page ' + \
                    'that your language has auxiliaries.'
             vr.err('q-inv-verb', mess)
 
-    if ch.get('q-infl'):
+    if ch.get('matrix-yes-no.q-infl'):
         # need to search inflectional rules for one that specifies 'question'
         ques_aff = any([feat.get('name','') == 'question'
                         for pcprefix in ('noun', 'verb', 'det', 'aux')
-                        for pc in ch[pcprefix + '-pc']
+                        for pc in ch.get(f'morphology.{pcprefix}-pc', ())
                         for lrt in pc.get('lrt',[])
                         for feat in lrt.get('feat',[])])
         if not ques_aff:
@@ -1094,26 +1094,26 @@ def validate_tanda(ch, vr):
     chosen = False
     ten = ('past', 'present', 'future', 'nonpast', 'nonfuture')
     for t in ten:
-        if ch.get(t):
+        if ch.get(f'tense-aspect-mood.{t}'):
             chosen = True
         elif t + '-subtype' in ch:
             mess = 'You cannot add a subtype if the supertype is not selected.'
             for st in ch[t + '-subtype']:
                 vr.err(st.full_key + '_name', mess)
 
-    if ch.get('tense-definition') == 'choose' and not chosen:
+    if ch.get('tense-aspect-mood.tense-definition') == 'choose' and not chosen:
         mess = 'You have chosen to select among hierarchy elements. ' + \
                'You need to select at least one tense element.'
         for t in ten:
             vr.err(t, mess)
 
-    if ch.get('tense-definition') == 'build':
+    if ch.get('tense-aspect-mood.tense-definition') == 'build':
         if 'tense' not in ch:
             mess = 'You have chosen to build your own tense hierarchy ' + \
                    'so you must enter at least one tense subtype.'
             vr.err('tense-definition', mess)
 
-        for tense in ch.get('tense'):
+        for tense in ch.get('tense-aspect-mood.tense', ()):
             if 'name' not in tense:
                 vr.err(tense.full_key + '_name',
                        'You must specify a name for each tense subtype you define.')
@@ -1122,7 +1122,7 @@ def validate_tanda(ch, vr):
                        'You must specify a supertype for each tense subtype you define.')
 
     ## validate aspect
-    for aspect in ch.get('aspect'):
+    for aspect in ch.get('tense-aspect-mood.aspect', ()):
         if 'name' not in aspect:
             vr.err(aspect.full_key + '_name',
                    'You must specify a name for each ' +
@@ -1133,7 +1133,7 @@ def validate_tanda(ch, vr):
                    'viewpoint aspect subtype you define.')
 
     ## validate situation
-    for situation in ch.get('situation'):
+    for situation in ch.get('tense-aspect-mood.situation', ()):
         if 'name' not in situation:
             vr.err(situation.full_key + '_name',
                    'You must specify a name for each ' +
@@ -1144,7 +1144,7 @@ def validate_tanda(ch, vr):
                    'situation aspect subtype you define.')
 
     ## validate mood
-    for mood in ch.get('mood'):
+    for mood in ch.get('tense-aspect-mood.mood', ()):
         if 'name' not in mood:
             vr.err(mood.full_key + '_name',
                    'You must specify a name for each ' +
@@ -1155,13 +1155,13 @@ def validate_tanda(ch, vr):
                    'mood subtype you define.')
 
     ## validate form
-    if ch.get('has-aux') == 'yes' and not ch.get('form-fin-nf') == 'on':
+    if ch.get('word-order.has-aux') == 'yes' and not ch.get('other-features.form-fin-nf') == 'on':
         mess = 'You have indicated on the word order page that ' + \
                'your language has auxiliaries or picked a sentential negation strategy ' \
                'that assumes auxiliaries, but have not initialized a FORM hierarchy.'
         vr.err('form-fin-nf', mess)
 
-    if not (ch.get('form-fin-nf') == 'on') and ch.get('form-subtype'):
+    if not (ch.get('other-features.form-fin-nf') == 'on') and ch.get('other-features.form-subtype'):
         mess = 'You have not initialized a FORM hierarchy ' \
                'but you have entered a form subtype.'
         vr.err('form-subtype', mess)
@@ -1238,46 +1238,46 @@ def validate_features(ch, vr):
     name_list = []
     value_list = []
 
-    for scale in ch.get('scale'):
-        for feat in scale.get('feat', []):
+    for scale in ch.get('direct-inverse.scale'):
+        for feat in scale.get('feat', ()):
             name_list += \
-                [[ feat.full_key + '_name', feat.get('name') ]]
+                [[ feat.full_key + '.name', feat.get('name') ]]
             value_list += \
-                [[ feat.full_key + '_value', feat.get('name'), feat.get('value') ]]
+                [[ feat.full_key + '.value', feat.get('name'), feat.get('value') ]]
 
     for lexprefix in ('noun', 'verb', 'det', 'aux', 'adj'):
-        for lex in ch.get(lexprefix):
-            for feat in lex.get('feat', []):
+        for lex in ch.get(f'lexicon.{lexprefix}'):
+            for feat in lex.get('feat', ()):
                 name_list += \
-                    [[ feat.full_key + '_name', feat.get('name') ]]
+                    [[ feat.full_key + '.name', feat.get('name') ]]
                 value_list += \
-                    [[ feat.full_key + '_value', feat.get('name'), feat.get('value') ]]
+                    [[ feat.full_key + '.value', feat.get('name'), feat.get('value') ]]
 
     for pcprefix in ('noun', 'verb', 'det', 'aux', 'adj'):
-        for pc in ch.get(pcprefix + '-pc'):
-            for lrt in pc.get('lrt', []):
-                for feat in lrt.get('feat', []):
+        for pc in ch.get(f'morphology.{pcprefix}-pc'):
+            for lrt in pc.get('lrt', ()):
+                for feat in lrt.get('feat', ()):
                     name_list += \
-                        [[ feat.full_key + '_name', feat.get('name') ]]
+                        [[ feat.full_key + '.name', feat.get('name') ]]
                     value_list += \
-                        [[ feat.full_key + '_value', feat.get('name'), feat.get('value') ]]
+                        [[ feat.full_key + '.value', feat.get('name'), feat.get('value') ]]
 
 
-    for context in ch.get('context',[]):
-        for feat in context.get('feat',[]):
+    for context in ch.get('arg-opt.context', ()):
+        for feat in context.get('feat', ()):
             name_list += \
-                [[ feat.full_key + '_name', feat.get('name') ]]
+                [[ feat.full_key + '.name', feat.get('name') ]]
             value_list += \
-                [[ feat.full_key + '_value', feat.get('name'), feat.get('value') ]]
+                [[ feat.full_key + '.value', feat.get('name'), feat.get('value') ]]
 
     ## LLD 12-29-2015 Check that argument structure choices are currently defined
-    for lex in ch.get('verb'):
-        if lex.get('valence', []):
+    for lex in ch.get('lexicon.verb'):
+        if lex.get('valence', ()):
             value_list += \
                 [[ lex.full_key + '_valence', 'argument structure', lex.get('valence') ]]
 
     # Check the name list to ensure they're all valid features
-    features = ch.features()
+    features = info.features(ch)
     for item in name_list:
         var = item[0]   # choices variable name
         name = item[1]  # feature name
@@ -1289,7 +1289,7 @@ def validate_features(ch, vr):
             vr.err(var, 'You have selected an invalid feature name.')
 
     # Check the value list to ensure they're all valid values
-    features = ch.features()
+    features = info.features(ch)
     for item in value_list:
         var = item[0] or ''    # choices variable name
         name = item[1] or ''   # feature name
@@ -1317,34 +1317,33 @@ def validate_hierarchy(ch, vr):
     # LLD 1-3-2016
     # Check that supertypes have been defined. This needs to be handled slightly differently
     # across categories.
-    for section in ['number', 'gender']:
-        valid_types = [section]
-        for feat in ch.get(section, []):
-            valid_types += [feat.get('name')]
-        for feat in ch.get(section, []):
-            for st in feat.get('supertype', []):
+    for section, supertype in (('number.number', 'number'), ('gender.gender', 'gender')):
+        valid_types = {supertype}
+        for feat in ch.get(section, ()):
+            valid_types.append(feat.get('name'))
+        for feat in ch.get(section, ()):
+            for st in feat.get('supertype', ()):
                 if st.get('name') not in valid_types:
                     vr.err(st.full_key + '_name', 'You have specified an invalid supertype.')
 
-    for section in ['feature']:
-        valid_types = []
-        for feat in ch.get(section, []):
-            valid_types += [feat.get('name')]
-            for value in feat.get('value'):
-                valid_types += [value.get('name')]
-        for feat in ch.get(section, []):
-            for value in feat.get('value', []):
-                for st in value.get('supertype', []):
-                    if st.get('name') not in valid_types:
-                        vr.err(st.full_key + '_name', 'You have specified an invalid supertype.')
+    valid_types = set()
+    for feat in ch.get('other-features.feature', ()):
+        valid_types.add(feat.get('name'))
+        for value in feat.get('value'):
+            valid_types.add(value.get('name'))
+    for feat in ch.get('other-features.feature', ()):
+        for value in feat.get('value', ()):
+            for st in value.get('supertype', ()):
+                if st.get('name') not in valid_types:
+                    vr.err(st.full_key + '_name', 'You have specified an invalid supertype.')
 
     # Adjectives have a similar check already in place.
     for lexprefix in ['verb', 'noun']:
-        valid_types = ['']
-        for lex in ch.get(lexprefix, []):
-            valid_types += [lex.full_key]
-        for lex in ch.get(lexprefix, []):
-            for st in lex.get('supertypes', '').split(", "):
+        valid_types = {''}
+        for lex in ch.get(lexprefix, ()):
+            valid_types.add(lex.full_key)
+        for lex in ch.get(lexprefix, ()):
+            for st in lex.get('supertypes', ()):
                 if st not in valid_types:
                     vr.err(lex.full_key + '_supertypes', 'You have specified an invalid supertype.')
 
@@ -1354,16 +1353,16 @@ def validate_hierarchy(ch, vr):
 
     # xsts is a dictionary that contains some item x's supertypes.
     xsts = {}
-    for type in ['number', 'gender']:
+    for section, type in (('number.number', 'number'), ('gender.gender', 'gender')):
         xsts[type] = [] # 'number' and 'gender' can be supertypes, so they need a dict entry.
-        for x in ch.get(type, []):
+        for x in ch.get(section, ()):
             sts = []
             for st in x.get('supertype',''):
                 sts.append(st.get('name'))
 
             xsts[x.get('name')] = sts
 
-        for x in ch.get(type, []):
+        for x in ch.get(section, []):
             st_anc = [] #used to check for vacuous inheritance
             seen = []
             paths = []
@@ -1417,46 +1416,45 @@ def validate_arg_opt(ch, vr):
     """Check to see if the user completed the necessary portions of the arg
      opt page and see that the OPT feature is used correctly elsewhere"""
 
-    if ch.get('subj-drop') and not ch.get('subj-mark-drop'):
+    if ch.get('arg-opt.subj-drop') and not ch.get('arg-opt.subj-mark-drop'):
         vr.err('subj-mark-drop',
                'You must select whether a subject marker is ' +
                'required, optional, or not permitted with subject dropping.')
 
-    if ch.get('subj-drop') and not ch.get('subj-mark-no-drop'):
+    if ch.get('arg-opt.subj-drop') and not ch.get('arg-opt.subj-mark-no-drop'):
         vr.err('subj-mark-no-drop',
                'You must select whether a subject marker is ' +
                'required, optional, or not permitted with an overt subject.')
 
-    if ch.get('obj-drop') and not ch.get('obj-mark-drop'):
+    if ch.get('arg-opt.obj-drop') and not ch.get('arg-opt.obj-mark-drop'):
         vr.err('obj-mark-drop',
                'You must select whether an object marker is ' +
                'required, optional, or not permitted with object dropping.')
 
-    if ch.get('obj-drop') and not ch.get('obj-mark-no-drop'):
+    if ch.get('arg-opt.obj-drop') and not ch.get('arg-opt.obj-mark-no-drop'):
         vr.err('obj-mark-no-drop',
                'You must select whether a object marker is ' +
                'required, optional, or not permitted with an overt object.')
 
-    for context in ch.get('context',[]):
-        for feat in context.get('feat',[]):
+    for context in ch.get('arg-opt.context', ()):
+        for feat in context.get('feat', ()):
             if not feat.get('head'):
                 mess = 'You must choose where the feature is specified.'
-                vr.err(feat.full_key+'_head',mess)
+                vr.err(feat.full_key+'.head',mess)
 
-    verbslist =  ch.get('verb')
-    for v in verbslist:
+    for v in ch.get('lexicon.verb', ()):
         for feat in v['feat']:
             if feat.get('name') == 'OPT' and not feat.get('head') in ['subj','obj']:
                 mess = "The OPT feature on verbs should be specified " + \
                        "on the subject NP or the object NP."
-                vr.err(feat.full_key+'_head',mess)
+                vr.err(feat.full_key+'.head',mess)
 
 ######################################################################
 # Validation of clausal modifiers
 def validate_clausalmods(ch, vr):
     """Check to see if the user completed the necessary portions of the
        Clausal Modifiers page and check for unsupported combinations of choices"""
-    for cms in ch.get('cms'):
+    for cms in ch.get('clausalmods.cms'):
         # First check the choices that are required for all clausal mod strategies
         if not cms.get('position'):
             mess = 'You must select a position for the clausal modifier.'
@@ -1552,7 +1550,7 @@ def validate_clausalmods(ch, vr):
 def validate_nominalized_clauses(ch, vr):
     """Check to see if the user completed the necessary portions of the
        Nominalized Clauses page and check for conflicts with word order"""
-    for ns in ch.get('ns'):
+    for ns in ch.get('nominalclause.ns'):
         if not ns.get('name'):
             mess = 'You must enter a name for the nominalization strategy.'
             vr.err(ns.full_key + '_name', mess)
@@ -1562,7 +1560,7 @@ def validate_nominalized_clauses(ch, vr):
         if not ns['nmzRel'] == 'yes' and not ns['nmzRel'] == 'no':
             vr.err(ns.full_key + '_nmzRel','Please choose whether nominalization contributes to the semantics.')
         if ns.get('level') == 'mid':
-            if ch.get('word-order') == 'vso' or ch.get('word-order') == 'osv':
+            if ch.get('word-order.word-order') in ('vso', 'osv'):
                 mess = 'The analysis for your word order does not include a' + \
                        ' VP constituent. You must select V or S nominalization.'
                 vr.err(ns.full_key + '_level', mess)
@@ -1574,14 +1572,10 @@ def validate_nominalized_clauses(ch, vr):
 #   Validate the user's choices about adnominal possession
 def validate_adnominal_possession(ch, vr):
     png_feats=set(['person','number','gender','pernum'])
-    for feat in ch.get('feature'):
-        if feat.get('type')!='type':
+    for feat in ch.get('other-features.feature'):
+        if feat.get('type', '') not in ('type', 'head'):
             png_feats.add(feat.get('name'))
-    # Add any user-defined non-syntactic feats:
-    for feat in ch.get('feature'):
-        if feat.get('type','')!='head':
-            png_feats.add(feat.get('name',''))
-    for strat in ch.get('poss-strat'):
+    for strat in ch.get('adnom-poss.poss-strat'):
         # CHECK THAT ALL THE CHOICES ARE CHOSEN
         # Require basic input for all possessive strategies:
         if not strat.get('order'):
@@ -1695,7 +1689,7 @@ def validate_adnominal_possession(ch, vr):
 #                           if not feat.get('value'):
 #                              mess='You must give the value of this feature.'
 #                              vr.err(feat.full_key+'_value',mess)
-    for pron in ch.get('poss-pron'):
+    for pron in ch.get('adnom-poss.poss-pron'):
         # Require basic input for all possessive pronouns
         if not pron.get('type'):
             mess='You must specify the type of this possessive pronoun.'
@@ -1771,14 +1765,14 @@ def validate_adnominal_possession(ch, vr):
 
 def validate(ch, extra = False):
     """
-    Validate the ChoicesFile ch.  Return a ValidationResult that
+    Validate the Choices. Return a ValidationResult that
     contains any errors and warnings.
     """
     vr = ValidationResult()
 
     validate_names(ch, vr)
     validate_general(ch, vr)
-    gmcs.linglib.case.validate(ch, vr)
+    case.validate(ch, vr)
     validate_person(ch, vr)
     validate_number(ch, vr)
     validate_gender(ch, vr)
@@ -1786,14 +1780,14 @@ def validate(ch, extra = False):
     validate_word_order(ch, vr)
     validate_information_structure(ch, vr)
     validate_tanda(ch, vr)
-    gmcs.linglib.negation.validate(ch, vr)
+    negation.validate(ch, vr)
     validate_coordination(ch, vr)
     validate_yesno_questions(ch, vr)
-    gmcs.linglib.lexicon.validate_lexicon(ch, vr)
-    gmcs.linglib.morphotactics.validate(ch, vr)
+    lexicon.validate_lexicon(ch, vr)
+    morphotactics.validate(ch, vr)
     validate_test_sentences(ch, vr)
     validate_adnominal_possession(ch, vr)
-    gmcs.linglib.clausalcomps.validate(ch, vr)
+    clausalcomps.validate(ch, vr)
     validate_clausalmods(ch, vr)
     validate_nominalized_clauses(ch, vr)
     validate_types(ch, vr)
@@ -1811,7 +1805,7 @@ def validate_choices(choices_file, extra = False):
     Validate the choices file found in choices_file.  Return a
     ValidationResult that contains any errors and warnings.
     """
-    ch = ChoicesFile(choices_file)
+    ch = Choices(choices_file)
     return validate(ch, extra)
 
 
