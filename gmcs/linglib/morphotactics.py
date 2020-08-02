@@ -202,7 +202,7 @@ def position_class_hierarchy(choices):
 
 def add_lexical_type_hierarchy(pch, choices):
     for lex_cat in LEXICAL_CATEGORIES:
-        if lex_cat not in choices: continue
+        if f"lexicon.{lex_cat}" not in choices: continue
         lth = lexicon.lexical_type_hierarchy(choices, lex_cat)
         _mns[lth.key] = lth
         _mns.update(lth.nodes)
@@ -223,7 +223,6 @@ def pc_lrt_merge(cur_pc, pc):
         cur_pc.identifier_suffix = 'lex-rule'
 
 def create_lexical_rule_types(cur_pc, pc):
-    print("hello world!")
     lrt_parents = {}
     # TJT 2014-08-21 Check incorporated stems too
     all_lrts = (pc.get('lrt', ()), pc.get('is-lrt', ()))
@@ -597,7 +596,7 @@ def get_infostr_constraint(k, cur):
 def get_infostr_constraints(choices):
     for i, pc in enumerate(all_position_classes(choices)):
         for j, lrt in enumerate(pc.get('lrt', ())):
-            _supertypes[lrt.full_key] = lrt.split_value('supertypes')
+            _supertypes[lrt.full_key] = lrt.get('supertypes', ())
             for st in _supertypes[lrt.full_key]:
                 if st not in _nonleaves:
                     _nonleaves.append(st)
@@ -652,8 +651,8 @@ def write_rules(pch, mylang, irules, lrules, lextdl, choices):
             write_supertypes(mylang, lrt.identifier(), lrt.all_supertypes())
         write_daughter_types(mylang, pc)
     # features need to be written later
-    return [(mn.key, mn.identifier(), mn.key.split('-')[0])
-            for mn in list(_mns.values())
+    return [(f'morphology.{mn.key}', mn.identifier(), mn.key.split('-')[0])
+            for mn in _mns.values()
             if isinstance(mn, LexicalRuleType) and len(mn.features) > 0]
 
 def write_intermediate_types(mylang):

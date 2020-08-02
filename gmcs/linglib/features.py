@@ -9,8 +9,8 @@ from gmcs.linglib import case
 #   passed-in type.
 
 def process_cfv_list(mylang, ch, hierarchies, to_cfv, tdlfile=None):
-    for (ch_key, type_id, pos) in to_cfv:
-        customize_feature_values(mylang, ch, hierarchies, ch[ch_key], type_id, pos,
+    for ch_key, type_id, pos in to_cfv:
+        customize_feature_values(mylang, ch, hierarchies, ch.get(ch_key), type_id, pos,
                                  tdlfile=tdlfile or mylang)
 
 def customize_feature_values(mylang, ch, hierarchies, ch_dict, type_name, pos, features=None, cases=None, tdlfile=None):
@@ -80,7 +80,7 @@ def customize_feature_values(mylang, ch, hierarchies, ch_dict, type_name, pos, f
 
     for feat in ch_dict.get(iter_feat, ()):
         n = feat.get('name','')
-        v = feat.get('value','').split(', ')
+        v = feat.get('value','')
 
         if n == 'case':
             v = [case.canon_to_abbr(c, cases) for c in v]

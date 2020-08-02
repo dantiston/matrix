@@ -40,8 +40,8 @@ def lexical_type_hierarchy(choices, lexical_supertype):
             # because bistems can give rise to flags that need to appear on
             # all verbs.
             if lexical_supertype == 'verb':
-                bistems = choices[lt.full_key]['bistem'] or []
-                stems = choices[lt.full_key]['stem'] or []
+                bistems = lt.get('bistem', ())
+                stems = lt.get('stem', ())
                 stems.extend(bistems)
                 for stem in stems:
                     lth.add_node(LexicalType(stem.full_key, stem['name'],
@@ -56,7 +56,7 @@ def get_lexical_supertype(lt_key, choices):
     elif lexical_category in ('aux','mverb','iverb','tverb'):
         return 'verb'
     elif lexical_category == 'verb':
-        return case.interpret_verb_valence(choices[lt_key]['valence'])
+        return case.interpret_verb_valence(choices[f'lexicon.{lt_key}.valence'])
     elif lexical_category in ('noun', 'det', 'adj', 'cop'): # TJT Added adj, cop, removed aux
         return lexical_category
     return None
@@ -163,7 +163,7 @@ def get_lt_name(key, choices):
         return LEXICAL_SUPERTYPES[key].rsplit('-lex',1)[0]
     else:
         # defined lextype, name may or may not be defined
-        name = get_name(choices[key])
+        name = get_name(choices.get(f'lexicon.{key}'))
         lex_st = LEXICAL_SUPERTYPES[key.strip('1234567890')]
         return '-'.join([name, lex_st.rsplit('-lex',1)[0]])
 
