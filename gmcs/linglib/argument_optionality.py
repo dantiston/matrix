@@ -115,8 +115,6 @@ def add_lexrules(choices):
     '''
     '''
     for pc in morphotactics.all_position_classes(choices):
-        pc_key = pc.full_key
-        idx = pc['lrt'].next_iter_num() if 'lrt' in pc else 1
         for lrt in pc.get('lrt', ()):
             overt = [f for f in lrt.get('feat', ()) if f['name']=='overt-arg']
             dropped = [f for f in lrt.get('feat', ()) if f['name']=='dropped-arg']
@@ -131,14 +129,13 @@ def add_lexrules(choices):
                     feat['value'] = 'plus'
                 # only create a lexical rule if necessary
                 if need_lex_rule:
-                    key = pc.full_key + '_lrt' + str(idx)
                     name = get_name(pc) + '-no-drop'
-                    choices[key + '_name'] = name
-                    choices[key + '_feat1_name'] = 'OPT'
-                    choices[key + '_feat1_value'] = 'minus'
-                    choices[key + '_feat1_head'] = feat['head']
-                    choices[key + '_lri1_inflecting'] = 'no'
-                    choices[key + '_lri1_orth'] = ''
+                    pc[f'lrt.name'] = name
+                    pc[f'lrt.feat1.name'] = 'OPT'
+                    pc[f'lrt.feat1.name'] = 'minus'
+                    pc[f'lrt.feat1.name'] = feat['head']
+                    pc[f'lrt.lri1.name.inflecting'] = 'no'
+                    pc[f'lrt.lri1.name.orth'] = ''
             # dropped-arg morphs should be the index of the next available + 1
             if dropped:
                 feat = dropped[0]
@@ -148,14 +145,13 @@ def add_lexrules(choices):
                     feat['value'] = 'minus'
                 # only create a lexical rule if necessary
                 if need_lex_rule:
-                    key = pc.full_key + '_lrt' + str(idx + 1)
                     name = get_name(pc) + '-drop'
-                    choices[key + '_name'] = name
-                    choices[key + '_feat1_name'] = 'OPT'
-                    choices[key + '_feat1_value'] = 'plus'
-                    choices[key + '_feat1_head'] = feat['head']
-                    choices[key + '_lri1_inflecting'] = 'no'
-                    choices[key + '_lri1_orth'] = ''
+                    pc[f'lrt.name'] = name
+                    pc[f'lrt.feat1.name'] = 'OPT'
+                    pc[f'lrt.feat1.name'] = 'plus'
+                    pc[f'lrt.feat1.name'] = feat['head']
+                    pc[f'lrt.lri1.name.inflecting'] = 'no'
+                    pc[f'lrt.lri1.name.orth'] = ''
 
 def need_no_drop_rule(obj_subj, choices):
     '''
@@ -164,8 +160,8 @@ def need_no_drop_rule(obj_subj, choices):
     for needing a separate morpheme.
     '''
     patterns = (set(['req','not']), set(['req','opt']))
-    if set([choices[obj_subj + '-drop'].split('-')[-1],
-            choices[obj_subj + '-no-drop'].split('-')[-1]]) in patterns:
+    if set([choices.get(f'arg-opt.{obj_subj}-drop', '').split('-')[-1],
+            choices.get(f'arg-opt.{obj_subj}-no-drop', '').split('-')[-1]]) in patterns:
         return True
     return False
 

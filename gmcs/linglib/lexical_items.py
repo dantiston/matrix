@@ -62,7 +62,7 @@ def insert_ids(ch):
             # as the basis of the identifier.
             for stem in pos.get('stem', ()):
                 orth = stem.get('orth')
-                if orth in list(stemids.keys()):
+                if orth in stemids:
                     stemids[orth] += 1
                 else:
                     stemids[orth] = 1
@@ -74,7 +74,7 @@ def insert_ids(ch):
                 orth = bistem.get('orth')
                 id = orth + '+' + aff
 
-                if id in list(stemids.keys()):
+                if id in stemids:
                     stemids[id] += 1
                 else:
                     stemids[id] = 1
@@ -91,23 +91,23 @@ def insert_ids(ch):
             for stem in pos.get('stem', ()):
                 orth = stem.get('orth')
                 if stemids[orth] == 1:
-                    ch[stem.full_key + '.name'] = orth
+                    stem['name'] = orth
                 elif orth not in stemidcounters:
                     stemidcounters[orth] = 1
-                    ch[stem.full_key + '.name'] = orth + '_1'
+                    stem['name'] = f'{orth}_1'
                 else:
                     stemidcounters[orth] += 1
-                    ch[stem.full_key + '.name'] = orth + '_' + str(stemidcounters[orth])
+                    stem['name'] = f'{orth}_{stemidcounters[orth]}'
             for bistem in pos.get('bistem', ()):
                 orth = bistem.get('orth') + '+' + bistem.get('aff')
                 if stemids[orth] == 1:
-                    ch[bistem.full_key + '.name'] = orth
+                    bistem['name'] = orth
                 elif orth not in stemidcounters:
                     stemidcounters[orth] = 1
-                    ch[bistem.full_key + '.name'] = orth + '_1'
+                    bistem['name'] = f'{orth}_1'
                 else:
                     stemidcounters[orth] += 1
-                    ch[bistem.full_key + '.name'] = orth + '_' + str(stemidcounters[orth])
+                    bistem['name'] = f'{orth}_{stemidcounters[orth]}'
     ## KPH Do the same for subordinators and complementizers
     add_subord_name(ch, stemids, stemidcounters)
 

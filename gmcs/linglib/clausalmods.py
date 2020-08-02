@@ -15,7 +15,7 @@ def customize_clausalmods(mylang, ch, lexicon, rules, roots, trigger):
         return None
     add_head_compement_rules(mylang, rules, ch)
 
-    for cms in ch.get('cms', ()):
+    for cms in ch.get('clausalmods.cms', ()):
         subord = cms.get('subordinator')
         subtype = cms.get('subordinator-type')
 
@@ -443,7 +443,7 @@ def add_subordinators_matrix_pair_to_lexicon(mylang, lexicon, cms, ch):
                                       LARG #mod ] !> ],\
                 LKEYS.KEYREL.ARG1 #h1 ]].')
     #if the subordinated feature is introduced by any of the strategies, we need to set it to none for this type
-    for strategy in ch.get('cms', ()):
+    for strategy in ch.get('clausalmods.cms', ()):
         if strategy.get('subordinator-type') == 'adverb':
             mylang.set_section('subordlex')
             mylang.add('subord-pair-matrix-lex-item := [ SYNSEM.SUBORDINATED none ].')
@@ -752,7 +752,7 @@ def has_subpairs(ch):
     Returns true if the grammar will have subordinator pairs and false otherwise
     """
     subpair = False
-    for cms in ch.get('cms', ()):
+    for cms in ch.get('clausalmods.cms', ()):
         if cms.get('subordinator') == 'pair':
             subpair = True
     return subpair
@@ -764,7 +764,7 @@ def add_head_compement_rules(mylang, rules, ch):
     mylang.set_section('addenda')
     mylang.add('head :+ [ INIT bool ].')
     subpos = []
-    for cms in ch.get('cms', ()):
+    for cms in ch.get('clausalmods.cms', ()):
         if cms.get('subordinator-type') == 'head':
             subpos.append(cms.get('subposition'))
     wo = ch.get('word-order')
@@ -879,7 +879,7 @@ def get_subord_stemids(ch, stemids):
     A function called by insert_ids() in lexical_items.py to
     check for name-space-collisions
     """
-    for cms in ch.get('cms', ()):
+    for cms in ch.get('clausalmods.cms', ()):
         for freemorph in cms.get('freemorph'):
             orth = freemorph.get('orth')
             if orth in stemids:
@@ -889,11 +889,11 @@ def get_subord_stemids(ch, stemids):
         for morphpair in cms.get('morphpair', ()):
             subordorth = morphpair.get('subordorth')
             matrixorth = morphpair.get('matrixorth')
-            if subordorth in list(stemids.keys()):
+            if subordorth in stemids:
                 stemids[subordorth] += 1
             else:
                 stemids[subordorth] = 1
-            if matrixorth in list(stemids.keys()):
+            if matrixorth in stemids:
                 stemids[matrixorth] += 1
             else:
                 stemids[matrixorth] = 1
@@ -905,35 +905,35 @@ def add_subord_name(ch, stemids, stemidcounters):
     create a "name" for each subordinator in choices, preventing
     name-space-collisions
     """
-    for cms in ch.get('cms', ()):
+    for cms in ch.get('clausalmods.cms', ()):
         for freemorph in cms.get('freemorph', ()):
             orth = freemorph.get('orth')
             if stemids[orth] == 1:
-                ch[freemorph.full_key + '_name'] = orth
+                freemorph['name'] = orth
             elif orth not in stemidcounters:
                 stemidcounters[orth] = 1
-                ch[freemorph.full_key + '_name'] = orth + '_1'
+                freemorph['name'] = f'{orth}_1'
             else:
                 stemidcounters[orth] += 1
-                ch[freemorph.full_key + '_name'] = orth + '_' + str(stemidcounters[orth])
+                freemorph['name'] = f'{orth}_{stemidcounters[orth]}'
         for morphpair in cms.get('morphpair', ()):
             subordorth = morphpair.get('subordorth')
             matrixorth = morphpair.get('matrixorth')
             #first look at the subordinator
             if stemids[subordorth] == 1:
-                ch[morphpair.full_key + '_subordname'] = subordorth
+                morphpair['subordname'] = subordorth
             elif subordorth not in stemidcounters:
                 stemidcounters[subordorth] = 1
-                ch[morphpair.full_key + '_subordname'] = subordorth + '_1'
+                morphpair['subordname'] = f'{subordorth}_1'
             else:
                 stemidcounters[subordorth] += 1
-                ch[morphpair.full_key + '_subordname'] = subordorth + '_' + str(stemidcounters[subordorth])
+                morphpair['subordname'] = f'{subordorth}_{stemidcounters[subordorth]}'
             #then look at the matrix adverb
             if stemids[matrixorth] == 1:
-                ch[morphpair.full_key + '_matrixname'] = matrixorth
+                morphpair['matrixname'] = matrixorth
             elif matrixorth not in stemidcounters:
                 stemidcounters[matrixorth] = 1
-                ch[morphpair.full_key + '_matrixname'] = matrixorth + '_1'
+                morphpair['matrixname'] = f'{matrixorth}_1'
             else:
                 stemidcounters[subordorth] += 1
-                ch[morphpair.full_key + '_matrixname'] = matrixorth + '_' + str(stemidcounters[matrixorth])
+                morphpair['matrixname'] = f'{matrixorth}_{stemidcounters[matrixorth]}'
