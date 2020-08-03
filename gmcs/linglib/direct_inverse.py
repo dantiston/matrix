@@ -159,7 +159,7 @@ def write_dir_inv_lexrule_supertypes(choices, mylang):
                '[ SYNSEM.' + dirinv_geom + ' dir ].')
     mylang.add('inv-lex-rule := add-only-no-ccont-rule & ' + \
                '[ SYNSEM.' + dirinv_geom + ' inv ].')
-    if choices.has_SCARGS():
+    if info.has_SCARGS(choices):
         mylang.add('dir-lex-rule := \
                    [ SC-ARGS < #1, #2 >, \
                      SYNSEM.LOCAL.CAT.VAL [ SUBJ < #1 >, \

@@ -82,15 +82,15 @@ def customize_gender(mylang, hierarchies):
 #   about other features.
 
 def init_other_hierarchies(ch, mylang, hierarchies):
-    for feature in ch.get('feature',[]):
+    for feature in ch.get('other-features.feature', ()):
         feat = feature.get('name','')
         type = feature.get('type','')
         hier = TDLHierarchy(feat, type)
 
         if feature.get('new', '') == 'yes':
-            for value in feature.get('value', []):
+            for value in feature.get('value', ()):
                 val = value.get('name')
-                for supertype in value.get('supertype', []):
+                for supertype in value.get('supertype', ()):
                     stype = supertype.get('name')
                     hier.add(val, stype)
         else:
