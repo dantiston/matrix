@@ -2,7 +2,6 @@ from collections import defaultdict
 
 from gmcs.linglib import lexicon
 from gmcs.linglib.lexbase import (PositionClass, LexicalRuleType,
-    #MorphotacticNode, LexicalType,
                                   LexicalRuleInstance,
                                   ALL_LEX_TYPES,
                                   LEXICAL_CATEGORIES,
@@ -12,7 +11,6 @@ from gmcs.linglib.lexbase import (PositionClass, LexicalRuleType,
 from gmcs.lib import Hierarchy
 from gmcs.utils import get_name
 from functools import reduce
-#from gmcs.utils import TDLencode
 
 ### Contents
 # 1. Module Variables
@@ -245,7 +243,7 @@ def create_lexical_rule_types(cur_pc, pc):
             cur_pc.relate_parent_child(_mns[parent], _mns[child])
 
 def create_lexical_rule_type(lrt, mtx_supertypes, cur_pc):
-    new_lrt = LexicalRuleType(lrt.full_key, get_name(lrt))
+    new_lrt = LexicalRuleType(lrt.full_key, get_name(lrt).replace(".", "_"))
     _id_key_tbl[new_lrt.identifier()] = lrt.full_key
     for feat in lrt.get('feat', ()):
         if feat['name'] == 'evidential':

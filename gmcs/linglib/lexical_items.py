@@ -125,12 +125,10 @@ def customize_bipartite_stems(ch):
     """
     # For each verb type
     for verb in ch.get('lexicon.verb', ()):
-
         # Check whether there are bipartite stems
         bistems = verb.get('bistem', ())
         if bistems:
             # Find position class for affixes
-
             pcname = verb.get('bipartitepc')
             pc = None
             for vpc in ch.get('morphology.verb-pc', ()):
@@ -144,7 +142,6 @@ def customize_bipartite_stems(ch):
             avpairs = {}
             for stem in bistems:
                 aff = stem.get('aff')
-                #orth = stem.get('orth')
 
                 # Update affix-stem dictionary
                 if aff in avpairs:
@@ -156,22 +153,20 @@ def customize_bipartite_stems(ch):
             # info I've added since first initializing stems
             bistems = verb.get('bistem')
 
-            for aff in avpairs.keys():
-                # Get iter number for lrts:
-                if pc['lrt']:
-                    iternum = str(pc['lrt'].next_iter_num())
-                else:
-                    iternum = '1'
-
+            for aff in avpairs:
                 # Create lexical rules types and instances for each affix
-                next_lrt_str = pc.full_key + '.lrt' + iternum
-                ch[next_lrt_str + '.require1_others'] = ', '.join(avpairs[aff])
-                ch[next_lrt_str + '.lri1.orth'] = aff
-                ch[next_lrt_str + '.lri1.inflecting'] = 'yes'
+                pc.set('lrt', {
+                    'require1': {'others': ', '.join(avpairs[aff])},
+                    'lri1': {
+                        'orth': aff,
+                        'inflecting': 'yes',
+                    }
+                })
+                lrt = next(lrt for lrt in pc.get('lrt', ()) if lrt.get('name') == '')
 
                 # Add requires constrains on stems
                 for stemid in avpairs[aff]:
-                    ch[stemid + '.require1.others'] = next_lrt_str
+                    ch[f'lexicon.{stemid}.require1.others'] = next_lrt_str
 
 def customize_verbs(mylang, ch, lexicon, hierarchies):
     negmod = ch.get('sentential-negation.neg-mod')
