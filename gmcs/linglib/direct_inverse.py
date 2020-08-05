@@ -64,20 +64,21 @@ def write_dir_inv_types(choices, mylang, hierarchies):
     supertype = 'dir-inv-scale'
     mylang.add(supertype + ' := canonical-synsem.')
 
-    scale_len = len(choices.get('direct-inverse.scale', ()))
+    scales = choices.get('direct-inverse.scale', ())
+    scale_len = len(scales)
 
-    for i in range(1, scale_len):
+    for i, scale in enumerate(scales[:-1], start=1):
         values = {}  # for each feature, a set of values
 
         # get the features on the first scale entry in this range
-        for feat in choices.get('direct-inverse.scale')[i].get('feat', []):
+        for feat in scale.get('feat', ()):
             name = feat.get('name','')
             if name not in values:
                 values[name] = set()
             values[name].add(feat.get('value'))
 
         # create the left type in the pair
-        type = 'dir-inv-' + str(i)
+        type = f'dir-inv-{i}'
 
         mylang.add(type + ' := ' + supertype + '.')
 
@@ -94,6 +95,7 @@ def write_dir_inv_types(choices, mylang, hierarchies):
             for f in features:
                 if f[0] == n:
                     geom = f[2]
+                    break
 
             value = hierarchies[n].get_type_covering(vset)
             if value != n:  # don't bother if it doesn't constrain anything
@@ -102,8 +104,8 @@ def write_dir_inv_types(choices, mylang, hierarchies):
         # rest of the scale
         values = {}
 
-        for scale in list(choices.get('direct-inverse.scale', []))[i:]:
-            for feat in scale.get('feat', ()):
+        for next_scale in scales[i:]:
+            for feat in next_scale.get('feat', ()):
                 name = feat.get('name','')
                 if name not in values:
                     values[name] = set()
@@ -114,9 +116,7 @@ def write_dir_inv_types(choices, mylang, hierarchies):
 
         mylang.add(type + ' := ' + supertype + '.')
 
-        for n in values:
-            vset = values[n]
-
+        for n, vset in values.items():
             if n == 'case':
                 new_vset = set()
                 for v in vset:
@@ -127,6 +127,7 @@ def write_dir_inv_types(choices, mylang, hierarchies):
             for f in features:
                 if f[0] == n:
                     geom = f[2]
+                    break
 
             value = hierarchies[n].get_type_covering(vset)
             if value != n:  # don't bother if it doesn't constrain anything
@@ -173,53 +174,52 @@ def add_lexrules(choices):
     scale_size = len(choices.get('direct-inverse.scale', ()))
     equal = choices.get('direct-inverse.scale-equal')
 
-    for lexprefix in ALL_LEX_TYPES:
-        for lex in choices.get(f'morphology.{lexprefix}', ()):
-            n = get_name(lex)
+    for lex in choices.get(f'lexicon.verb', ()):
+        n = get_name(lex)
 
-            # If the lexical type is a direct-inverse verb, later rules
-            # should use its mandatory rules as input rather than the
-            # lexical type.  Create those rules here and put their supertype
-            # in the root_dict.
-            if lexprefix == 'verb' and lex.get('valence', '').endswith('dirinv'):
-                name = n + '-dir-inv'
-                choices.set('morphology.verb-pc', {
-                    'name': name,
-                    'inputs': [lex.full_key],
-                    # The order doesn't really matter for lrules, so just put something
-                    'order': 'suffix',
-                })
-                pc = next(pc for pc in choices.get('morphology.verb-pc') if pc['name'] == name)
-                reassign_inputs(choices, lex.full_key, pc_key)
-                # make the lexical type require the pc
-                lex.set('require.others', pc.full_key)
+        # If the lexical type is a direct-inverse verb, later rules
+        # should use its mandatory rules as input rather than the
+        # lexical type.  Create those rules here and put their supertype
+        # in the root_dict.
+        if lex.get('valence', '').endswith('dirinv'):
+            name = n + '-dir-inv'
+            choices.set('morphology.verb-pc', {
+                'name': name,
+                'inputs': [lex.full_key],
+                # The order doesn't really matter for lrules, so just put something
+                'order': 'suffix',
+            })
+            pc = next(pc for pc in choices.get('morphology.verb-pc') if pc['name'] == name)
+            reassign_inputs(choices, lex.full_key, pc.full_key)
+            # make the lexical type require the pc
+            lex.set('require.others', pc.full_key)
 
-                # regarding the calculating of the keys, consider scale_size is 2:
-                #   i = 0 or 1, so direc_lrt_key = (0*2)+0+1 = 1, or (1*2)+1+1 = 4
-                #   j = 1 or 2, so lrt_key = (0*2)+0+1+1 = 2, (0*2)+0+2+1 = 3, or
-                #                            (1*2)+1+1+1 = 5, (1*2)+1+2+1 = 6
-                for i, direc in enumerate(['dir', 'inv']):
-                    direc_lrt_key = pc_key + '.lrt' + str((i * scale_size) + i + 1)
-                    choices[direc_lrt_key + '.name'] = '-'.join([n, direc])
-                    choices[direc_lrt_key + '.feat1_name'] = 'direction'
-                    choices[direc_lrt_key + '.feat1_value'] = direc
-                    for j in range(1, scale_size+1):
-                        if j == scale_size and not (equal == 'direct' and direc == 'dir'):
-                            break
-                        lrt_key = pc_key + '.lrt' + str((i * scale_size) + i + j + 1)
-                        subj_type, comps_type = get_subj_comps_types(j, scale_size,
-                                                                     direc, equal)
-                        choices[lrt_key + '.name'] = '-'.join([n, direc, str(j)])
-                        choices[lrt_key + '.supertypes'] = direc_lrt_key
-                        choices[lrt_key + '.feat1_name'] = 'dirinv-type'
-                        choices[lrt_key + '.feat1_head'] = 'subj'
-                        choices[lrt_key + '.feat1_value'] = subj_type
-                        choices[lrt_key + '.feat2_name'] = 'dirinv-type'
-                        choices[lrt_key + '.feat2_head'] = 'obj'
-                        choices[lrt_key + '.feat2_value'] = comps_type
-                        # add an empty lexical rule instance
-                        choices[lrt_key + '.lri1_inflecting'] = 'no'
-                        choices[lrt_key + '.lri1_orth'] = ''
+            # regarding the calculating of the keys, consider scale_size is 2:
+            #   i = 0 or 1, so direc_lrt_key = (0*2)+0+1 = 1, or (1*2)+1+1 = 4
+            #   j = 1 or 2, so lrt_key = (0*2)+0+1+1 = 2, (0*2)+0+2+1 = 3, or
+            #                            (1*2)+1+1+1 = 5, (1*2)+1+2+1 = 6
+            for i, direc in enumerate(['dir', 'inv']):
+                direc_lrt_key = pc.full_key + '.lrt' + str((i * scale_size) + i + 1)
+                choices[direc_lrt_key + '.name'] = '-'.join([n, direc])
+                choices[direc_lrt_key + '.feat1_name'] = 'direction'
+                choices[direc_lrt_key + '.feat1_value'] = direc
+                for j in range(1, scale_size+1):
+                    if j == scale_size and not (equal == 'direct' and direc == 'dir'):
+                        break
+                    lrt_key = f'morphology.{pc.full_key}.lrt{str((i * scale_size) + i + j + 1)}'
+                    subj_type, comps_type = get_subj_comps_types(j, scale_size,
+                                                                 direc, equal)
+                    choices[f'{lrt_key}.name'] = '-'.join([n, direc, str(j)])
+                    choices[f'{lrt_key}.supertypes'] = direc_lrt_key
+                    choices[f'{lrt_key}.feat1.name'] = 'dirinv-type'
+                    choices[f'{lrt_key}.feat1.head'] = 'subj'
+                    choices[f'{lrt_key}.feat1.value'] = subj_type
+                    choices[f'{lrt_key}.feat2.name'] = 'dirinv-type'
+                    choices[f'{lrt_key}.feat2.head'] = 'obj'
+                    choices[f'{lrt_key}.feat2.value'] = comps_type
+                    # add an empty lexical rule instance
+                    choices[f'{lrt_key}.lri1.inflecting'] = 'no'
+                    choices[f'{lrt_key}.lri1.orth'] = ''
 
 def reassign_inputs(choices, inp_key, pc_key):
     for lexprefix in ALL_LEX_TYPES:

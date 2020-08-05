@@ -1,16 +1,19 @@
 from collections import defaultdict
+from functools import reduce
 
-from gmcs.linglib import lexicon
-from gmcs.linglib.lexbase import (PositionClass, LexicalRuleType,
-                                  LexicalRuleInstance,
-                                  ALL_LEX_TYPES,
-                                  LEXICAL_CATEGORIES,
-                                  LEXICAL_SUPERTYPES,
-                                  NON_ESSENTIAL_LEX_CATEGORIES)
+from delphin_choices import Choices
 
 from gmcs.lib import Hierarchy
+from gmcs.linglib import lexicon
+from gmcs.linglib.lexbase import ALL_LEX_TYPES
+from gmcs.linglib.lexbase import LEXICAL_CATEGORIES
+from gmcs.linglib.lexbase import LEXICAL_SUPERTYPES
+from gmcs.linglib.lexbase import LexicalRuleInstance
+from gmcs.linglib.lexbase import LexicalRuleType
+from gmcs.linglib.lexbase import LexicalType
+from gmcs.linglib.lexbase import NON_ESSENTIAL_LEX_CATEGORIES
+from gmcs.linglib.lexbase import PositionClass
 from gmcs.utils import get_name
-from functools import reduce
 
 ### Contents
 # 1. Module Variables
@@ -305,23 +308,26 @@ def create_lexical_rule_type(lrt, mtx_supertypes, cur_pc):
 
 def interpret_constraints(choices):
     convert_obligatoriness_to_req(choices)
-    for mn in list(_mns.values()):
+    for mn in _mns.values():
+        prefix = 'lexicon' if isinstance(mn, LexicalType) else 'morphology'
+        key = f'{prefix}.{mn.key}'
+        value = choices.get(key)
         # don't bother if the morphotactic node is not defined in choices
-        if mn.key not in choices \
-                or not isinstance(choices[mn.key], dict): continue
+        if not isinstance(value, Choices):
+            continue
 
-        for req in choices[mn.key].get('require', []):
+        for req in value.get('require', ()):
             others = dict([(o, _mns[o]) for o in req['others'].split(', ')])
-            mn.disjunctive_flag_sets[tuple(sorted(others.keys()))] = others
-            if all(o.precedes(mn) for o in list(others.values())):
+            mn.disjunctive_flag_sets[tuple(sorted(others))] = others
+            if all(o.precedes(mn) for o in others.values()):
                 mn.constraints['req-bkwd'].update(others)
-            elif all(mn.precedes(o) for o in list(others.values())):
+            elif all(mn.precedes(o) for o in others.values()):
                 mn.constraints['req-fwd'].update(others)
                 # we're not covering the case where others appear before
                 # and after the current pc.
                 # the case where it is neither followed by or follows other
                 # should be covered in a validation test
-        for fbd in choices[mn.key].get('forbid',[]):
+        for fbd in value.get('forbid', ()):
             other = _mns[fbd['others']]
             # only forbid backwards. convert forwards forbids to backwards
             if other.precedes(mn):
@@ -336,7 +342,7 @@ def convert_obligatoriness_to_req(choices):
     """
     for pc in all_position_classes(choices):
         if pc.get('obligatory','') == 'on':
-            basetypes = [i for i in list(_mns[pc.full_key].input_span().values())
+            basetypes = [i for i in _mns[pc.full_key].input_span().values()
                          if len(i.inputs()) == 0]
             for bt in basetypes:
                 bt.constraints['req-fwd'][pc.full_key] = _mns[pc.full_key]
@@ -349,7 +355,7 @@ def create_flags():
     reqfwd  = (('-', None), ('+', None))
     reqbkwd = ((None, '+'), ('+', None))
     forbid  = ((None, 'na'), ('+', None))
-    for mn in list(_mns.values()):
+    for mn in _mns.values():
         assign_flags(mn, reqfwd, minimal_flag_set(mn, 'req-fwd'))
         assign_flags(mn, reqbkwd, minimal_flag_set(mn, 'req-bkwd'))
         assign_flags(mn, forbid, minimal_flag_set(mn, 'forbid'))
@@ -408,10 +414,10 @@ def minimal_flag_set(mn, constraint_type):
                 accounted_for[x.key] = True
     return all_flag_groups
 
-def get_all_flags(out_or_in):
+def get_all_flags(mns, out_or_in):
     flags = set()
-    for mn in list(_mns.values()):
-        flags.update(set(mn.flags[out_or_in].keys()))
+    for mn in mns.values():
+        flags.update(mn.flags[out_or_in])
     return flags
 
 def set_req_bkwd_initial_flags(lex_pc, flag_tuple):
@@ -617,13 +623,13 @@ def write_rules(pch, mylang, irules, lrules, lextdl, choices):
                             ['incorp','Incorporated Stem Lexical Rule Instances',False,False]])
     # Set up inflectional flags
     get_infostr_constraints(choices)
-    all_flags = get_all_flags('out').union(get_all_flags('in'))
+    all_flags = get_all_flags(_mns, 'out').union(get_all_flags(_mns, 'in'))
     write_inflected_avms(mylang, all_flags)
     mylang.set_section('lexrules')
     # First write any intermediate types (keep them together)
     write_intermediate_types(mylang)
     mylang.add_literal(';;; Lexical rule types')
-    for pc in sorted(list(pch.nodes.values()), key=lambda x: x.tdl_order):
+    for pc in sorted(pch.nodes.values(), key=lambda x: x.tdl_order):
         # set the appropriate section
         mylang.set_section(get_section_from_pc(pc))
         # if it's a lexical type, just write flags and move on
@@ -635,7 +641,7 @@ def write_rules(pch, mylang, irules, lrules, lextdl, choices):
         # only lexical rules from this point
         write_supertypes(mylang, pc.identifier(), pc.supertypes)
         write_pc_flags(mylang, lextdl, pc, all_flags, choices)
-        for lrt in sorted(list(pc.nodes.values()), key=lambda x: x.tdl_order):
+        for lrt in sorted(pc.nodes.values(), key=lambda x: x.tdl_order):
             write_i_or_l_rules(irules, lrules, lrt, pc.order)
             # TJT 2014-08-27: Write adjective position class features
             write_pc_adj_syntactic_behavior(lrt, mylang, choices)
@@ -730,7 +736,7 @@ def write_mn_flags(mylang, lextdl, mn, output_flags, all_flags, choices):
     else:
         write_flags(mylang, mn)
     to_copy = {}
-    cur_output_flags = output_flags.union(set(mn.flags['out'].keys()))
+    cur_output_flags = output_flags.union(mn.flags['out'])
     for sub_mn in list(mn.children().values()):
         to_copy[sub_mn.key] = write_mn_flags(mylang, lextdl, sub_mn,
                                              cur_output_flags, all_flags, choices)
@@ -755,7 +761,7 @@ def write_flags(tdlfile, mn):
 def write_copy_up_flags(mylang, to_copy, all_flags, force_write=False):
     copied_flags = set()
     if len(to_copy) == 0: return copied_flags
-    common_flags = reduce(set.intersection, list(to_copy.values()))
+    common_flags = reduce(set.intersection, to_copy.values())
     for mn_key in to_copy:
         mn = _mns[mn_key]
         if mn.identifier_suffix in ('lex-super', 'lex', ''): continue
@@ -1139,7 +1145,7 @@ def lrt_validation(lrt, vr, index_feats, choices, incorp=False, inputs=set(), sw
     # EKN 2018-01-09: Check that only PNG features are
     # added as agreement features to possessive strategies
     png_feats=set(['person','number','gender','pernum'])
-    for feat in choices.get('feature', ()):
+    for feat in choices.get('other-features.feature', ()):
         if feat.get('type')!='type':
             png_feats.add(feat.get('name'))
     for feat_key in other_feats:

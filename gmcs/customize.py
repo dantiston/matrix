@@ -11,10 +11,9 @@ import sys
 from subprocess import call
 
 from delphin import tsdb
-from delphin_choices.choices import Choices
+from delphin_choices import Choices
 
 from gmcs import tdl
-from gmcs.choices import ChoicesFile
 from gmcs.linglib import adnominal_possession
 from gmcs.linglib import agreement_features
 from gmcs.linglib import argument_optionality
