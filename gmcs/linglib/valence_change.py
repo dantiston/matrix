@@ -8,7 +8,7 @@ from functools import partial
 # currently only intransitive and strict transitive
 def added_argnum_for_vchop(vchop):
     position = vchop.get('argpos','post').lower() # default to post
-    inputs = vchop.get('inputs','').split(',')
+    inputs = vchop.get('inputs', ())
     transitive = 'trans' in inputs or (len(inputs) == 1 and inputs[0] == '') # default to transitive
     numargs = 3 if transitive else 2
     argnum = numargs - (1 if (transitive and position == 'pre') else 0)
@@ -477,7 +477,7 @@ def customize_valence_change(mylang, ch, lexicon, rules, irules, lrules):
         idx = pc['lrt'].next_iter_num() if 'lrt' in pc else 1
         for lrt in pc.get('lrt', []):
             for vchop in lrt.get('valchg', []):
-                inputs = vchop.get('inputs','').split(',')
+                inputs = vchop.get('inputs', ())
                 # default to transitive
                 transitive = 'trans' in inputs or (len(inputs) == 1 and inputs[0] == '')
                 opname = vchop['operation'].lower()

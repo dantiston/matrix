@@ -1,7 +1,6 @@
 from collections import defaultdict
 
 from gmcs.linglib import case
-#from gmcs.linglib import lexical_items
 from gmcs.utils import get_name
 from gmcs.choices import ChoiceDict
 from gmcs.linglib.lexbase import LexicalType, PositionClass
@@ -138,24 +137,25 @@ def get_all_supertypes(key, choices):
     the user and whether the supertypes provide a path to the root. This does
     not include matrix internal types. Returns an empty list if no supertypes defined.
     """
-    pathToRoot = False
+    path_to_root = False
     seen = set()
-    supertypes = key.get('supertypes','').split(', ')
-    if len(supertypes) == 1 and supertypes[0] == '':
-        pathToRoot = True
+    supertypes = key.get('supertypes', ())
+    if not supertypes:
+        path_to_root = True
         supertypes = []
     else:
         for supertype in supertypes:
-            if supertype in seen: continue
+            if supertype in seen:
+                continue
             seen.add(supertype)
-            if not choices.get(supertype,False): continue
-            parents = choices.get(supertype).get('supertypes','').split(', ')
-            if parents:
-                if '' in parents:
-                    pathToRoot = True
-                else:
-                    supertypes.extend(parents)
-    return supertypes, pathToRoot
+            if not choices.get(supertype, False):
+                continue
+            parents = choices.get(supertype).get('supertypes', ())
+            if not parents:
+                path_to_root = True
+            else:
+                supertypes.extend(parents)
+    return supertypes, path_to_root
 
 def get_lt_name(key, choices):
     if key in LEXICAL_SUPERTYPES:
@@ -222,7 +222,7 @@ def validate_lexicon(ch, vr):
     inherited_feats = {}
 
     for noun in ch.get('lexicon.noun', ()):
-        sts = noun.get('supertypes').split(', ')
+        sts = noun.get('supertypes', ())
         undefined_sts = [x for x in sts if x not in ch]
         if undefined_sts:
             vr.err(noun.full_key + '_supertypes',
@@ -404,7 +404,7 @@ def validate_lexicon(ch, vr):
     feats = {}
     inherited_feats = {}
     for v in ch.get('lexicon.verb', ()):
-        vtsts[v.full_key] = v.get('supertypes').split(', ')
+        vtsts[v.full_key] = v.get('supertypes', ())
         feats[v.full_key] = {}
         for f in v.get('feat', ()):
             feats[v.full_key][f.get('name')]=f.get('value')
@@ -562,7 +562,7 @@ def validate_lexicon(ch, vr):
     adj_pc_switching_inputs = defaultdict(list)
     for adj_pc in ch.get('morphology.adj-pc', ()):
         if adj_pc.get('switching',''):
-            inputs = adj_pc.get('inputs', '').split(', ')
+            inputs = adj_pc.get('inputs', ())
             if isinstance(inputs, str):
                 adj_pc_switching_inputs[inputs].append(adj_pc)
             else:
@@ -593,7 +593,7 @@ def validate_lexicon(ch, vr):
                        'Type names cannot include the space character')
 
         # Supertypes must be defined
-        supertypes = adj.get('supertypes','').split(', ')
+        supertypes = adj.get('supertypes', ())
         undefined_supertypes = [x for x in supertypes if x not in ch]
         if undefined_supertypes:
             vr.err(adj.full_key + '_supertypes',
@@ -646,10 +646,10 @@ def validate_lexicon(ch, vr):
                     'defined on the Lexicon page.')
 
         ## Get path to root and supertypes to check
-        supertypes, pathToRoot = get_all_supertypes(adj, ch)
+        supertypes, path_to_root = get_all_supertypes(adj, ch)
 
         # Each adjective needs a path to root
-        if not pathToRoot:
+        if not path_to_root:
             vr.err(adj.full_key+'_supertypes',
                    'This adjective type doesn\'t inherit from adj-lex or a ' + \
                    'descendant, where a type inherits from adj-lex if it is' + \
@@ -852,7 +852,7 @@ def validate_lexicon(ch, vr):
                        'Type names cannot include the space character.')
 
         # Supertypes must be defined
-        immediate_supertypes = cop.get('supertypes','').split(', ')
+        immediate_supertypes = cop.get('supertypes', ())
         undefined_supertypes = [st for st in immediate_supertypes if st not in ch]
         if undefined_supertypes:
             vr.err(adj.full_key+'_supertypes',
@@ -860,7 +860,7 @@ def validate_lexicon(ch, vr):
                    "%s." % ', '.join(undefined_supertypes))
 
         ## Get path to root and supertypes to check
-        supertypes, pathToRoot = get_all_supertypes(cop, ch)
+        supertypes, path_to_root = get_all_supertypes(cop, ch)
         inherited_choices = defaultdict(dict)
 
         # Check supertypes for inherited features and collisions
@@ -896,7 +896,7 @@ def validate_lexicon(ch, vr):
                         'inherited choices are: %s' % (inherited_choices[choice]))
 
         # Each Copula needs a path to root
-        if not pathToRoot:
+        if not path_to_root:
             vr.err(cop.full_key+'_supertypes',
                    'This copula type doesn\'t inherit from cop-lex or a ' + \
                    'descendant, where a type inherits from cop-lex if it is' + \

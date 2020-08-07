@@ -648,7 +648,7 @@ def customize_adjs(mylang, ch, lexicon, hierarchies, rules):
     # Go through adjective position classes...
     for adj_pc in ch.get('morphology.adj-pc', ()):
         # check if any have "any adj" as input
-        if not adj_types['any_adj'] and 'adj' in adj_pc.get('inputs', '').split(', '):
+        if not adj_types['any_adj'] and 'adj' in adj_pc.get('inputs', ()):
             adj_types['any_adj'] = True
         # Additional checks for switching adjectives
         switching = adj_pc.get('switching',False)
@@ -691,7 +691,7 @@ def customize_adjs(mylang, ch, lexicon, hierarchies, rules):
         # Get all supertypes to check for redundant specifications
         all_supertypes, pathToRoot = get_all_supertypes(adj, ch)
         if not pathToRoot:
-            raise ValueError("No path to the root was found for type %s." % adj.get('name','') + \
+            raise ValueError("No path to the root was found for type %s. " % adj.get('name','') + \
                              "Please try validating your choices and compiling again.")
         # Keep track of redundancies
         supertype_redundancies = defaultdict(lambda: False)
@@ -914,7 +914,7 @@ def customize_adjs(mylang, ch, lexicon, hierarchies, rules):
                        section=pred_adj_map[form]['section'])
 
     # If adjective incorporation, add to mylanguage.tdl
-    if ch.get("adj_incorp",False):
+    if ch.get("lexicon.adj_incorp",False):
         mylang.add('''adj_incorporation-lex-rule := add-only-rule &
                     [ C-CONT [ RELS <! arg1-ev-relation &
                                        [ LBL #ltop,

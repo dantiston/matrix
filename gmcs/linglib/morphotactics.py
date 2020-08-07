@@ -181,8 +181,8 @@ def position_class_hierarchy(choices):
     pc_inputs = {}
     # Now create the actual position classes
     for i, pc in enumerate(all_position_classes(choices)):
-        # these PCs are ChoiceDicts
-        if len(pc.get('inputs', ())) > 0:
+        # these PCs are Choices
+        if pc.get('inputs', ()):
             pc_inputs[pc.full_key] = set(pc.get('inputs'))
         cur_pc = pch.add_node(PositionClass(pc.full_key, get_name(pc),
                                             order=pc.get('order')))
@@ -888,7 +888,7 @@ def write_valence_change_behavior(pc, lrt, mylang, choices):
     for op in lrt.valchgops:
         operation = op.get('operation','').lower()
         lrt_ops.add(operation)
-        transitive = 'trans' in op.get('inputs','').split(',')
+        transitive = 'trans' in op.get('inputs', ())
         argnum, numargs = added_argnum_for_vchop(op)
 
         if operation == 'subj-rem':
@@ -977,7 +977,7 @@ def validate(choices, vr):
         switching = pc.get('switching',False)
         pc_switching_inputs = set()
         if pc.get('switching',''):
-            inputs = pc.get('inputs', '').split(', ')
+            inputs = pc.get('inputs', ())
             pc_switching_inputs.update(inputs)
         for lrt in pc.get('lrt', ()):
             lrt_validation(lrt, vr, index_feats, choices, inputs=pc_switching_inputs, switching=switching)
@@ -991,7 +991,7 @@ def basic_pc_validation(choices, pc, vr):
     if not 'order' in pc:
         vr.err(pc.full_key + '_order',
                'You must specify an order for every position class you define.')
-    if not pc.get('inputs',''):
+    if not pc.get('inputs', ()):
         # TJT 2014-09-01: Changing this to an error as the system crashes without an input
         vr.err(pc.full_key + '_inputs',
                #'A position class without any inputs is unusable unless you ' +\
@@ -1000,7 +1000,7 @@ def basic_pc_validation(choices, pc, vr):
     else:
         # All user-defined inputs must be defined
         if any(inp not in choices and inp not in LEXICAL_SUPERTYPES
-               for inp in pc.get('inputs','').split(', ')):
+               for inp in pc.get('inputs', ())):
             vr.err(pc.full_key + '_inputs',
                    'Every lexical type, lexical rule type, or position class ' + \
                    'that serves as the input to a position class must be ' + \
@@ -1011,9 +1011,9 @@ def basic_pc_validation(choices, pc, vr):
     # LLD 2015-12-09: modified to check for ALL_LEX_TYPES, so we check that verb,
     # aux, noun, etc. are defined if needed (not just det, adj, cop).
     #if any(inp in NON_ESSENTIAL_LEX_CATEGORIES  and inp not in choices
-    #        for inp in pc.get('inputs','').split(', ')):
+    #        for inp in pc.get('inputs', ())):
     if any(inp in ALL_LEX_TYPES and inp not in choices
-           for inp in pc.get('inputs','').split(', ')):
+           for inp in pc.get('inputs', ())):
         vr.err(pc.full_key + '_inputs',
                'You have specified morphology for a part of speech ' + \
                'that does not have any lexical types defined. You ' + \
@@ -1297,7 +1297,7 @@ def hierarchy_validation(choices, pc, vr):
                     has_no_affix_lri.add(lrt.full_key)
                 if lri['inflecting'] == 'yes':
                     has_affix_lri.add(lrt.full_key)
-                    sts = lrt.get('supertypes', '').split(", ")
+                    sts = lrt.get('supertypes', ())
                     if sts:
                         sts_dict[lrt.full_key] = sts
     for lrt, sts in list(sts_dict.items()):
@@ -1320,7 +1320,7 @@ def hierarchy_validation(choices, pc, vr):
     inherited_feats = {}
 
     for lrt in pc.get('lrt', []):
-        sts = lrt.get('supertypes', '').split(", ")
+        sts = lrt.get('supertypes', ())
         if sts:
             lrtsts[lrt.full_key] = sts
         feats[lrt.full_key] = {}
@@ -1436,12 +1436,12 @@ def warn_merged_pcs(all_pcs, vr):
     for pc in all_pcs:
         pc_name = pc.full_key
         order = pc.get('order','') # prefix or suffix
-        inputs = pc.get('inputs',[])
+        inputs = pc.get('inputs', ())
         # Not sure why inputs is a string instead of a list...
         if isinstance(inputs, str):
             input_map[inputs][order].add(pc_name)
         else:
-            for inp in pc.get('inputs',[]):
+            for inp in pc.get('inputs', ()):
                 input_map[inp][order].add(pc_name)
                 # Warn for each obligatory position class with equal inputs and orders
                 #   pcs_to_be_merged = {pc for inp in input_map
