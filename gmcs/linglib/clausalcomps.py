@@ -1,3 +1,5 @@
+from delphin_choices import info
+
 from gmcs.utils import get_name,TDLencode, orth_encode
 
 from gmcs import constants
@@ -581,7 +583,7 @@ Add clausal verb supertype to the grammar.
 # It is possible that that call should be moved to this module.
 
 def add_clausalcomp_verb_supertype(ch, mainorverbtype,mylang):
-    head = ch.case_head()
+    head = info.case_head(ch)
     typedef = CLAUSALCOMP + '-verb-lex := ' + mainorverbtype + '&\
       [ SYNSEM.LOCAL.CAT.VAL.COMPS < #comps >,\
         ARG-ST < [ LOCAL.CAT.HEAD ' + head + ' ],\

@@ -38,8 +38,6 @@ from gmcs.utils import format_comment_block
 ######################################################################
 # globals
 
-# ch = {}
-
 hierarchies = {}
 
 mylang = None
@@ -374,12 +372,8 @@ def customize_matrix(path, arch_type, destination=None, force_dest=False):
     # if no destination dir is specified, just use the choices file's dir
     destination = destination or os.path.dirname(path)
 
-    # ch = ChoicesFile(path)
     with open(path, 'r') as f:
         ch = Choices.loads_dsl(f.read())
-
-    # from pprint import pprint
-    # pprint(ch._root)
 
     language = ch.get('general.language', '')
 

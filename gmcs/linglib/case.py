@@ -410,11 +410,11 @@ def customize_verb_case(mylang, ch):
                 else:
                     a_case = canon_to_abbr(c[0], cases)
                     o_case = canon_to_abbr(c[1], cases)
-                    a_head = ch.case_head(c[0])
+                    a_head = info.case_head(ch, c[0])
                     if not clausal:
-                        o_head = ch.case_head(c[1])
+                        o_head = info.case_head(ch, c[1])
                     elif o_case:
-                        o_head = ch.case_head(c[1])
+                        o_head = info.case_head(ch, c[1])
 
                 if a_case and o_case:
                     if not clausal:
@@ -481,7 +481,7 @@ def customize_verb_case(mylang, ch):
                     s_head = info.case_head(ch)
                 else:
                     s_case = canon_to_abbr(c[0], cases)
-                    s_head = ch.case_head(c[0])
+                    s_head = info.case_head(ch, c[0])
 
                 if s_case:
                     if not clausal:

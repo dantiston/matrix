@@ -1,3 +1,5 @@
+from delphin_choices import info
+
 # Constants
 # Admittedly, they are a bit ugly but the hope is they will prevent some number of typo-bugs.
 ###
@@ -361,7 +363,7 @@ def get_head_type(arg, lrt, ch):
     head_type = ''
     for f in lrt('feat', ()):
         if f['name'] == 'case' and f['head'] == arg:
-            head_type = ch.case_head(f['value'])
+            head_type = info.case_head(ch, f['value'])
     return head_type
 
 def get_nmz_lexrules(ch):
