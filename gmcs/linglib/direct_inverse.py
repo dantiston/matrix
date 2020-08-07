@@ -207,7 +207,7 @@ def add_lexrules(choices):
                     'name': f'{n}-{direc}',
                     'feat1': {
                         'name': 'direction',
-                        'value': direc,
+                        'value': [direc],
                     }
                 })
                 for j in range(1, scale_size+1):
@@ -218,16 +218,16 @@ def add_lexrules(choices):
                         j, scale_size, direc, equal)
                     choices.set(lrt_key, {
                         'name': f'{n}-{direc}-{j}',
-                        'supertypes': direc_lrt_key,
+                        'supertypes': [direc_lrt_key],
                         'feat1': {
                             'name': 'dirinv-type',
                             'head': 'subj',
-                            'value': subj_type,
+                            'value': [subj_type],
                         },
                         'feat2': {
                             'name': 'dirinv-type',
                             'head': 'obj',
-                            'value': comps_type,
+                            'value': [comps_type],
                         },
                         'lri1': {
                             'inflecting': 'no',
