@@ -317,7 +317,7 @@ def customize_verbs(mylang, ch, lexicon, hierarchies):
 
 
 def create_verb_lex_type(cases, ch, hierarchies, lexicon, mylang, verb):
-    stypes = verb.get('supertypes', '').split(', ')
+    stypes = verb.get('supertypes', ())
     stype_names = [verb_id(ch[st]) for st in stypes if st != '']
     vtype = verb_id(verb)
     construct_supertype_names(cases, ch, stype_names, verb)
@@ -422,7 +422,7 @@ def customize_determiners(mylang, ch, lexicon, hierarchies):
         mylang.add('determiner-lex := non-mod-lex-item.')
 
     # Determiners
-    if 'det' in ch:
+    if 'lexicon.det' in ch:
         lexicon.add_literal(';;; Determiners')
 
     for det in ch.get('lexicon.det', ()):
@@ -474,16 +474,15 @@ def customize_nouns(mylang, ch, lexicon, hierarchies):
     mylang.add('head :+ [ PRON bool ].',section='addenda')
 
     # Figure out which kinds of determiner-marking are in the language
-    seen = {'obl':False, 'opt':False, 'imp':False}
+    seen = set()
     seenCount = 0
 
     for noun in ch.get('lexicon.noun', ()):
         det = noun.get('det')
-        if not det == '' and not seen[det]:
-            seen[det] = True
-            seenCount += 1
+        if not det == '' and det not in seen:
+            seen.add(det)
 
-    singlentype = (seenCount == 1)
+    singlentype = len(seen) == 1
 
     # Playing fast and loose with the meaning of OPT on SPR.  Using
     # OPT - to mean obligatory (as usual), OPT + to mean impossible (that's
@@ -518,20 +517,20 @@ def customize_nouns(mylang, ch, lexicon, hierarchies):
 
     # singlentype means there's only one type of n in the hierarchy.
     if singlentype:
-        if seen['obl']:
+        if 'obl' in seen:
             typedef = 'noun-lex := [ SYNSEM.LOCAL.CAT.VAL.SPR < [ OPT - ] > ].'
             mylang.add(typedef)
-        elif seen['imp']:
+        elif 'imp' in seen:
             typedef = 'noun-lex := [ SYNSEM.LOCAL.CAT.VAL.SPR < [ OPT + ] > ].'
             mylang.add(typedef)
     else:
-        if seen['obl']:
+        if 'obl' in seen:
             typedef = \
                 'obl-spr-noun-lex := noun-lex & \
                    [ SYNSEM.LOCAL.CAT.VAL.SPR < [ OPT - ] > ].'
             mylang.add(typedef)
 
-        if seen['imp']:
+        if 'imp' in seen:
             typedef = \
                 'no-spr-noun-lex := noun-lex & \
                    [ SYNSEM.LOCAL.CAT.VAL.SPR < [ OPT + ] > ].'
@@ -543,7 +542,7 @@ def customize_nouns(mylang, ch, lexicon, hierarchies):
     for pron in ch.get('adnom-poss.poss-pron', ()):
         if pron.get('type')!='affix':
             poss_prons=True
-    if (seen['imp'] or poss_prons) and ch.get('word-order.has-dets') == 'yes':
+    if ('imp' in seen or poss_prons) and ch.get('word-order.has-dets') == 'yes':
         mylang.add(
             'head-spec-phrase := [ NON-HEAD-DTR.SYNSEM.OPT - ].',
             'Nouns which cannot take specifiers mark their SPR requirement\n' +
@@ -559,44 +558,42 @@ def customize_nouns(mylang, ch, lexicon, hierarchies):
 
     # make a hash of nountypes --> lists of children so that we
     # can stopdet on children
-    children = defaultdict(dict)
+    children = defaultdict(set)
     for noun in ch.get('lexicon.noun', ()):
-        for p in noun.get('supertypes', '').split(', '):
-            children[p][noun.full_key] = 1
+        for p in noun.get('supertypes', ()):
+            children[p].add(noun.full_key)
 
-    # make and populate a dictionary of stopdets, to avoid vacuous det supertypes
+    # make and populate stopdets to avoid vacuous det supertypes
     # have to follow inheritance paths downwards from any nonempty det values
-    stopdets={}
-    for noun in ch.get('noun', ()):
+    stopdets = set()
+    for noun in ch.get('lexicon.noun', ()):
         # if det is nonempty, child nouns shouldn't inherit det
         det = noun.get('det')
-        if det != '':
+        if det is not None:
             if noun.full_key in children:
                 # there are children to stopdet on
                 # recursively look for children
                 parents = [ noun.full_key ]
-                while (True):
-                    next_parents = []
+                while True:
+                    next_parents = set()
                     for p in parents:
                         if p in children:
-                            for c in list(children[p].keys()):
-                                stopdets[c]=True
+                            for c in children[p]:
+                                stopdets.add(c)
                                 if not c in next_parents:
                                     next_parents.append(c)
-                    if len(next_parents) == 0:
+                    if not next_parents:
                         break
                     else:
                         parents = next_parents
 
 
-    for noun in ch.get('noun', ()):
+    for noun in ch.get('lexicon.noun', ()):
         ntype = noun_id(noun)
-        det = noun.get('det')
-        pron = True if noun.get('pron')=='on' else False
-        if noun.full_key in stopdets:
-            det = ''
+        det = noun.get('det') if noun.full_key in stopdets else ''
+        pron = noun.get('pron') == 'on'
 
-        stypes = noun.get('supertypes', '').split(', ')
+        stypes = noun.get('supertypes', ())
         stype_names = [noun_id(ch[st]) for st in stypes if st != '']
 
         #if singlentype or det == 'opt':
@@ -758,7 +755,7 @@ def customize_adjs(mylang, ch, lexicon, hierarchies, rules):
                             raise ValueError(def_error % (supertype, supertype_predcop, adj.get('name',''), predcop))
 
         ## Calculate supertypes
-        stypes = adj.get('supertypes', '').split(', ')
+        stypes = adj.get('supertypes', ())
         stype_names = []
         if '' in stypes: # Found root
             root = True
@@ -892,8 +889,8 @@ def customize_adjs(mylang, ch, lexicon, hierarchies, rules):
                          'section':'lexrules'}}
     # EKN 03-02-2018 Add [ CASE real-case ] to SUBJ of adj iff
     # the language has case and possessives:
-    poss = True if ch.get('poss-strat') or ch.get('poss-pron') else False
-    case_on = True if ch.get('case-marking')!='none' else False
+    poss = True if ch.get('adnom-poss.poss-strat') or ch.get('adnom-poss.poss-pron') else False
+    case_on = True if ch.get('case.case-marking')!='none' else False
     if poss and case_on:
         pred_adj_definition = '''%s
           [ SYNSEM.LOCAL [ CAT.VAL.SUBJ < [ LOCAL [ CAT.HEAD.CASE real-case,
@@ -974,8 +971,8 @@ def customize_cops(mylang, ch, lexicon, hierarchies, trigger):
 
         # EKN 03-02-2018 Add [ CASE real-case ] to all subj of copula iff
         # the language has case and possessives:
-        poss = True if ch.get('poss-strat') or ch.get('poss-pron') else False
-        case_on = True if ch.get('case-marking')!='none' else False
+        poss = ch.get('adnom-poss.poss-strat') or ch.get('adnom-poss.poss-pron')
+        case_on = ch.get('case.case-marking') != 'none'
         if poss and case_on:
             mylang.add('''%s := [ SYNSEM.LOCAL.CAT.VAL.SUBJ < [ LOCAL.CAT.HEAD.CASE real-case ]  > ].''' % LEXICAL_SUPERTYPES['cop'])
 
@@ -989,7 +986,7 @@ def customize_cops(mylang, ch, lexicon, hierarchies, trigger):
             ctype = cop_id(cop)
 
             ## Calculate supertypes
-            stypes = cop.get('supertypes', '').split(', ')
+            stypes = cop.get('supertypes', ())
             stype_def = ''
             if '' in stypes: # Found root
                 stype_def = 'adj-comp-copula-verb-lex & ' # Change for new complement types

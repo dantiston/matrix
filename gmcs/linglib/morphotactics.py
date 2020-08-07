@@ -310,8 +310,7 @@ def interpret_constraints(choices):
     convert_obligatoriness_to_req(choices)
     for mn in _mns.values():
         prefix = 'lexicon' if isinstance(mn, LexicalType) else 'morphology'
-        key = f'{prefix}.{mn.key}'
-        value = choices.get(key)
+        value = choices.get(f'{prefix}.{mn.key}')
         # don't bother if the morphotactic node is not defined in choices
         if not isinstance(value, Choices):
             continue
