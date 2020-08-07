@@ -317,7 +317,7 @@ def interpret_constraints(choices):
             continue
 
         for req in value.get('require', ()):
-            others = dict([(o, _mns[o]) for o in req['others'].split(', ')])
+            others = dict((o, _mns[o]) for o in req['others'])
             mn.disjunctive_flag_sets[tuple(sorted(others))] = others
             if all(o.precedes(mn) for o in others.values()):
                 mn.constraints['req-bkwd'].update(others)
