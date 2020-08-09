@@ -7,6 +7,7 @@ from gmcs.linglib.lexbase import LexicalType, PositionClass
 from gmcs.linglib.lexbase import ALL_LEX_TYPES
 from gmcs.linglib.lexbase import LEXICAL_CATEGORIES
 from gmcs.linglib.lexbase import LEXICAL_SUPERTYPES
+from gmcs.utils import remove_section
 
 def lexical_type_hierarchy(choices, lexical_supertype):
     if lexical_supertype not in LEXICAL_CATEGORIES:
@@ -39,9 +40,7 @@ def lexical_type_hierarchy(choices, lexical_supertype):
             # because bistems can give rise to flags that need to appear on
             # all verbs.
             if lexical_supertype == 'verb':
-                bistems = lt.get('bistem', ())
-                stems = lt.get('stem', ())
-                stems.extend(bistems)
+                stems = lt.get('stem', ()) + lt.get('bistem', ())
                 for stem in stems:
                     lth.add_node(LexicalType(stem.full_key, stem['name'],
                                              parents={lt.full_key:lth.nodes[lt.full_key]},
@@ -49,13 +48,13 @@ def lexical_type_hierarchy(choices, lexical_supertype):
     return lth
 
 def get_lexical_supertype(lt_key, choices):
-    lexical_category = lt_key.rstrip('0123456789')
+    lexical_category = lt_key.split(".")[-1].rstrip('0123456789')
     if lexical_category in ('iverb','tverb') and choices['word-order.has-aux'] == 'yes':
         return 'mverb'
     elif lexical_category in ('aux','mverb','iverb','tverb'):
         return 'verb'
     elif lexical_category == 'verb':
-        return case.interpret_verb_valence(choices[f'lexicon.{lt_key}.valence'])
+        return case.interpret_verb_valence(choices[f'{lt_key}.valence'])
     elif lexical_category in ('noun', 'det', 'adj', 'cop'): # TJT Added adj, cop, removed aux
         return lexical_category
     return None
@@ -158,14 +157,15 @@ def get_all_supertypes(key, choices):
     return supertypes, path_to_root
 
 def get_lt_name(key, choices):
-    if key in LEXICAL_SUPERTYPES:
+    type_ = remove_section(key)
+    if type_ in LEXICAL_SUPERTYPES:
         # lexical supertype-- pull out of lexical_supertypes, remove '-lex'
-        return LEXICAL_SUPERTYPES[key].rsplit('-lex',1)[0]
+        return LEXICAL_SUPERTYPES[type_].rsplit('-lex', 1)[0]
     else:
         # defined lextype, name may or may not be defined
-        name = get_name(choices.get(f'lexicon.{key}'))
-        lex_st = LEXICAL_SUPERTYPES[key.strip('1234567890')]
-        return '-'.join([name, lex_st.rsplit('-lex',1)[0]])
+        name = get_name(choices.get(key))
+        lex_st = LEXICAL_SUPERTYPES[type_.strip('1234567890')]
+        return '-'.join((name, lex_st.rsplit('-lex', 1)[0]))
 
 ######################################################################
 # validate_lexicon(ch, vr)

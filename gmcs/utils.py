@@ -59,6 +59,9 @@ def orth_encode(orthin):
 def get_name(item):
     return item.get('name', None) or item.full_key
 
+def remove_section(key):
+    return key.split(".", 1)[-1]
+
 def format_comment_block(comment_string, max_chars=70, prefix=';;;'):
     lines = []
     comment_lines = comment_string.split('\\n')

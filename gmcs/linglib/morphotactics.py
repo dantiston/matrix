@@ -14,6 +14,7 @@ from gmcs.linglib.lexbase import LexicalType
 from gmcs.linglib.lexbase import NON_ESSENTIAL_LEX_CATEGORIES
 from gmcs.linglib.lexbase import PositionClass
 from gmcs.utils import get_name
+from gmcs.utils import remove_section
 
 ### Contents
 # 1. Module Variables
@@ -106,7 +107,7 @@ def get_input_map(pch):
     classes taking those inputs as the values.
     """
     inp_map = defaultdict(list)
-    for pc in list(pch.nodes.values()):
+    for pc in pch.nodes.values():
         i_s = tuple(sorted(pc.valid_inputs(), key=lambda x: x.tdl_order))
         if len(i_s) > 0:
             inp_map[i_s] += [pc]
@@ -183,11 +184,11 @@ def position_class_hierarchy(choices):
     for i, pc in enumerate(all_position_classes(choices)):
         # these PCs are Choices
         if pc.get('inputs', ()):
-            pc_inputs[pc.full_key] = set(pc.get('inputs'))
+            pc_inputs[remove_section(pc.full_key)] = set(pc.get('inputs', ()))
         cur_pc = pch.add_node(PositionClass(pc.full_key, get_name(pc),
                                             order=pc.get('order')))
         cur_pc.tdl_order = i
-        _mns[cur_pc.key] = cur_pc
+        _mns[remove_section(cur_pc.key)] = cur_pc
         # If only one root LRT, and the PC or the LRT are unnamed, merge them
         if pc_lrt_mergeable(pc):
             pc_lrt_merge(cur_pc, pc)
@@ -205,8 +206,8 @@ def add_lexical_type_hierarchy(pch, choices):
     for lex_cat in LEXICAL_CATEGORIES:
         if f"lexicon.{lex_cat}" not in choices: continue
         lth = lexicon.lexical_type_hierarchy(choices, lex_cat)
-        _mns[lth.key] = lth
-        _mns.update(lth.nodes)
+        _mns[remove_section(lth.key)] = lth
+        _mns.update({remove_section(key): value for key, value in lth.nodes.items()})
         pch.add_node(lth)
 
 def pc_lrt_mergeable(pc):
@@ -301,7 +302,7 @@ def create_lexical_rule_type(lrt, mtx_supertypes, cur_pc):
                     for lri in lrt.get('lri',[])]
     # Fill out the obvious supertypes (later we'll finish)
     set_lexical_rule_supertypes(new_lrt, mtx_supertypes)
-    _mns[new_lrt.key] = new_lrt
+    _mns[remove_section(new_lrt.key)] = new_lrt
     return new_lrt
 
 ### CONSTRAINTS ###
@@ -341,10 +342,11 @@ def convert_obligatoriness_to_req(choices):
     """
     for pc in all_position_classes(choices):
         if pc.get('obligatory','') == 'on':
-            basetypes = [i for i in _mns[pc.full_key].input_span().values()
+            pc_key = remove_section(pc.full_key)
+            basetypes = [i for i in _mns[pc_key].input_span().values()
                          if len(i.inputs()) == 0]
             for bt in basetypes:
-                bt.constraints['req-fwd'][pc.full_key] = _mns[pc.full_key]
+                bt.constraints['req-fwd'][pc_key] = _mns[pc_key]
 
 ### FLAGS ###
 
@@ -719,14 +721,14 @@ def write_pc_flags(mylang, lextdl, pc, all_flags, choices):
     out_flags = set(pc.flags['out'].keys())
     to_copy = {}
     for mn in pc.roots():
-        to_copy[mn.key] = write_mn_flags(mylang, lextdl, mn, out_flags, all_flags,
+        to_copy[remove_section(mn.key)] = write_mn_flags(mylang, lextdl, mn, out_flags, all_flags,
                                          choices)
     # for lex-rule PCs (not lexical types), write copy-up flags
     if pc.is_lex_rule:
         # first write copy-ups for the root nodes
         copied_flags = write_copy_up_flags(mylang, to_copy, all_flags)
         # then, if any remain, copy up on the pc (if a lexrule)
-        to_copy = {pc.key: all_flags.difference(out_flags.union(copied_flags))}
+        to_copy = {remove_section(pc.key): all_flags.difference(out_flags.union(copied_flags))}
         write_copy_up_flags(mylang, to_copy, all_flags, force_write=True)
 
 def write_mn_flags(mylang, lextdl, mn, output_flags, all_flags, choices):
@@ -737,7 +739,7 @@ def write_mn_flags(mylang, lextdl, mn, output_flags, all_flags, choices):
     to_copy = {}
     cur_output_flags = output_flags.union(mn.flags['out'])
     for sub_mn in list(mn.children().values()):
-        to_copy[sub_mn.key] = write_mn_flags(mylang, lextdl, sub_mn,
+        to_copy[remove_section(sub_mn.key)] = write_mn_flags(mylang, lextdl, sub_mn,
                                              cur_output_flags, all_flags, choices)
     copied_flags = write_copy_up_flags(mylang, to_copy, all_flags)
     return all_flags.difference(cur_output_flags).difference(copied_flags)

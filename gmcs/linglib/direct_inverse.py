@@ -186,24 +186,23 @@ def add_lexrules(choices):
         if lex.get('valence', '').endswith('dirinv'):
             n = get_name(lex)
             name = n + '-dir-inv'
-            choices.add('morphology.verb-pc', {
+            pc_key = choices.add('morphology.verb-pc', {
                 'name': name,
                 'inputs': [lex.full_key],
                 # The order doesn't really matter for lrules, so just put something
                 'order': 'suffix',
             })
-            pc = choices.get_last()
-            _reassign_inputs(choices, lex.full_key, pc.full_key)
+            _reassign_inputs(choices, lex.full_key, pc_key)
             # make the lexical type require the pc
-            lex.add('require', {'others': [pc.full_key]})
+            lex.add('require', {'others': [pc_key]})
 
             # regarding the calculating of the keys, consider scale_size is 2:
             #   i = 0 or 1, so direc_lrt_key = (0*2)+0+1 = 1, or (1*2)+1+1 = 4
             #   j = 1 or 2, so lrt_key = (0*2)+0+1+1 = 2, (0*2)+0+2+1 = 3, or
             #                            (1*2)+1+1+1 = 5, (1*2)+1+2+1 = 6
             for i, direc in enumerate(['dir', 'inv']):
-                direc_lrt_key = f'{pc.full_key}.lrt{str((i * scale_size) + i + 1)}'
-                choices.set(f'morphology.{direc_lrt_key}', {
+                direc_lrt_key = f'{pc_key}.lrt{str((i * scale_size) + i + 1)}'
+                choices.set(direc_lrt_key, {
                     'name': f'{n}-{direc}',
                     'feat1': {
                         'name': 'direction',
@@ -213,7 +212,7 @@ def add_lexrules(choices):
                 for j in range(1, scale_size+1):
                     if j == scale_size and not (equal == 'direct' and direc == 'dir'):
                         break
-                    lrt_key = f'morphology.{pc.full_key}.lrt{str((i * scale_size) + i + j + 1)}'
+                    lrt_key = f'{pc_key}.lrt{str((i * scale_size) + i + j + 1)}'
                     subj_type, comps_type = get_subj_comps_types(
                         j, scale_size, direc, equal)
                     choices.set(lrt_key, {
