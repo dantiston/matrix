@@ -221,9 +221,9 @@ def pc_lrt_mergeable(pc):
     return len([l for l in pc.get('lrt', ()) if not defined_lexrule_sts(l, pc)]) == 1
 
 def pc_lrt_merge(cur_pc, pc):
-    lrt = pc['lrt'].get_first()
+    lrt = pc.get('lrt', ())[0]
     if pc.get('name','') == '' or lrt.get('name','') == '':
-        name = pc.get('name') or lrt.get('name') or pc.full_key
+        name = pc.get('name') or lrt.get('name') or remove_section(pc.full_key)
         lrt['name'] = cur_pc.name = name
         cur_pc.identifier_suffix = 'lex-rule'
 
@@ -1033,11 +1033,11 @@ def basic_pc_validation(choices, pc, vr):
                 'lexical rule types is unusable, though it can be later ' + \
                 'defined by hand.')
     elif len(pc.get('lrt', [])) == 1:
-        lrt = pc['lrt'].get_first()
+        lrt = pc.get('lrt', ())[0]
         if lrt.get('name', '') == '' or pc.get('name', '') == '':
             # if the lrt has no name, it will be merged with its position class.
             # make sure it has no constraints
-            for c in lrt.get('require', []) + lrt.get('forbid', []):
+            for c in lrt.get('require', ()) + lrt.get('forbid', ()):
                 vr.err(c.full_key + '_others', 'Solitary lexical rule types with ' + \
                        'no name will be merged with their position class, and ' + \
                        'therefore cannot themselves take constraints. Apply the ' + \
