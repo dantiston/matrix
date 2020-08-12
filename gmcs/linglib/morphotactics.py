@@ -58,11 +58,14 @@ def defined_lexrule_sts(lrt,pc):
     Return the list of lexical rule supertypes, filtering out ones
     not defined in the pc (likely Matrix types)
     """
-    sts = lrt.get('supertypes', ())
+    # TODO: Replace with this simpler implementation
+    # return set(remove_section(lrt.full_key) for lrt in pc.get('lrt', ())).intersection(lrt.get('supertypes', ()))
+    sts = set(lrt.get('supertypes', ()))
     to_return = []
     for lrt in pc.get('lrt', ()):
-        if lrt.full_key in sts:
-            to_return.append(lrt.full_key)
+        lrt_key = remove_section(lrt.full_key)
+        if lrt_key in sts:
+            to_return.append(lrt_key)
     return to_return
 
 def disjunctive_typename(mns):
@@ -215,7 +218,7 @@ def pc_lrt_mergeable(pc):
     A pc is mergeable with its only daughter in case it only has
     one daughter.
     """
-    return len([l for l in pc['lrt'] if not defined_lexrule_sts(l, pc)]) == 1
+    return len([l for l in pc.get('lrt', ()) if not defined_lexrule_sts(l, pc)]) == 1
 
 def pc_lrt_merge(cur_pc, pc):
     lrt = pc['lrt'].get_first()
@@ -231,13 +234,14 @@ def create_lexical_rule_types(cur_pc, pc):
     for lrts in all_lrts:
         for j, lrt in enumerate(lrts):
             mtx_supertypes = set()
+            lrt_key = remove_section(lrt.full_key)
             if 'supertypes' in lrt:
-                lrt_parents[lrt.full_key] = set(defined_lexrule_sts(lrt,pc))
+                lrt_parents[lrt_key] = set(defined_lexrule_sts(lrt,pc))
                 mtx_supertypes = set(lrt.get('supertypes', ())).difference(
-                    lrt_parents.get(lrt.full_key, set()))
+                    lrt_parents.get(lrt_key, set()))
             # default name uses name of PC with _lrtX
             if 'name' not in lrt:
-                lrt['name'] = cur_pc.name + lrt.full_key.replace(cur_pc.key, '', 1)
+                lrt['name'] = cur_pc.name + lrt_key.replace(cur_pc.key, '', 1)
             cur_lrt = create_lexical_rule_type(lrt, mtx_supertypes, cur_pc)
             # the ordering should only mess up if there are 100+ lrts
             cur_lrt.tdl_order = cur_pc.tdl_order + (0.01 * j)
@@ -311,7 +315,8 @@ def interpret_constraints(choices):
     convert_obligatoriness_to_req(choices)
     for mn in _mns.values():
         prefix = 'lexicon' if isinstance(mn, LexicalType) else 'morphology'
-        value = choices.get(f'{prefix}.{mn.key}')
+        key = f'{prefix}.{mn.key}' if not mn.key.startswith(prefix) else mn.key
+        value = choices.get(key)
         # don't bother if the morphotactic node is not defined in choices
         if not isinstance(value, Choices):
             continue
@@ -656,7 +661,7 @@ def write_rules(pch, mylang, irules, lrules, lextdl, choices):
             write_supertypes(mylang, lrt.identifier(), lrt.all_supertypes())
         write_daughter_types(mylang, pc)
     # features need to be written later
-    return [(f'morphology.{mn.key}', mn.identifier(), mn.key.split('-')[0])
+    return [(mn.key, mn.identifier(), mn.key.split('-')[0])
             for mn in _mns.values()
             if isinstance(mn, LexicalRuleType) and len(mn.features) > 0]
 

@@ -8,7 +8,7 @@ from gmcs.lib import TDLHierarchy
 from gmcs.linglib import case
 from gmcs.linglib import morphotactics
 from gmcs.linglib.lexbase import ALL_LEX_TYPES
-from gmcs.utils import get_name
+from gmcs.utils import get_name, remove_section
 
 dirinv_geom = 'LOCAL.CAT.HEAD.DIRECTION'
 
@@ -186,15 +186,19 @@ def add_lexrules(choices):
         if lex.get('valence', '').endswith('dirinv'):
             n = get_name(lex)
             name = n + '-dir-inv'
+            lex_key = remove_section(lex.full_key)
             pc_key = choices.add('morphology.verb-pc', {
                 'name': name,
-                'inputs': [lex.full_key],
+                'inputs': [lex_key],
                 # The order doesn't really matter for lrules, so just put something
                 'order': 'suffix',
             })
-            _reassign_inputs(choices, lex.full_key, pc_key)
             # make the lexical type require the pc
             lex.add('require', {'others': [pc_key]})
+            print(lex)
+            # make other PCs take the new PC instead of the lexical type
+            pc_key = f'morphology.{pc_key}'
+            _reassign_inputs(choices, lex_key, pc_key)
 
             # regarding the calculating of the keys, consider scale_size is 2:
             #   i = 0 or 1, so direc_lrt_key = (0*2)+0+1 = 1, or (1*2)+1+1 = 4
@@ -202,6 +206,7 @@ def add_lexrules(choices):
             #                            (1*2)+1+1+1 = 5, (1*2)+1+2+1 = 6
             for i, direc in enumerate(['dir', 'inv']):
                 direc_lrt_key = f'{pc_key}.lrt{str((i * scale_size) + i + 1)}'
+                direc_lrt_type = remove_section(direc_lrt_key)
                 choices.set(direc_lrt_key, {
                     'name': f'{n}-{direc}',
                     'feat1': {
@@ -217,7 +222,7 @@ def add_lexrules(choices):
                         j, scale_size, direc, equal)
                     choices.set(lrt_key, {
                         'name': f'{n}-{direc}-{j}',
-                        'supertypes': [direc_lrt_key],
+                        'supertypes': [direc_lrt_type],
                         'feat1': {
                             'name': 'dirinv-type',
                             'head': 'subj',
@@ -240,4 +245,4 @@ def _reassign_inputs(choices, inp_key, pc_key):
             if pc.full_key == pc_key: continue
             inputs = pc.get('inputs', ())
             if inp_key in inputs:
-                pc['inputs'] = [i if i != inp_key else pc_key for i in inputs]
+                pc['inputs'] = [i if i != inp_key else remove_section(pc_key) for i in inputs]
