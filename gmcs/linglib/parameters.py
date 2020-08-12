@@ -20,8 +20,8 @@ def determine_vcluster(auxcomp, auxorder, wo, ch):
                 vcluster = True
             elif wo == 'vos' or wo == 'svo':
                 vcluster = False
-        if wo == 'free' and ch.get('multiple-aux') == 'yes':
+        if wo == 'free' and ch.get('word-order.multiple-aux') == 'yes':
             vcluster = True
-    if not ch.get('has-aux') == 'yes':
+    if not ch.get('word-order.has-aux') == 'yes':
         vcluster = False
     return vcluster

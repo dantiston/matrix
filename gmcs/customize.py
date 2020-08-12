@@ -175,7 +175,7 @@ def customize_script(ch, grammar_path):
             for l in lines:
                 l = l.strip()
                 if l == ';;; Modules: LOAD my_language.tdl':
-                    myl = ch.get('general.language').lower() + '.tdl'
+                    myl = ch.get('general.language', 'my-lang').lower() + '.tdl'
                     s.write('   (lkb-pathname (parent-directory) "' + myl + '")\n')
                 else:
                     s.write(l + '\n')
@@ -190,7 +190,7 @@ def customize_pettdl(ch, grammar_path):
     try:
         with open(os.path.join(get_matrix_core_path(), 'pet.tdl'), 'r', encoding='utf-8') as p_in:
             lines = p_in.readlines()
-        myl = ch.get('general.language').lower()
+        myl = ch.get('general.language', 'my-lang').lower()
         with open(os.path.join(grammar_path, myl + '-pet.tdl'), 'w', encoding='utf-8') as p_out:
             for l in lines:
                 l = l.strip()
@@ -209,7 +209,7 @@ def customize_pettdl(ch, grammar_path):
 #
 
 def customize_acetdl(ch, grammar_path):
-    myl = ch.get('general.language').lower()
+    myl = ch.get('general.language', 'my-lang').lower()
     ace_config = os.path.join(grammar_path, 'ace', 'config.tdl')
     replace_strings = {'mylanguage': os.path.join('..', myl + '-pet.tdl')}
     with open(ace_config, 'r', encoding='utf-8') as a_in:
@@ -245,7 +245,7 @@ def customize_roots(ch):
                       NON-LOCAL non-local-none ] ].'
     roots.add(typedef, comment)
 
-    if 'form-fin-nf' in ch:
+    if 'other-features.form-fin-nf' in ch:
         roots.add('root := [ SYNSEM.LOCAL.CAT.HEAD.FORM finite ].')
 
     # ERB 2006-10-05 I predict a bug here:  If we a language with auxiliaries
@@ -258,7 +258,7 @@ def customize_roots(ch):
         adj.get("predcop", '') in ("imp", "opt")
         for adj in ch.get('lexicon.adj', ())
     )
-    has_question_particles = bool(ch.get('q-part', ''))
+    has_question_particles = bool(ch.get('matrix-yes-no.q-part', ''))
 
     if has_question_particles and has_stative_predicate_adjectives:
         roots.add('root := [ SYNSEM.LOCAL.CAT.HEAD +vjc ].')

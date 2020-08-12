@@ -354,10 +354,9 @@ def customize_major_constituent_order(wo, mylang, ch, rules):
 
 
 def specialize_word_order(hc,orders, mylang, ch, rules):
-
     adp = orders['adp']
     aux = orders['aux']
-    qpart_order = orders['qpart_order'] #TODO: verify _-delimited key
+    qpart_order = orders['qpart_order']
     auxcomp = ch.get('word-order.aux-comp')
     wo = ch.get('word-order.word-order')
     auxorder = ch.get('word-order.aux-comp-order')
@@ -756,7 +755,7 @@ def customize_subord_word_order(mylang,ch,wo,rules):
 
             # For German-like subordinate clauses, we need additional feature VC (verb cluster)
             # to ensure that verbs and auxiliaries in subordinate clauses cluster at the end.
-            if 'has-aux' in ch and ch['has-aux'] == 'yes':
+            if ch.get('word-order.has-aux') == 'yes':
                 update_lex_items_vcluster(ch, mylang)
                 mylang.add('subord-phrase := [ SYNSEM.LOCAL.CAT.VC - ].')
                 mylang.add('basic-unary-phrase :+\
@@ -773,7 +772,7 @@ def customize_subord_word_order(mylang,ch,wo,rules):
                 mylang.add('vc-comp-head-phrase := verb-cluster-phrase & basic-head-1st-comp-phrase.',
                            merge=True,section='phrases')
                 rules.add('vc-comp-head := vc-comp-head-phrase.')
-                if ch['has-dets'] == 'yes':
+                if ch.get('word-order.has-dets') == 'yes':
                     mylang.add('basic-head-spec-phrase :+ [ SYNSEM.LOCAL.CAT.VC #vc,'
                                'HEAD-DTR.SYNSEM.LOCAL.CAT.VC #vc ].')
 
@@ -864,9 +863,9 @@ def determine_consistent_order(wo,hc,ch):
                 qpart_order = 'free-sq'
             elif ch.get('word-order.q-part-order') == 'before':
                 qpart_order = 'free-qs'
-        elif hc == 'comp-head' and ch.get('q-part-order') == 'before':
+        elif hc == 'comp-head' and ch.get('word-order.q-part-order') == 'before':
             qpart_order = 'ov-qs'
-        elif hc == 'head-comp' and ch.get('q-part-order') == 'after':
+        elif hc == 'head-comp' and ch.get('word-order.q-part-order') == 'after':
             qpart_order = 'vo-sq'
 
     for ccs in ch.get('word-order.comps', ()):
