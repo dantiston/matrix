@@ -474,11 +474,9 @@ def customize_nouns(mylang, ch, lexicon, hierarchies):
 
     # Figure out which kinds of determiner-marking are in the language
     seen = set()
-    seenCount = 0
-
     for noun in ch.get('lexicon.noun', ()):
-        det = noun.get('det')
-        if not det == '' and det not in seen:
+        det = noun.get('det', '')
+        if det:
             seen.add(det)
 
     singlentype = len(seen) == 1

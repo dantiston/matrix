@@ -241,7 +241,7 @@ def create_lexical_rule_types(cur_pc, pc):
                     lrt_parents.get(lrt_key, set()))
             # default name uses name of PC with _lrtX
             if 'name' not in lrt:
-                lrt['name'] = cur_pc.name + lrt_key.replace(cur_pc.key, '', 1)
+                lrt['name'] = f"{cur_pc.name}-{lrt_key.replace(cur_pc.key, '', 1)}"
             cur_lrt = create_lexical_rule_type(lrt, mtx_supertypes, cur_pc)
             # the ordering should only mess up if there are 100+ lrts
             cur_lrt.tdl_order = cur_pc.tdl_order + (0.01 * j)
@@ -251,7 +251,7 @@ def create_lexical_rule_types(cur_pc, pc):
             cur_pc.relate_parent_child(_mns[parent], _mns[child])
 
 def create_lexical_rule_type(lrt, mtx_supertypes, cur_pc):
-    new_lrt = LexicalRuleType(lrt.full_key, get_name(lrt).replace(".", "_"))
+    new_lrt = LexicalRuleType(lrt.full_key, get_name(lrt).replace(".", "-"))
     _id_key_tbl[new_lrt.identifier()] = lrt.full_key
     for feat in lrt.get('feat', ()):
         if feat['name'] == 'evidential':

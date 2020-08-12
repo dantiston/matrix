@@ -195,7 +195,6 @@ def add_lexrules(choices):
             })
             # make the lexical type require the pc
             lex.add('require', {'others': [pc_key]})
-            print(lex)
             # make other PCs take the new PC instead of the lexical type
             pc_key = f'morphology.{pc_key}'
             _reassign_inputs(choices, lex_key, pc_key)
